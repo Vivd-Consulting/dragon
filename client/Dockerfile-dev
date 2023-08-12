@@ -1,0 +1,11 @@
+FROM node:18.16.0-alpine
+
+WORKDIR /opt/client
+COPY ./package.json ./yarn.lock ./
+RUN apk add git
+RUN yarn install
+
+COPY . /opt/client
+
+EXPOSE 3000
+CMD ["yarn", "dev"]

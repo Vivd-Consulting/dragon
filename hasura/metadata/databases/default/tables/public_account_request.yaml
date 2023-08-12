@@ -1,0 +1,41 @@
+table:
+  name: account_request
+  schema: public
+object_relationships:
+- name: dragon_user
+  using:
+    foreign_key_constraint_on: user_id
+insert_permissions:
+- permission:
+    check: {}
+    columns:
+    - bm_id
+    - created_at
+    - landing_url
+    - name
+    - offer_url
+    - timezone
+    - user_id
+    - vertical
+  role: user
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - bm_id
+    - created_at
+    - denied_reason
+    - id
+    - is_approved
+    - landing_url
+    - name
+    - offer_url
+    - timezone
+    - updated_at
+    - user_id
+    - vertical
+    filter:
+      dragon_user:
+        id:
+          _eq: X-Hasura-User-Id
+  role: user

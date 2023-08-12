@@ -1,0 +1,129 @@
+@use 'styles/consts'
+
+.desktop-sidebar
+  width: 100%
+  overflow-x: auto
+  position: sticky
+  top: 0px
+  z-index: 99
+  background-color: white
+  box-shadow: rgb(21 28 30 / 20%) 0px 1px 3px 0px
+  border-style: none solid none none
+  border-width: 1px
+  border-color: #eeeeee
+  display: flex
+  flex-direction: column
+
+  @media screen and (max-width: consts.$smallLaptop)
+    transform: translateX(-100%)
+    transition: transform .6s cubic-bezier(.05,.74,.2,.99)
+
+  .desktop-sidebar-body
+    padding: consts.$base_spacing * 3
+    display: flex
+    flex-direction: column
+    flex: 1
+    gap: consts.$base_spacing * 2
+    color: #4c4c4c
+
+    .sidebar-logo
+      height: 140px
+      width: 140px
+
+      @media screen and (max-width: consts.$smallLaptop)
+        opacity: 0
+
+    .sidebar-title
+      color: #241510
+
+    .sidebar-items-container
+      position: relative
+      height: 100%
+
+    .sidebar-items
+      position: absolute
+      overflow: scroll
+      height: 100%
+      width: 100%
+
+      &::-webkit-scrollbar
+        display: none
+
+      .sidebar-group
+        cursor: pointer
+
+        .group-header
+          padding: consts.$base_spacing * 2
+
+          &:hover
+            background-color: #eeeeee
+            border-radius: consts.$card_radius
+
+        .group-children
+          margin-left: 2em
+          color: #989898
+
+      .sidebar-item
+        cursor: pointer
+        padding: consts.$base_spacing * 2
+
+        &.selected
+          background-color: consts.$selected_bg_colour
+          color: consts.$selected_text_colour
+          border-radius: consts.$card_radius
+
+        &:hover
+          background-color: #eeeeee
+          border-radius: consts.$card_radius
+
+.mobile-sidebar
+  width: 100%
+  overflow-x: auto
+  padding: consts.$base_spacing * 1
+  display: flex
+  flex-direction: column
+  gap: consts.$base_spacing * 2
+  color: #4c4c4c
+
+  .sidebar-logo
+    height: 140px
+    width: 140px
+
+  .sidebar-items-container
+    position: relative
+    height: 100%
+
+  .sidebar-items
+    overflow: scroll
+    height: 100%
+    width: 100%
+
+    &::-webkit-scrollbar
+      display: none
+
+    .sidebar-group
+      cursor: pointer
+
+      .group-header
+        padding: consts.$base_spacing * 2
+
+        &:hover
+          background-color: #eeeeee
+          border-radius: consts.$card_radius
+
+      .group-children
+        margin-left: 2em
+        color: #989898
+
+    .sidebar-item
+      cursor: pointer
+      padding: consts.$base_spacing * 2
+
+      &.selected
+        background-color: consts.$selected_bg_colour
+        color: consts.$selected_text_colour
+        border-radius: consts.$card_radius
+
+      &:hover
+        background-color: #eeeeee
+        border-radius: consts.$card_radius

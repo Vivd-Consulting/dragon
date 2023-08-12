@@ -1,0 +1,59 @@
+table:
+  name: dragon_user
+  schema: public
+array_relationships:
+- name: account_requests
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: account_request
+        schema: public
+- name: media
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: media
+        schema: public
+- name: dragon_user_ad_accounts
+  using:
+    foreign_key_constraint_on:
+      column: dragon_user_id
+      table:
+        name: dragon_user_ad_account
+        schema: public
+- name: wire_requests
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: wire_request
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - accepted_tos
+    - id
+    - created_at
+    - date_subscribed
+    - date_unsubscribed
+    - deleted_at
+    - email
+    - name
+    - updated_at
+    filter:
+      id:
+        _eq: X-Hasura-User-Id
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - accepted_tos
+    - date_subscribed
+    - date_unsubscribed
+    filter:
+      id:
+        _eq: X-Hasura-User-Id
+  role: user

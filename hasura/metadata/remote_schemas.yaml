@@ -1,0 +1,31 @@
+- name: Apollo
+  definition:
+    url: '{{REMOTE_SCHEMA}}'
+    timeout_seconds: 60
+    customization: {}
+    headers:
+    - name: action-secret
+      value_from_env: ACTION_SECRET
+    forward_client_headers: true
+  comment: ""
+  permissions:
+  - role: user
+    definition:
+      schema: |-
+        schema  { query: Query }
+
+        type AdAccount { id: String!
+          insights: [Insights]
+          name: String!
+        }
+
+        type Insights { account_id: String!
+          account_name: String!
+          date_start: String
+          date_stop: String
+          spend: Float
+        }
+
+        type Query { adAccounts: [AdAccount]
+          balance: Float
+        }

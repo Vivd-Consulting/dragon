@@ -1,0 +1,8 @@
+- "!include public_account_request.yaml"
+- "!include public_ad_account.yaml"
+- "!include public_ad_account_spend.yaml"
+- "!include public_facebook_token.yaml"
+- "!include public_media.yaml"
+- "!include public_dragon_user.yaml"
+- "!include public_dragon_user_ad_account.yaml"
+- "!include public_wire_request.yaml"

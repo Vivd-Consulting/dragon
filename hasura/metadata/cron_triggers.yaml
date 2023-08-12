@@ -1,0 +1,18 @@
+- name: Import Ad Account Spend
+  webhook: '{{ACTION_API}}/events/importSpend'
+  schedule: 0 0 * * *
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: action-secret
+    value_from_env: ACTION_SECRET
+  comment: ""
+- name: Import Ad Accounts
+  webhook: '{{ACTION_API}}/events/importAccounts'
+  schedule: 0 0 * * *
+  include_in_metadata: true
+  payload: {}
+  headers:
+  - name: action-secret
+    value_from_env: ACTION_SECRET
+  comment: Imports Ad Accounts

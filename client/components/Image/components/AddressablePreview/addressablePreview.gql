@@ -1,0 +1,10 @@
+  query addressablePreview($id: Int!) {
+    addressable(where: { id: { _eq: $id } }) {
+      id
+      previewImage {
+        key
+        filename
+        attribution_id
+      }
+    }
+  }

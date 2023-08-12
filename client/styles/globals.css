@@ -1,0 +1,122 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
+    Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.p-button:not(#user-profile .p-button) {
+  font-weight: 500 !important;
+}
+
+.p-button-icon {
+  font-weight: 600 !important;
+}
+
+.p-card.p-component {
+  border-radius: 7px !important;
+}
+
+.page-card > .p-card-body > .p-card-content {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.p-datatable-wrapper {
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.p-breadcrumb {
+  border-radius: 7px !important;
+  overflow-x: visible !important;
+}
+
+img {
+  max-width: 100%;
+}
+
+.p-splitbutton-menubutton {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+#user-profile {
+  border-radius: 7px;
+  padding: 8px;
+}
+
+#user-profile:hover {
+  background-color: #eeeeee;
+  border-radius: 7px;
+  padding: 8px;
+}
+
+ul,
+.p-menu {
+  border-radius: 0 0 7px 7px;
+}
+
+.map-checkbox-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+
+  gap: 3px;
+  padding-right: 6px;
+  padding-top: 6px;
+}
+
+.checkbox-label {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10pt;
+  text-shadow: rgb(0 0 0) -1px 1px 2px, rgb(0 0 0) 1px 1px 2px, rgb(0 0 0) 0px -1px 2px;
+}
+
+img.image-preview {
+  max-width: 200px;
+}
+
+img {
+  max-width: 500px;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: rgb(200, 200, 200);
+  background-image: linear-gradient(to right, #ccc, rgb(200, 200, 200), #ccc);
+}
+
+.preview-image-border {
+  object-fit: scale-down;
+  border: 1px solid #e9ecef;
+  padding: 4px;
+  margin-bottom: 18px;
+  line-height: 1.42857143;
+  background-color: #f3f3f3;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+}
+
+.challenge-style-header {
+  border: 1px solid #e9ecef;
+}
+
+.challenge-style-header thead.p-datatable-thead {
+  display: none;
+}

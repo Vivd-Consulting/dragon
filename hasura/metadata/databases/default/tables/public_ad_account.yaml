@@ -1,0 +1,29 @@
+table:
+  name: ad_account
+  schema: public
+array_relationships:
+- name: insights
+  using:
+    foreign_key_constraint_on:
+      column: ad_account_id
+      table:
+        name: ad_account_spend
+        schema: public
+- name: dragon_user_ad_accounts
+  using:
+    foreign_key_constraint_on:
+      column: ad_account_id
+      table:
+        name: dragon_user_ad_account
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - created_at
+    - id
+    - name
+    - updated_at
+    filter:
+      id:
+        _in: x-hasura-ad-account-ids
+  role: user

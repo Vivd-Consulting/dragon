@@ -1,0 +1,8 @@
+query dragonUser($id: String!) {
+  dragon_user(where: {id: {_eq: $id}}) {
+    id
+    name
+    email
+    accepted_tos
+  }
+}

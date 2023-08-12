@@ -1,0 +1,16 @@
+mutation updateAttribution(
+  $id: Int!
+  $author: String
+  $license: attribution_type
+  $source_url: String
+  $title: String
+) {
+  update_attribution(
+    where: { id: { _eq: $id } }
+    _set: { author: $author, license: $license, source_url: $source_url, title: $title }
+  ) {
+    returning {
+      id
+    }
+  }
+}

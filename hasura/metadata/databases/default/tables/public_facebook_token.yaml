@@ -1,0 +1,3 @@
+table:
+  name: facebook_token
+  schema: public

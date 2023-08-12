@@ -1,0 +1,23 @@
+{
+  "name": "dragon",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "docker-compose up",
+    "reset": "cd e2e && node reset.js",
+    "clean": "cd e2e && node clean.js && hasura metadata reload --skip-update-check",
+    "seed": "hasura seed apply --database-name default --skip-update-check",
+    "hasura": "hasura --project hasura --skip-update-check",
+    "hasura:console": "npm run hasura console",
+    "hasura:migrate": "npm run hasura migrate apply",
+    "prepare": "husky install",
+    "postinstall": "husky install",
+    "lint": "cd client && yarn lint",
+    "tsCheck": "cd client && yarn tsCheck"
+  },
+  "devDependencies": {
+    "hasura-cli": "2.25.0",
+    "husky": "^8.0.3"
+  }
+}

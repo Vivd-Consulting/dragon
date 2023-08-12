@@ -1,0 +1,8 @@
+query adminCards {
+  totalBalance
+  dragon_user_aggregate(where: {date_subscribed: {_is_null: false}, date_unsubscribed: {_is_null: true}}) {
+    aggregate {
+      count
+    }
+  }
+}

@@ -1,0 +1,16 @@
+FROM node:18.16.0-alpine
+
+# Create the working dir
+WORKDIR /opt/api
+
+# Do not use cache when we change node dependencies in package.json
+COPY package.json yarn.lock ./
+
+# Install packages + Prepare cache file
+RUN yarn install --frozen-lockfile --no-cache
+
+COPY . /opt/api
+
+EXPOSE 3006
+EXPOSE 3008
+CMD ["yarn", "watch"]

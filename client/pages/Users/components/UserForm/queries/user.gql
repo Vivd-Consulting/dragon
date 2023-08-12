@@ -1,0 +1,8 @@
+query dragon_user($id: String!) {
+  dragon_user(where: { id: { _eq: $id }, deleted_at: { _is_null: true } }) {
+    id
+    name
+    email
+  }
+  userRole(user_id: $id)
+}

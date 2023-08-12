@@ -1,0 +1,73 @@
+version: '3.6'
+services:
+  client:
+    build:
+      context: client/.
+      dockerfile: Dockerfile-dev
+    depends_on:
+      - api
+    env_file:
+      - client/.env.local
+    volumes:
+      - ./client/.:/opt/client
+      - /opt/client/node_modules
+      - /opt/client/.next
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    restart: always
+    image: "dragon_client:latest"
+  
+  api:
+    build:
+      context: api/.
+      dockerfile: Dockerfile-dev
+    depends_on:
+      - hasura
+    env_file:
+      - api/.env
+    volumes:
+      - ./api/.:/opt/api
+      - /opt/api/node_modules
+    ports:
+      - '3006:3006'
+      - '3008:3008'
+      - '9229:9229'
+    image: "dragon_api:latest"
+    restart: always
+
+  postgres:
+    image: postgres:15
+    container_name: db
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+        - "6543:5432"
+    environment:
+      - POSTGRES_DB=value
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pgpass
+
+  hasura:
+    image: hasura/graphql-engine:v2.25.1.cli-migrations-v3
+    container_name: hasura
+    ports:
+      - "${HASURA_GRAPHQL_SERVER_PORT}:${HASURA_GRAPHQL_SERVER_PORT}"
+    depends_on:
+      - "postgres"
+    restart: always
+    env_file:
+      - .env
+    command:
+      - graphql-engine
+      - serve
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./hasura/migrations:/hasura-migrations
+      - ./hasura/metadata:/hasura-metadata
+
+volumes:
+  db_data:

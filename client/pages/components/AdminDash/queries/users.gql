@@ -1,0 +1,9 @@
+query users($deleted: Boolean) {
+  dragon_user(where: {deleted_at: {_is_null: $deleted}}) {
+    name
+    email
+    date_subscribed
+    date_unsubscribed
+    bm_id
+  }
+}
