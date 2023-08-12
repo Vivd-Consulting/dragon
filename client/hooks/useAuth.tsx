@@ -69,6 +69,7 @@ function GqlProvider({ user, role, accessToken, children }) {
           name
           email
           accepted_tos
+          is_enabled
           date_subscribed
           date_unsubscribed
         }

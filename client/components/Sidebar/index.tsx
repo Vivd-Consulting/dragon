@@ -79,6 +79,22 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
         <Column className={styles['sidebar-items']}>
           <SidebarItem icon="pi pi-home" label="Home" href="/" onClick={onItemClick} />
 
+          <SidebarItem icon="pi pi-home" label="Clients" href="/Clients" onClick={onItemClick} />
+
+          <SidebarItem
+            icon="pi pi-home"
+            label="Contractors"
+            href="/Contractors"
+            onClick={onItemClick}
+          />
+
+          <SidebarItem
+            icon="pi pi-home"
+            label="Time Tracker"
+            href="/TimeTracker"
+            onClick={onItemClick}
+          />
+
           <SidebarItem
             icon="pi pi-users"
             allowedRole={Role.Admin}

@@ -9,6 +9,7 @@ CREATE TABLE dragon_user (
   contractor_id integer REFERENCES contractor(id),
 
   accepted_tos boolean NOT NULL DEFAULT false,
+  is_enabled boolean NOT NULL DEFAULT false,
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
@@ -78,6 +79,20 @@ CREATE TABLE project_contractor (
   project_id text NOT NULL REFERENCES project(id),
 
   PRIMARY KEY (dragon_user_id, project_id)
+);
+
+CREATE TABLE project_time (
+  id SERIAL PRIMARY KEY,
+  start_time timestamp NOT NULL,
+  end_time timestamp NOT NULL,
+  description text,
+
+  dragon_user_id text NOT NULL REFERENCES dragon_user(id),
+  project_id integer NOT NULL REFERENCES project(id),
+
+  created_at timestamp NOT NULL DEFAULT now(),
+  updated_at timestamp NOT NULL DEFAULT now(),
+  deleted_at timestamp
 );
 
 CREATE TABLE budget (

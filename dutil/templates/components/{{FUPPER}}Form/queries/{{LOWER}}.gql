@@ -1,0 +1,5 @@
+query {{QUERYNAME}}($id: String!) {
+  dragon_user(where: { id: { _eq: $id }, deleted_at: { _is_null: true } }) {
+    id
+  }
+}

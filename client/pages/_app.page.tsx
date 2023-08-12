@@ -48,6 +48,17 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 function RoleWrapper({ componentRole, children }) {
   const { dragonUser, role } = useAuth();
 
+  if (dragonUser && !dragonUser.is_enabled) {
+    return (
+      <div className="flex flex-column gap-4">
+        <div className="pb-4">
+          <h1>Account Unactivated</h1>
+          <span>Your account has not been activated yet.</span>
+        </div>
+      </div>
+    );
+  }
+
   if (dragonUser && !dragonUser.accepted_tos) {
     return <TermsOfService />;
   }
