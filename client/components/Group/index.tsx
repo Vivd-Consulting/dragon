@@ -51,16 +51,48 @@ export function Row({
   align,
   wrap,
   'data-cy': dataCy,
+  p,
+  px,
+  py,
+  pt,
+  pb,
+  pl,
+  pr,
+  m,
+  mx,
+  my,
+  mt,
+  mb,
+  ml,
+  mr,
   ...rest
 }: GroupProps) {
+  const klass = cx(
+    className,
+    p && `p-${p}`,
+    px && `px-${px}`,
+    py && `py-${py}`,
+    pt && `pt-${pt}`,
+    pb && `pb-${pb}`,
+    pl && `pl-${pl}`,
+    pr && `pr-${pr}`,
+    m && `m-${m}`,
+    mx && `mx-${mx}`,
+    my && `my-${my}`,
+    mt && `mt-${mt}`,
+    mb && `mb-${mb}`,
+    ml && `ml-${ml}`,
+    mr && `mr-${mr}`
+  );
+
   return (
     <Group
-      className={className}
       direction="row"
       gap={gap}
       align={align}
       wrap={wrap}
       data-cy={dataCy}
+      className={klass}
       {...rest}
     >
       {children}

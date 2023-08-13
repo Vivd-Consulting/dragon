@@ -1,0 +1,15 @@
+query clients($limit: Int, $offset: Int, $order_by: [client_order_by!], $where: client_bool_exp) {
+  client(limit: $limit, offset: $offset, where: $where) {
+    id
+    name
+    description
+    gpt_persona
+    start_date
+    end_date
+  }
+  client_aggregate(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    aggregate {
+      count
+    }
+  }
+}

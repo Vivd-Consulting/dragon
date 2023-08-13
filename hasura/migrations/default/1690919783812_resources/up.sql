@@ -6,6 +6,9 @@ CREATE TABLE client (
   description text,
   gpt_persona text,
 
+  start_date timestamp,
+  end_date timestamp,
+
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
   deleted_at timestamp
