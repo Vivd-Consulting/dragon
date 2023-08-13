@@ -1,0 +1,18 @@
+table:
+  name: contractor
+  schema: public
+array_relationships:
+- name: contractor_rates
+  using:
+    foreign_key_constraint_on:
+      column: contractor_id
+      table:
+        name: contractor_rate
+        schema: public
+- name: dragon_users
+  using:
+    foreign_key_constraint_on:
+      column: contractor_id
+      table:
+        name: dragon_user
+        schema: public

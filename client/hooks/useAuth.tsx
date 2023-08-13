@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
-import { ApolloProvider } from '@apollo/client';
+import { useQuery, ApolloProvider } from '@apollo/client';
 import gql from 'graphql-tag';
 import { create } from 'zustand';
-
-import { useQueryOnce } from 'hooks/useQuery';
+import { Button } from 'primereact/button';
+import { signOut } from 'next-auth/react';
 
 import { Role } from 'types/roles';
 
@@ -28,6 +28,8 @@ interface SessionData {
 export function GqlAuthProvider({ children }) {
   const { data, status } = useSession();
 
+  console.log({ data, status });
+
   useAuth = create(() => ({
     user: null,
     role: 0,
@@ -38,12 +40,14 @@ export function GqlAuthProvider({ children }) {
 
   if (status === 'loading') {
     return null;
+  } else if (status === 'unauthenticated') {
+    return <Unauthenticated />;
   }
 
-  if (!data) {
-    signIn('auth0');
-    return null;
-  }
+  // if (!data) {
+  //   signIn('auth0');
+  //   return null;
+  // }
 
   const { user, role, accessToken } = data as Partial<SessionData>;
 
@@ -61,7 +65,7 @@ export function GqlAuthProvider({ children }) {
 function GqlProvider({ user, role, accessToken, children }) {
   const [client] = useState(createApolloClient(accessToken));
 
-  const { data } = useQueryOnce(
+  const { data } = useQuery(
     gql`
       query dragonUser($email: String!) {
         dragon_user(where: { email: { _eq: $email } }) {
@@ -70,8 +74,6 @@ function GqlProvider({ user, role, accessToken, children }) {
           email
           accepted_tos
           is_enabled
-          date_subscribed
-          date_unsubscribed
         }
       }
     `,
@@ -84,10 +86,11 @@ function GqlProvider({ user, role, accessToken, children }) {
   );
 
   if (data) {
-    const _role: Role =
-      {
-        admin: Role.Admin
-      }[role] || Role.User;
+    const _role: Role = {
+      admin: Role.Admin
+    }[role];
+
+    console.log({ _role, data });
 
     const userData = {
       ...data.dragon_user[0]
@@ -105,4 +108,26 @@ function GqlProvider({ user, role, accessToken, children }) {
   }
 
   return null;
+}
+
+function Unauthenticated() {
+  return (
+    <div className="flex flex-column gap-4">
+      <div className="pb-4">
+        <h1>Unauthorized</h1>
+        <span>You are not authorized to view this page.</span>
+
+        <Button
+          label="Sign out"
+          className="block"
+          onClick={() =>
+            signOut({
+              callbackUrl: process.env.NEXT_PUBLIC_LOGOUT_URL
+            })
+          }
+        />
+        <Button label="Sign In" className="block" onClick={() => signIn('auth0')} />
+      </div>
+    </div>
+  );
 }

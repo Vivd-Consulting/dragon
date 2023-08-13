@@ -1,0 +1,18 @@
+table:
+  name: client
+  schema: public
+array_relationships:
+- name: dragon_users
+  using:
+    foreign_key_constraint_on:
+      column: client_id
+      table:
+        name: dragon_user
+        schema: public
+- name: projects
+  using:
+    foreign_key_constraint_on:
+      column: client_id
+      table:
+        name: project
+        schema: public

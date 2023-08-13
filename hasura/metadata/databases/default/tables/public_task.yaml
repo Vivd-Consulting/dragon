@@ -1,0 +1,16 @@
+table:
+  name: task
+  schema: public
+object_relationships:
+- name: dragonUserBySuggestedAsigneeId
+  using:
+    foreign_key_constraint_on: suggested_asignee_id
+- name: dragonUserByUserId
+  using:
+    foreign_key_constraint_on: user_id
+- name: dragon_user
+  using:
+    foreign_key_constraint_on: asignee_id
+- name: project
+  using:
+    foreign_key_constraint_on: project_id

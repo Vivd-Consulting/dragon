@@ -71,8 +71,8 @@ app.use(async (req, res, next) => {
     // Get token info
     const token = jwt_decode(getAuthToken(req.headers));
     token.role = token["https://hasura.io/jwt/claims"]?.["x-hasura-role"];
-    token.bm_id = token["https://hasura.io/jwt/claims"]?.["x-hasura-bm-id"];
-    token.ad_account_ids = user["https://hasura.io/jwt/claims"]?.["x-hasura-ad-account-ids"];
+    // const clientId = user["https://hasura.io/jwt/claims"]?.["x-hasura-client-id"];
+    // const contractorId = user["https://hasura.io/jwt/claims"]?.["x-hasura-contractor-id"];
 
     res.locals.token = token;
   } catch (e) {

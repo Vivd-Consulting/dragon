@@ -1,0 +1,10 @@
+table:
+  name: project_contractor
+  schema: public
+object_relationships:
+- name: dragon_user
+  using:
+    foreign_key_constraint_on: dragon_user_id
+- name: project
+  using:
+    foreign_key_constraint_on: project_id

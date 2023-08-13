@@ -26,11 +26,6 @@ const USERS = gql`
       id
       name
       email
-      date_subscribed
-      date_unsubscribed
-      bmId
-      auth0_bm_id
-      auth0_ad_accounts
       role
     }
   }

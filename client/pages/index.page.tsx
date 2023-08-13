@@ -22,6 +22,6 @@ function Home() {
   );
 }
 
-Home.roles = [Role.Admin, Role.User];
+Home.roles = [Role.Admin, Role.Contractor, Role.Client];
 
 export default Home;

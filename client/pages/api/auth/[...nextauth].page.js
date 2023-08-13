@@ -36,8 +36,8 @@ export default NextAuth({
     },
     async signIn({ user, profile }) {
       try {
-        const claims = profile['https://hasura.io/jwt/claims'];
-        const role = claims?.['x-hasura-role']?.toLowerCase();
+        // const claims = profile['https://hasura.io/jwt/claims'];
+        // const role = claims?.['x-hasura-role']?.toLowerCase();
 
         const dragonUser = await knex('dragon_user').where({ id: user.id }).first();
 
@@ -47,20 +47,6 @@ export default NextAuth({
             id: user.id,
             email: user.email
           });
-
-          if (role === 'admin') {
-            return true;
-          }
-
-          // TODO: Send them to the pay page
-          return '/pay';
-        } else if (!dragonUser.date_subscribed || dragonUser.date_unsubscribed) {
-          if (role === 'admin') {
-            return true;
-          }
-
-          // TODO: Send them to the pay page
-          return true;
         }
 
         return true;

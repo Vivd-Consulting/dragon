@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useMutation } from '@apollo/client';
 import { FieldValues, useForm, UseFormReturn, UseFormSetValue } from 'react-hook-form';
+import { useQuery } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
@@ -9,7 +10,6 @@ import { Dialog } from 'primereact/dialog';
 import { sanitize } from 'utils';
 
 import { useAuth } from 'hooks/useAuth';
-import { useQueryOnce } from 'hooks/useQuery';
 
 import { Role } from 'types/roles';
 
@@ -26,7 +26,7 @@ import inviteUserQuery from './queries/inviteUser.gql';
 import styles from './styles.module.sass';
 
 export function ViewUserModal({ user, trigger }) {
-  const { data } = useQueryOnce(userQuery, {
+  const { data } = useQuery(userQuery, {
     fetchPolicy: 'no-cache',
     variables: {
       id: user.auth_0_id
@@ -210,7 +210,7 @@ interface User {
 function UserForm({ user = {} as User, onSubmit, onClose, choosePassword = false }) {
   const { role: _role } = useAuth();
 
-  const isAdmin = _role >= Role.User;
+  const isAdmin = _role === Role.Admin;
 
   const formHook: UseFormReturn<FieldValues, any> = useForm({ defaultValues: user });
   const { setValue } = formHook as {

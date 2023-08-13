@@ -1,8 +1,6 @@
 import GraphQLJSON from 'graphql-type-json';
 import gql from 'graphql-tag';
 
-import { graphApi } from '../facebook.js';
-
 import knex from '../db.js';
 
 import {
@@ -49,9 +47,7 @@ export const typeDefs = gql`
     role: String
 
     # DB USER:
-    date_subscribed: String
-    date_unsubscribed: String
-    subscribed: Boolean
+    is_enabled: Boolean
     accepted_tos: Boolean
     deleted_at: String
   }
@@ -59,9 +55,7 @@ export const typeDefs = gql`
   type DbUser {
     name: String
     email: String
-    bm_id: String
-    date_subscribed: String
-    date_unsubscribed: String
+    is_enabled: Boolean
     accepted_tos: Boolean
     created_at: String
     updated_at: String
@@ -155,21 +149,6 @@ export const resolvers = {
       }
 
       return getRole(args.user_id);
-    },
-    adAccounts: async (parent, args, context) => {
-      const { bmId } = context;
-      const { getLinkedAdAccounts, getAdAccountInsights } = await graphApi(
-        bmId
-      );
-
-      const accounts = await getLinkedAdAccounts();
-
-      for (const account of accounts) {
-        const insights = await getAdAccountInsights(account.id);
-        account.insights = insights;
-      }
-
-      return accounts;
     }
   },
   Mutation: {

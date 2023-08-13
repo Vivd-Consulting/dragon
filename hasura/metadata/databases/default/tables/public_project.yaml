@@ -1,0 +1,36 @@
+table:
+  name: project
+  schema: public
+object_relationships:
+- name: client
+  using:
+    foreign_key_constraint_on: client_id
+array_relationships:
+- name: budgets
+  using:
+    foreign_key_constraint_on:
+      column: project_id
+      table:
+        name: budget
+        schema: public
+- name: project_contractors
+  using:
+    foreign_key_constraint_on:
+      column: project_id
+      table:
+        name: project_contractor
+        schema: public
+- name: project_times
+  using:
+    foreign_key_constraint_on:
+      column: project_id
+      table:
+        name: project_time
+        schema: public
+- name: tasks
+  using:
+    foreign_key_constraint_on:
+      column: project_id
+      table:
+        name: task
+        schema: public

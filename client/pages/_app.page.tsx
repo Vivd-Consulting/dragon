@@ -4,6 +4,8 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 
+import { Button } from 'primereact/button';
+import { signOut } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 
@@ -48,12 +50,26 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 function RoleWrapper({ componentRole, children }) {
   const { dragonUser, role } = useAuth();
 
+  console.log({
+    logoutUrl: process.env.NEXT_PUBLIC_LOGOUT_URL
+  });
+
   if (dragonUser && !dragonUser.is_enabled) {
     return (
       <div className="flex flex-column gap-4">
         <div className="pb-4">
           <h1>Account Unactivated</h1>
           <span>Your account has not been activated yet.</span>
+
+          <Button
+            label="Sign out"
+            className="block"
+            onClick={() =>
+              signOut({
+                callbackUrl: process.env.NEXT_PUBLIC_LOGOUT_URL
+              })
+            }
+          />
         </div>
       </div>
     );
@@ -69,6 +85,16 @@ function RoleWrapper({ componentRole, children }) {
         <div className="pb-4">
           <h1>Unauthorized</h1>
           <span>You are not authorized to view this page.</span>
+
+          <Button
+            label="Sign out"
+            className="block"
+            onClick={() =>
+              signOut({
+                callbackUrl: process.env.NEXT_PUBLIC_LOGOUT_URL
+              })
+            }
+          />
         </div>
       </div>
     );

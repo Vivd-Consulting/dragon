@@ -1,5 +1,27 @@
 CREATE SCHEMA IF NOT EXISTS "public";
 
+CREATE TABLE client (
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL,
+  description text,
+  gpt_persona text,
+
+  created_at timestamp NOT NULL DEFAULT now(),
+  updated_at timestamp NOT NULL DEFAULT now(),
+  deleted_at timestamp
+);
+
+CREATE TABLE contractor (
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL,
+  description text,
+  gpt_persona text,
+
+  created_at timestamp NOT NULL DEFAULT now(),
+  updated_at timestamp NOT NULL DEFAULT now(),
+  deleted_at timestamp
+);
+
 CREATE TABLE dragon_user (
   id text NOT NULL PRIMARY KEY,
   name text NOT NULL,
@@ -30,32 +52,12 @@ CREATE TABLE media (
   deleted_at timestamp
 );
 
-CREATE TABLE contractor (
-  id SERIAL PRIMARY KEY,
-  name text NOT NULL,
-  description text,
-
-  created_at timestamp NOT NULL DEFAULT now(),
-  updated_at timestamp NOT NULL DEFAULT now(),
-  deleted_at timestamp
-);
-
 CREATE TABLE contractor_rate (
   id SERIAL PRIMARY KEY,
   rate float NOT NULL,
   description text,
 
   contractor_id integer NOT NULL REFERENCES contractor(id),
-
-  created_at timestamp NOT NULL DEFAULT now(),
-  updated_at timestamp NOT NULL DEFAULT now(),
-  deleted_at timestamp
-);
-
-CREATE TABLE client (
-  id SERIAL PRIMARY KEY,
-  name text NOT NULL,
-  description text,
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
@@ -76,7 +78,7 @@ CREATE TABLE project (
 
 CREATE TABLE project_contractor (
   dragon_user_id text NOT NULL REFERENCES dragon_user(id),
-  project_id text NOT NULL REFERENCES project(id),
+  project_id int NOT NULL REFERENCES project(id),
 
   PRIMARY KEY (dragon_user_id, project_id)
 );
@@ -117,8 +119,8 @@ CREATE TABLE task (
   user_id text NOT NULL REFERENCES dragon_user(id),
   priority integer NOT NULL DEFAULT 0,
 
-  suggested_asignee_id integer REFERENCES dragon_user(id),
-  asignee_id integer REFERENCES dragon_user(id),
+  suggested_asignee_id text REFERENCES dragon_user(id),
+  asignee_id text REFERENCES dragon_user(id),
   project_id integer NOT NULL REFERENCES project(id),
   suggested_estimate_minutes integer NOT NULL DEFAULT 0,
   estimate_minutes integer NOT NULL DEFAULT 0,
