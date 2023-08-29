@@ -101,22 +101,3 @@ hr {
   background: rgb(200, 200, 200);
   background-image: linear-gradient(to right, #ccc, rgb(200, 200, 200), #ccc);
 }
-
-.preview-image-border {
-  object-fit: scale-down;
-  border: 1px solid #e9ecef;
-  padding: 4px;
-  margin-bottom: 18px;
-  line-height: 1.42857143;
-  background-color: #f3f3f3;
-  border: 1px solid #ddd;
-  border-radius: 2px;
-}
-
-.challenge-style-header {
-  border: 1px solid #e9ecef;
-}
-
-.challenge-style-header thead.p-datatable-thead {
-  display: none;
-}

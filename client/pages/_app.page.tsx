@@ -50,10 +50,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 function RoleWrapper({ componentRole, children }) {
   const { dragonUser, role } = useAuth();
 
-  console.log({
-    logoutUrl: process.env.NEXT_PUBLIC_LOGOUT_URL
-  });
-
   if (dragonUser && !dragonUser.is_enabled) {
     return (
       <div className="flex flex-column gap-4">
