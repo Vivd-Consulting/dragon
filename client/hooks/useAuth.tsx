@@ -87,10 +87,10 @@ function GqlProvider({ user, role, accessToken, children }) {
 
   if (data) {
     const _role: Role = {
-      admin: Role.Admin
+      admin: Role.Admin,
+      contractor: Role.Contractor,
+      customer: Role.Client
     }[role];
-
-    console.log({ _role, data });
 
     const userData = {
       ...data.dragon_user[0]

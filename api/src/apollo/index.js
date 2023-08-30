@@ -27,7 +27,7 @@ const schema = new ApolloServer({
     // const clientId = user["https://hasura.io/jwt/claims"]?.["x-hasura-client-id"];
     // const contractorId = user["https://hasura.io/jwt/claims"]?.["x-hasura-contractor-id"];
 
-    return { user, bmId, adAccountIds, role };
+    return { user, role };
   },
   // This always needs to be enabled for Hasura to instrospect the schema
   introspection: true,

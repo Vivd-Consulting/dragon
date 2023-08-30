@@ -9,7 +9,7 @@ import { useAuth } from 'hooks/useAuth';
 import createClientMutation from './queries/createClient.gql';
 
 export default function Clients() {
-  const { modoUser } = useAuth();
+  const { dragonUser } = useAuth();
   const [createRequest] = useMutation(createClientMutation, {
     refetchQueries: ['accountRequests']
   });
@@ -43,7 +43,7 @@ export default function Clients() {
       await createRequest({
         variables: {
           ...data,
-          userId: modoUser?.id
+          userId: dragonUser?.id
         }
       });
 

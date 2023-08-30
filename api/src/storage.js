@@ -61,9 +61,9 @@ router.post(
   async function (req, res, next) {
     try {
       const type = req.headers["type"] || "image";
-      const organization = res.locals.token[jwtClaim]["x-hasura-org-id"];
+      // const claims = res.locals.token[jwtClaim]
 
-      const media = await persistMedia(req.saved_files, type, organization);
+      const media = await persistMedia(req.saved_files, type);
 
       res.json(media);
     } catch (error) {
