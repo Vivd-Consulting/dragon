@@ -5,3 +5,39 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
     Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.p-button:not(#user-profile .p-button) {
+  font-weight: 500 !important;
+}
+
+.p-button-icon {
+  font-weight: 600 !important;
+}
+
+.p-card.p-component {
+  border-radius: 7px !important;
+}
+
+.page-card > .p-card-body > .p-card-content {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.p-datatable-wrapper {
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.p-breadcrumb {
+  border-radius: 7px !important;
+  overflow-x: visible !important;
+}
