@@ -77,7 +77,7 @@ export function ManagedFormInput({ formHook }: ManagedFormInputsProps) {
       ImagePreview,
       HiddenInputText
     };
-  }, [formHook, control, errors, register]);
+  }, [formHook, control, errors]);
 
   return components;
 }
