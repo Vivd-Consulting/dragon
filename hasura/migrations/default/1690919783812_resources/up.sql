@@ -5,13 +5,25 @@ CREATE TABLE client (
   name text NOT NULL,
   description text,
   gpt_persona text,
+  contact_id integer REFERENCES contact(id),
+  document text,
 
   start_date timestamp,
   end_date timestamp,
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
+  archived_at timestamp NOT NULL DEFAULT now(),
   deleted_at timestamp
+);
+
+CREATE TABLE contact (
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL,
+  role text NOT NULL,
+
+  created_at timestamp NOT NULL DEFAULT now(),
+  updated_at timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE contractor (
