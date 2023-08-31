@@ -10,13 +10,13 @@ import { useAuth } from 'hooks/useAuth';
 import createClientMutation from './queries/createClient.gql';
 
 export default function ClientForm() {
-  const router = useRouter();
   const { dragonUser } = useAuth();
   const [createRequest] = useMutation(createClientMutation, {
     refetchQueries: ['accountRequests']
   });
   const [loading, setLoading] = useState(false);
   const toast = useRef<any>(null);
+  const router = useRouter();
 
   return (
     <>
