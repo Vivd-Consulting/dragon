@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from "fs";
 
 function writeFile(path, content) {
   return new Promise((resolve, reject) => {
@@ -22,13 +22,11 @@ function createDirectory(path) {
   });
 }
 
-// client/pages/Users
+// client/pages/users
 function newResourcePage(name) {
   const pageDir = `client/pages/${name}`;
   const componentDir = `${pageDir}/components`;
   const formDir = `${pageDir}/components/${name}Form`;
   const listDir = `${pageDir}/components/${name}List`;
   const listQueryDir = `${listDir}/queries`;
-
-
 }
