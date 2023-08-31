@@ -17,8 +17,6 @@ export default function ClientList() {
     fetchPolicy: 'no-cache'
   });
 
-  const router = useRouter();
-
   const wireRequests = loading ? previousData?.wire_request : data?.wire_request;
   const totalRecords = loading
     ? previousData?.client_aggregate.aggregate.count
@@ -44,18 +42,7 @@ export default function ClientList() {
       emptyMessage="No Clients found."
       data-cy="wires-table"
     >
-      <Column
-        body={
-          <Button
-            type="button"
-            icon="pi pi-user-edit"
-            tooltip="Edit Client"
-            tooltipOptions={{ position: 'bottom' }}
-            size="small"
-            onClick={() => router.push('/clients/edit/1')}
-          />
-        }
-      />
+      <Column body={useRedirectEditPage} />
       <Column
         field="id"
         header="ID"
@@ -108,5 +95,20 @@ export default function ClientList() {
         className="white-space-nowrap"
       />
     </DataTable>
+  );
+}
+
+function useRedirectEditPage(data: any) {
+  const router = useRouter();
+
+  return (
+    <Button
+      type="button"
+      icon="pi pi-user-edit"
+      tooltip="Edit Client"
+      tooltipOptions={{ position: 'bottom' }}
+      size="small"
+      onClick={() => router.push(`/clients/edit/${data?.id}`)}
+    />
   );
 }
