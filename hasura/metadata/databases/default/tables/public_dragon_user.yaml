@@ -2,52 +2,52 @@ table:
   name: dragon_user
   schema: public
 object_relationships:
-- name: client
-  using:
-    foreign_key_constraint_on: client_id
-- name: contractor
-  using:
-    foreign_key_constraint_on: contractor_id
+  - name: client
+    using:
+      foreign_key_constraint_on: client_id
+  - name: contractor
+    using:
+      foreign_key_constraint_on: contractor_id
 array_relationships:
-- name: media
-  using:
-    foreign_key_constraint_on:
-      column: user_id
-      table:
-        name: media
-        schema: public
-- name: project_contractors
-  using:
-    foreign_key_constraint_on:
-      column: dragon_user_id
-      table:
-        name: project_contractor
-        schema: public
-- name: project_times
-  using:
-    foreign_key_constraint_on:
-      column: dragon_user_id
-      table:
-        name: project_time
-        schema: public
-- name: tasks
-  using:
-    foreign_key_constraint_on:
-      column: asignee_id
-      table:
-        name: task
-        schema: public
-- name: tasksBySuggestedAsigneeId
-  using:
-    foreign_key_constraint_on:
-      column: suggested_asignee_id
-      table:
-        name: task
-        schema: public
-- name: tasksByUserId
-  using:
-    foreign_key_constraint_on:
-      column: user_id
-      table:
-        name: task
-        schema: public
+  - name: media
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: media
+          schema: public
+  - name: project_contractors
+    using:
+      foreign_key_constraint_on:
+        column: dragon_user_id
+        table:
+          name: project_contractor
+          schema: public
+  - name: project_times
+    using:
+      foreign_key_constraint_on:
+        column: dragon_user_id
+        table:
+          name: project_time
+          schema: public
+  - name: tasks
+    using:
+      foreign_key_constraint_on:
+        column: asignee_id
+        table:
+          name: task
+          schema: public
+  - name: tasksBySuggestedAsigneeId
+    using:
+      foreign_key_constraint_on:
+        column: suggested_asignee_id
+        table:
+          name: task
+          schema: public
+  - name: tasksByUserId
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: task
+          schema: public
