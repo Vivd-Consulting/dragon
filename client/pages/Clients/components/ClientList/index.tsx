@@ -1,5 +1,8 @@
+import { useRouter } from 'next/router';
+
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
@@ -13,6 +16,8 @@ export default function ClientList() {
   } = usePaginatedQuery(clientQuery, {
     fetchPolicy: 'no-cache'
   });
+
+  const router = useRouter();
 
   const wireRequests = loading ? previousData?.wire_request : data?.wire_request;
   const totalRecords = loading
@@ -39,6 +44,18 @@ export default function ClientList() {
       emptyMessage="No Clients found."
       data-cy="wires-table"
     >
+      <Column
+        body={
+          <Button
+            type="button"
+            icon="pi pi-user-edit"
+            tooltip="Edit Client"
+            tooltipOptions={{ position: 'bottom' }}
+            size="small"
+            onClick={() => router.push('/clients/edit/1')}
+          />
+        }
+      />
       <Column
         field="id"
         header="ID"
