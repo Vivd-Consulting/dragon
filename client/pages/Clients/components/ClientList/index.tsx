@@ -21,7 +21,7 @@ export default function ClientList() {
 
   return (
     <DataTable
-      value={wireRequests}
+      value={data?.client}
       paginator
       lazy
       onPage={onPage}
@@ -39,12 +39,56 @@ export default function ClientList() {
       emptyMessage="No Clients found."
       data-cy="wires-table"
     >
-      <Column field="id" header="ID" sortable />
+      <Column
+        field="id"
+        header="ID"
+        sortable
+        headerClassName="white-space-nowrap"
+        className="white-space-nowrap"
+      />
       <Column
         field="created_at"
         header="Created At"
         body={({ created_at }) => <span>{new Date(created_at).toLocaleString()}</span>}
         sortable
+        headerClassName="white-space-nowrap"
+        className="white-space-nowrap"
+      />
+      <Column
+        field="name"
+        header="Name"
+        headerClassName="white-space-nowrap"
+        className="white-space-nowrap"
+      />
+      <Column
+        field="description"
+        header="Description"
+        headerClassName="white-space-nowrap"
+        className="white-space-nowrap"
+      />
+      <Column
+        field="gpt_persona"
+        header="GPT Persona"
+        headerClassName="white-space-nowrap"
+        className="white-space-nowrap"
+      />
+      <Column
+        field="document"
+        header="Document"
+        headerClassName="white-space-nowrap"
+        className="white-space-nowrap"
+      />
+      <Column
+        field="start_date"
+        header="Start Date"
+        headerClassName="white-space-nowrap"
+        className="white-space-nowrap"
+      />
+      <Column
+        field="end_date"
+        header="End Date"
+        headerClassName="white-space-nowrap"
+        className="white-space-nowrap"
       />
     </DataTable>
   );
