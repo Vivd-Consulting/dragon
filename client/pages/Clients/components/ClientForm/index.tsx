@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { useMutation } from '@apollo/client';
 import { Toast } from 'primereact/toast';
 
@@ -9,6 +10,7 @@ import { useAuth } from 'hooks/useAuth';
 import createClientMutation from './queries/createClient.gql';
 
 export default function ClientForm() {
+  const router = useRouter();
   const { dragonUser } = useAuth();
   const [createRequest] = useMutation(createClientMutation, {
     refetchQueries: ['accountRequests']
@@ -48,13 +50,15 @@ export default function ClientForm() {
         }
       });
 
-      // Show error toast
+      // Show success toast
       toast?.current?.show({
         severity: 'success',
         summary: 'Success',
         detail: 'Account Request Submitted!',
         life: 3000
       });
+
+      router.push('/clients');
     } catch {
       setLoading(false);
 
