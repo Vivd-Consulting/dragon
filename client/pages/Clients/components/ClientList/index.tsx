@@ -14,14 +14,14 @@ export default function ClientList() {
     fetchPolicy: 'no-cache'
   });
 
-  const wireRequests = loading ? previousData?.wire_request : data?.wire_request;
+  const clients = loading ? previousData?.clients : data?.clients;
   const totalRecords = loading
     ? previousData?.client_aggregate.aggregate.count
     : data?.client_aggregate.aggregate.count;
 
   return (
     <DataTable
-      value={wireRequests}
+      value={clients}
       paginator
       lazy
       onPage={onPage}
@@ -37,7 +37,7 @@ export default function ClientList() {
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
       rowsPerPageOptions={[10, 25, 50, 100]}
       emptyMessage="No Clients found."
-      data-cy="wires-table"
+      data-cy="clients-table"
     >
       <Column field="id" header="ID" sortable />
       <Column
