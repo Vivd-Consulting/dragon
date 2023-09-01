@@ -7,6 +7,7 @@ query client($id: Int!) {
     start_date
     end_date
     created_at
+    archived_at
     document
   }
 }

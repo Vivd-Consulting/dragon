@@ -7,6 +7,7 @@ query clients($limit: Int, $offset: Int, $order_by: [client_order_by!], $where: 
     start_date
     end_date
     created_at
+    archived_at
     document
   }
   client_aggregate(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
