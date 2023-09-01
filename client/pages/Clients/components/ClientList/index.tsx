@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { DataTable } from 'primereact/datatable';
@@ -77,18 +78,31 @@ export default function ClientList() {
         className="white-space-nowrap"
       />
       <Column
+        body={({ document }) => (
+          <a
+            href={document ?? ''}
+            rel="noopener noreferrer"
+            target="_blank"
+            className="flex items-center gap-2 hover:text-blue-500"
+          >
+            <div className="pi pi-link" />
+            View
+          </a>
+        )}
         field="document"
         header="Document"
         headerClassName="white-space-nowrap"
         className="white-space-nowrap"
       />
       <Column
+        body={({ start_date }) => <span>{new Date(start_date).toISOString()}</span>}
         field="start_date"
         header="Start Date"
         headerClassName="white-space-nowrap"
         className="white-space-nowrap"
       />
       <Column
+        body={({ end_date }) => <span>{new Date(end_date).toLocaleString()}</span>}
         field="end_date"
         header="End Date"
         headerClassName="white-space-nowrap"
