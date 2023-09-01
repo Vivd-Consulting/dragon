@@ -11,7 +11,7 @@ import { Toast } from 'primereact/toast';
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 import clientQuery from './queries/clients.gql';
-import archiveClientMutation from './queries/archieveClient.gql';
+import archiveClientMutation from './queries/archiveClient.gql';
 
 export default function ClientList() {
   const {
@@ -131,7 +131,7 @@ export default function ClientList() {
         message: `Are you sure you want to archive ${data.name}?`,
         header: 'Archive Client',
         icon: 'pi pi-exclamation-triangle',
-        accept: () => _archieveClient(data.id)
+        accept: () => _archiveClient(data.id)
       });
     };
 
@@ -153,7 +153,7 @@ export default function ClientList() {
     );
   }
 
-  async function _archieveClient(id) {
+  async function _archiveClient(id) {
     const date = new Date();
 
     try {
@@ -171,8 +171,8 @@ export default function ClientList() {
       toastRef?.current?.show({
         life: 3000,
         severity: 'error',
-        summary: 'Failed to archieve client.',
-        detail: 'Unable to archieve the client at this time.'
+        summary: 'Failed to archive client.',
+        detail: 'Unable to archive the client at this time.'
       });
       console.error(e);
     }
