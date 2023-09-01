@@ -1,5 +1,10 @@
 import { Card } from 'primereact/card';
+import React from 'react';
 
-export default function Page({ children }) {
+interface PageProps {
+  children: React.ReactNode;
+}
+
+export default function Page({ children }: PageProps) {
   return <Card className="page-card">{children}</Card>;
 }
