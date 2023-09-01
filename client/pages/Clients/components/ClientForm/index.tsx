@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation } from '@apollo/client';
+
 import { Toast } from 'primereact/toast';
 
 import { Form, FormFooterButtons } from 'components/Form';
@@ -8,6 +9,7 @@ import { Form, FormFooterButtons } from 'components/Form';
 import { useAuth } from 'hooks/useAuth';
 
 import createClientMutation from './queries/createClient.gql';
+import updateClientMutation from './queries/updateClient.gql';
 
 // TODO: Add client Type
 interface ClientFormPageProps {
@@ -20,6 +22,11 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
   const [createRequest] = useMutation(createClientMutation, {
     refetchQueries: ['accountRequests']
   });
+
+  const [updateRequest] = useMutation(updateClientMutation, {
+    refetchQueries: ['accountRequests']
+  });
+
   const [loading, setLoading] = useState(false);
   const toast = useRef<any>(null);
   const router = useRouter();
@@ -64,12 +71,21 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
     setLoading(true);
 
     try {
-      await createRequest({
-        variables: {
-          ...data,
-          userId: dragonUser?.id
-        }
-      });
+      if (initialData) {
+        await updateRequest({
+          variables: {
+            ...data,
+            userId: dragonUser?.id
+          }
+        });
+      } else {
+        await createRequest({
+          variables: {
+            ...data,
+            userId: dragonUser?.id
+          }
+        });
+      }
 
       // Show success toast
       toast?.current?.show({
