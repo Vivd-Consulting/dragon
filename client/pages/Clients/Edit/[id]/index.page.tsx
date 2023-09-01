@@ -9,7 +9,7 @@ export default function EditClient() {
   const router = useRouter();
   const { id: clientId } = router.query;
 
-  const { data: client } = useQuery(clientQuery, {
+  const { data: client, loading: isClientLoading } = useQuery(clientQuery, {
     variables: {
       id: clientId
     }
@@ -18,7 +18,7 @@ export default function EditClient() {
   return (
     <div>
       <h1>Edit Client</h1>
-      <ClientForm initialData={client} />
+      <ClientForm initialData={client} isInitialDataLoading={isClientLoading} />
     </div>
   );
 }

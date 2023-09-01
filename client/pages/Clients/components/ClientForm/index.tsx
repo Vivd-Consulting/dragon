@@ -12,9 +12,10 @@ import createClientMutation from './queries/createClient.gql';
 // TODO: Add client Type
 interface ClientFormPageProps {
   initialData?: any;
+  isInitialDataLoading?: boolean;
 }
 
-export default function ClientForm({ initialData }: ClientFormPageProps) {
+export default function ClientForm({ initialData, isInitialDataLoading }: ClientFormPageProps) {
   const { dragonUser } = useAuth();
   const [createRequest] = useMutation(createClientMutation, {
     refetchQueries: ['accountRequests']
@@ -23,11 +24,26 @@ export default function ClientForm({ initialData }: ClientFormPageProps) {
   const toast = useRef<any>(null);
   const router = useRouter();
 
+  if (isInitialDataLoading) {
+    return null;
+  }
+
+  const defaultValues = initialData
+    ? initialData.client[0]
+    : {
+        name: '',
+        description: '',
+        gpt_persona: '',
+        document: '',
+        start_date: '',
+        end_data: ''
+      };
+
   return (
     <>
       <Toast ref={toast} />
 
-      <Form onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
+      <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
         {({ InputText, InputTextArea, InputCalendar }) => (
           <>
             <InputText label="Name" name="name" isRequired autoFocus />
