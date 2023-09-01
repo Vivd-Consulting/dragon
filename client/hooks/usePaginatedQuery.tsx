@@ -19,6 +19,7 @@ type PaginationOptions = {
 };
 
 type SortingOptions = {
+  defaultSort?: Record<string, string>;
   sortField?: string;
   sortOrder?: number;
 };
@@ -97,12 +98,14 @@ export function usePaginatedQuery<
       !paginationValues.page || paginationValues.page === 0 ? 0 : paginationValues.page * pageSize;
     const limit = paginationValues.rows;
 
+    const parsedSort = parseSortField(paginationValues.sortField, paginationValues.sortOrder);
+    const sort = parsedSort ? parsedSort : options?.defaultSort;
+
     const currentVariables = {
       ...variables,
-      // ...{ where: { user_id: { _eq: 123 } } },
       offset,
       limit,
-      order_by: parseSortField(paginationValues.sortField, paginationValues.sortOrder)
+      order_by: sort
     };
 
     const queryOptions = { ...rest, variables: currentVariables as unknown as TVariables };
