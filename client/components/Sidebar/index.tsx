@@ -56,12 +56,12 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
         label={user.email}
         icon="pi pi-user"
         id="user-profile"
-        onClick={() => onSelectPath('/ManageAccount')}
+        onClick={() => onSelectPath('/manage-account')}
         model={[
           {
             label: 'Manage Account',
             icon: 'pi pi-user',
-            command: () => onSelectPath('/ManageAccount')
+            command: () => onSelectPath('/manage-account')
           },
           {
             label: 'Sign out',
@@ -79,19 +79,19 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
         <Column className={styles['sidebar-items']}>
           <SidebarItem icon="pi pi-home" label="Home" href="/" onClick={onItemClick} />
 
-          <SidebarItem icon="pi pi-home" label="Clients" href="/Clients" onClick={onItemClick} />
+          <SidebarItem icon="pi pi-home" label="Clients" href="/clients" onClick={onItemClick} />
 
           <SidebarItem
             icon="pi pi-home"
             label="Contractors"
-            href="/Contractors"
+            href="/contractors"
             onClick={onItemClick}
           />
 
           <SidebarItem
             icon="pi pi-home"
             label="Time Tracker"
-            href="/TimeTracker"
+            href="/time-tracker"
             onClick={onItemClick}
           />
 
@@ -99,7 +99,7 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
             icon="pi pi-users"
             allowedRole={Role.Admin}
             label="Users"
-            href="/Users"
+            href="/users"
             onClick={onItemClick}
           />
 
