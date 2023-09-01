@@ -9,7 +9,12 @@ import { useAuth } from 'hooks/useAuth';
 
 import createClientMutation from './queries/createClient.gql';
 
-export default function ClientForm() {
+// TODO: Add client Type
+interface ClientFormPageProps {
+  initialData?: any;
+}
+
+export default function ClientForm({ initialData }: ClientFormPageProps) {
   const { dragonUser } = useAuth();
   const [createRequest] = useMutation(createClientMutation, {
     refetchQueries: ['accountRequests']

@@ -15,12 +15,10 @@ export default function EditClient() {
     }
   });
 
-  console.log('single client:: ', client);
-
   return (
     <div>
       <h1>Edit Client</h1>
-      <ClientForm />
+      <ClientForm initialData={client} />
     </div>
   );
 }
