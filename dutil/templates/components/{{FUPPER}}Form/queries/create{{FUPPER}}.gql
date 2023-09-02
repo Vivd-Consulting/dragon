@@ -1,9 +1,0 @@
-mutation create{{FUPPER}}(
-  $name: String!
-) {
-  create{{FUPPER}}(
-    name: $name
-  ) {
-    id
-  }
-}
