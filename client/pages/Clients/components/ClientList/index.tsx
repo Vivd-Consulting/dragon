@@ -7,8 +7,11 @@ import { Column } from 'primereact/column';
 import { SplitButton } from 'primereact/splitbutton';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
+import { Tooltip } from 'primereact/tooltip';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
+
+import { dateFormat } from 'utils';
 
 import clientQuery from './queries/clients.gql';
 import archiveClientMutation from './queries/archiveClient.gql';
@@ -22,7 +25,9 @@ export default function ClientList() {
     fetchPolicy: 'no-cache'
   });
 
-  const [archiveClient] = useMutation(archiveClientMutation);
+  const [archiveClient] = useMutation(archiveClientMutation, {
+    refetchQueries: ['clients']
+  });
 
   const toastRef = useRef<Toast>(null);
 
@@ -65,7 +70,7 @@ export default function ClientList() {
         <Column
           field="created_at"
           header="Created At"
-          body={({ created_at }) => <span>{new Date(created_at).toLocaleString()}</span>}
+          body={({ created_at }) => <span>{dateFormat(created_at)}</span>}
           sortable
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
@@ -106,16 +111,37 @@ export default function ClientList() {
           className="white-space-nowrap"
         />
         <Column
-          body={({ start_date }) => <span>{new Date(start_date).toISOString()}</span>}
+          body={({ start_date }) => <span>{dateFormat(start_date)}</span>}
           field="start_date"
           header="Start Date"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
         <Column
-          body={({ end_date }) => <span>{new Date(end_date).toLocaleString()}</span>}
+          body={({ end_date }) => <span>{dateFormat(end_date)}</span>}
           field="end_date"
           header="End Date"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+        <Column
+          body={({ archived_at }) => {
+            const isArchived = !!archived_at;
+            const archivedDate = dateFormat(archived_at);
+
+            return (
+              <>
+                <Tooltip target=".pi-check" />
+                <i
+                  data-pr-tooltip={isArchived ? archivedDate : ''}
+                  data-pr-position="bottom"
+                  className={`pi ${isArchived ? 'pi-check text-green-500' : 'pi-minus'}`}
+                />
+              </>
+            );
+          }}
+          field="archived_at"
+          header="Archived"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
@@ -128,10 +154,12 @@ export default function ClientList() {
 
     const confirmArchiveClient = () => {
       confirmDialog({
-        message: `Are you sure you want to archive ${data.name}?`,
-        header: 'Archive Client',
+        message: `Are you sure you want to ${data.archived_at ? 'unarchive' : 'archive'} ${
+          data.name
+        }?`,
+        header: `${data.archived_at ? 'Unarchive' : 'Archive'} Client`,
         icon: 'pi pi-exclamation-triangle',
-        accept: () => _archiveClient(data.id)
+        accept: () => _archiveClient(data)
       });
     };
 
@@ -140,10 +168,11 @@ export default function ClientList() {
         id="user-profile"
         size="small"
         icon="pi pi-user-edit"
+        label="Edit"
         onClick={() => router.push(`/clients/edit/${data?.id}`)}
         model={[
           {
-            label: 'Archive User',
+            label: data.archived_at ? 'Unarchive Client' : 'Archive Client',
             icon: 'pi pi-folder',
             command: () => confirmArchiveClient()
           }
@@ -153,26 +182,27 @@ export default function ClientList() {
     );
   }
 
-  async function _archiveClient(id) {
+  async function _archiveClient(data) {
     const date = new Date();
+    const isArchived = !!data.archived_at;
 
     try {
       await archiveClient({
-        variables: { id, archived_at: date }
+        variables: { id: data.id, archived_at: isArchived ? null : date }
       });
 
       toastRef?.current?.show({
         severity: 'success',
         summary: 'Success',
-        detail: 'Client is archived!',
+        detail: `Client is ${isArchived ? 'unarchived' : 'archived'}!`,
         life: 3000
       });
     } catch (e) {
       toastRef?.current?.show({
         life: 3000,
         severity: 'error',
-        summary: 'Failed to archive client.',
-        detail: 'Unable to archive the client at this time.'
+        summary: `Failed to ${isArchived ? 'unarchive' : 'archive'} client.`,
+        detail: `Unable to ${isArchived ? 'unarchive' : 'archive'} the client at this time.`
       });
       console.error(e);
     }

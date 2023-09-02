@@ -9,7 +9,7 @@ import { Role } from 'types/roles';
 
 import ClientList from './components/ClientList';
 
-function Clients() {
+export default function Clients() {
   const router = useRouter();
 
   return (
@@ -35,5 +35,3 @@ function Clients() {
 }
 
 Clients.roles = [Role.Admin];
-
-export default Clients;
