@@ -10,11 +10,11 @@ CREATE TABLE client (
 
   start_date timestamp,
   end_date timestamp,
+  archived_at timestamp,
+  deleted_at timestamp
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
-  archived_at timestamp NOT NULL DEFAULT now(),
-  deleted_at timestamp
 );
 
 CREATE TABLE contact (
