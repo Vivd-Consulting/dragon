@@ -26,7 +26,7 @@ export default function ClientList() {
 
   const toastRef = useRef<Toast>(null);
 
-  const wireRequests = loading ? previousData?.wire_request : data?.wire_request;
+  const clients = loading ? previousData?.clients : data?.clients;
   const totalRecords = loading
     ? previousData?.client_aggregate.aggregate.count
     : data?.client_aggregate.aggregate.count;
@@ -36,7 +36,7 @@ export default function ClientList() {
       <Toast ref={toastRef} />
 
       <DataTable
-        value={data?.client}
+        value={clients}
         paginator
         lazy
         onPage={onPage}
@@ -52,7 +52,7 @@ export default function ClientList() {
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
         rowsPerPageOptions={[10, 25, 50, 100]}
         emptyMessage="No Clients found."
-        data-cy="wires-table"
+        data-cy="clients-table"
       >
         <Column body={useActionButtons} />
         <Column

@@ -1,5 +1,0 @@
-mutation delete{{FUPPER}}($id: Int!) {
-  delete_{{LOWER}}_by_pk(id: $id) {
-    id
-  }
-}
