@@ -26,7 +26,7 @@ export default function ClientList() {
 
   const toastRef = useRef<Toast>(null);
 
-  const clients = loading ? previousData?.clients : data?.clients;
+  const clients = loading ? previousData?.client : data?.client;
   const totalRecords = loading
     ? previousData?.client_aggregate.aggregate.count
     : data?.client_aggregate.aggregate.count;
@@ -137,9 +137,9 @@ export default function ClientList() {
 
     return (
       <SplitButton
+        id="user-profile"
         size="small"
         icon="pi pi-user-edit"
-        id="user-profile"
         onClick={() => router.push(`/clients/edit/${data?.id}`)}
         model={[
           {
