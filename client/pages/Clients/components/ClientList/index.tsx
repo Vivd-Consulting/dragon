@@ -148,7 +148,7 @@ export default function ClientList() {
             command: () => confirmArchiveClient()
           }
         ]}
-        className="p-button-raised p-button-secondary p-button-text mb-2"
+        className="p-button-raised p-button-secondary p-button-text"
       />
     );
   }

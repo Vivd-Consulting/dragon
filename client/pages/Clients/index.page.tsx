@@ -23,6 +23,7 @@ function Clients() {
               label="Add Client"
               type="button"
               icon="pi pi-plus"
+              raised
             />
           </Row>
         }
