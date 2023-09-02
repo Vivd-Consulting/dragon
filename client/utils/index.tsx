@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export function whatsChanged(prev, next, transformer: Function | null = null) {
   const prevSet = transformer ? new Set(transformer(prev)) : new Set(prev);
   const nextSet = transformer ? new Set(transformer(next)) : new Set(next);
@@ -65,7 +67,9 @@ export async function checkLinkIsSafe(link) {
   }
 
   try {
-    const url = `https://webrisk.googleapis.com/v1/uris:search?threatTypes=MALWARE&threatTypes=UNWANTED_SOFTWARE&threatTypes=SOCIAL_ENGINEERING&uri=${encodeURIComponent(link)}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS}`;
+    const url = `https://webrisk.googleapis.com/v1/uris:search?threatTypes=MALWARE&threatTypes=UNWANTED_SOFTWARE&threatTypes=SOCIAL_ENGINEERING&uri=${encodeURIComponent(
+      link
+    )}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS}`;
 
     const response = await fetch(url);
     const data = await response.json();
@@ -83,3 +87,7 @@ export async function checkLinkIsSafe(link) {
     return err.message;
   }
 }
+
+export const dateFormat = date => {
+  return dayjs(date).format('MMM D, HH:mm');
+};
