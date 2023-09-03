@@ -24,7 +24,7 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
   });
 
   const [updateRequest] = useMutation(updateClientMutation, {
-    refetchQueries: ['accountRequests']
+    refetchQueries: ['accountRequests', 'client']
   });
 
   const [loading, setLoading] = useState(false);
