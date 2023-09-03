@@ -26,7 +26,7 @@ export default function ClientList() {
   });
 
   const [archiveClient] = useMutation(archiveClientMutation, {
-    refetchQueries: ['clients']
+    refetchQueries: ['clients', 'client']
   });
 
   const toastRef = useRef<Toast>(null);
