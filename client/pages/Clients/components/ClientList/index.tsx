@@ -4,14 +4,15 @@ import { useRef } from 'react';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { SplitButton } from 'primereact/splitbutton';
+import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { Tooltip } from 'primereact/tooltip';
 
-import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
-
+import { Row } from 'components/Group';
 import { dateFormat } from 'utils';
+
+import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 import clientQuery from './queries/clients.gql';
 import archiveClientMutation from './queries/archiveClient.gql';
@@ -59,7 +60,6 @@ export default function ClientList() {
         emptyMessage="No Clients found."
         data-cy="clients-table"
       >
-        <Column body={useActionButtons} />
         <Column
           field="id"
           header="ID"
@@ -145,40 +145,33 @@ export default function ClientList() {
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
+        <Column body={useActionButtons} />
       </DataTable>
     </>
   );
 
   function useActionButtons(data) {
     const router = useRouter();
+    const isArchived = !!data.archived_at;
 
     const confirmArchiveClient = () => {
       confirmDialog({
-        message: `Are you sure you want to ${data.archived_at ? 'unarchive' : 'archive'} ${
-          data.name
-        }?`,
-        header: `${data.archived_at ? 'Unarchive' : 'Archive'} Client`,
+        message: `Are you sure you want to ${isArchived ? 'unarchive' : 'archive'} ${data.name}?`,
+        header: `${isArchived ? 'Unarchive' : 'Archive'} Client`,
         icon: 'pi pi-exclamation-triangle',
         accept: () => _archiveClient(data)
       });
     };
 
     return (
-      <SplitButton
-        id="user-profile"
-        size="small"
-        icon="pi pi-user-edit"
-        label="Edit"
-        onClick={() => router.push(`/clients/edit/${data?.id}`)}
-        model={[
-          {
-            label: data.archived_at ? 'Unarchive Client' : 'Archive Client',
-            icon: 'pi pi-folder',
-            command: () => confirmArchiveClient()
-          }
-        ]}
-        className="p-button-raised p-button-secondary p-button-text"
-      />
+      <Row>
+        <Button
+          size="small"
+          icon="pi pi-user-edit"
+          onClick={() => router.push(`/clients/edit/${data?.id}`)}
+        />
+        <Button size="small" icon="pi pi-folder" onClick={confirmArchiveClient} />
+      </Row>
     );
   }
 
