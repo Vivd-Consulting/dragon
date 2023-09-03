@@ -56,7 +56,7 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
             <InputText label="Name" name="name" isRequired autoFocus />
             <InputTextArea label="Description" name="description" isRequired />
             <InputTextArea label="GPT Persona" name="gpt_persona" isRequired />
-            <InputText label="Document" name="document" isRequired />
+            <InputText label="Document" name="document" />
             <InputCalendar label="Start Date" name="start_date" isRequired />
             <InputCalendar label="End Date" name="end_date" isRequired />
 
