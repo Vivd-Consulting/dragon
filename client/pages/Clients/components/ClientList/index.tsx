@@ -23,7 +23,12 @@ export default function ClientList() {
     paginationValues,
     onPage
   } = usePaginatedQuery(clientQuery, {
-    fetchPolicy: 'no-cache'
+    fetchPolicy: 'no-cache',
+    variables: {
+      where: {
+        archived_at: { _is_null: true }
+      }
+    }
   });
 
   const [archiveClient] = useMutation(archiveClientMutation, {
