@@ -1,6 +1,8 @@
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 
+import { Card } from 'primereact/card';
+
 import ClientForm from '../../components/ClientForm';
 
 import clientQuery from '../queries/client.gql';
@@ -16,9 +18,9 @@ export default function EditClient() {
   });
 
   return (
-    <div>
+    <Card>
       <h1>Edit Client</h1>
       <ClientForm initialData={client} isInitialDataLoading={isClientLoading} />
-    </div>
+    </Card>
   );
 }

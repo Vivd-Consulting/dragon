@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 
-import { Row, Column } from 'components/Group';
-
 import { Role } from 'types/roles';
+
+import { Row, Column } from 'components/Group';
 
 import ClientList from './components/ClientList';
 
