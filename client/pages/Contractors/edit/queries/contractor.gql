@@ -1,0 +1,13 @@
+query contractor($id: Int!) {
+  contractor(where: { id: { _eq: $id } }) {
+    id
+    name
+    location
+    rate
+    invoice
+    gpt_persona
+    start_date
+    end_date
+    document
+  }
+}
