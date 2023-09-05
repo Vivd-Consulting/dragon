@@ -28,12 +28,21 @@ CREATE TABLE client (
 CREATE TABLE contractor (
   id SERIAL PRIMARY KEY,
   name text NOT NULL,
-  description text,
+  location text NOT NULL,
   gpt_persona text,
+  contact_id integer REFERENCES contact(id),
+  document text,
+  rate float NOT NULL,
+  invoice float NOT NULL,
+
+
+  start_date timestamp,
+  end_date timestamp,
+  archived_at timestamp,
+  deleted_at timestamp,
 
   created_at timestamp NOT NULL DEFAULT now(),
-  updated_at timestamp NOT NULL DEFAULT now(),
-  deleted_at timestamp
+  updated_at timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE dragon_user (
