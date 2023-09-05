@@ -138,8 +138,6 @@ export default function ContractorList() {
 
         <Column
           body={({ archived_at }) => {
-            const archivedDate = dateFormat(archived_at);
-
             return <i className="pi pi-times-circle" />;
           }}
           field="archived_at"

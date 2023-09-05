@@ -131,19 +131,7 @@ export default function ClientList() {
         />
         <Column
           body={({ archived_at }) => {
-            const isArchived = !!archived_at;
-            const archivedDate = dateFormat(archived_at);
-
-            return (
-              <>
-                <Tooltip target=".pi-check" />
-                <i
-                  data-pr-tooltip={isArchived ? archivedDate : ''}
-                  data-pr-position="bottom"
-                  className={`pi ${isArchived ? 'pi-check text-green-500' : 'pi-minus'}`}
-                />
-              </>
-            );
+            return <i className="pi pi-times-circle" />;
           }}
           field="archived_at"
           header="Archived"
@@ -157,12 +145,11 @@ export default function ClientList() {
 
   function useActionButtons(data) {
     const router = useRouter();
-    const isArchived = !!data.archived_at;
 
     const confirmArchiveClient = () => {
       confirmDialog({
-        message: `Are you sure you want to ${isArchived ? 'unarchive' : 'archive'} ${data.name}?`,
-        header: `${isArchived ? 'Unarchive' : 'Archive'} Client`,
+        message: `Are you sure you want to archive ${data.name}?`,
+        header: 'Archive Client',
         icon: 'pi pi-exclamation-triangle',
         accept: () => _archiveClient(data)
       });
@@ -191,25 +178,24 @@ export default function ClientList() {
 
   async function _archiveClient(data) {
     const date = new Date();
-    const isArchived = !!data.archived_at;
 
     try {
       await archiveClient({
-        variables: { id: data.id, archived_at: isArchived ? null : date }
+        variables: { id: data.id, archived_at: date }
       });
 
       toastRef?.current?.show({
         severity: 'success',
         summary: 'Success',
-        detail: `Client is ${isArchived ? 'unarchived' : 'archived'}!`,
+        detail: 'Client is archived!',
         life: 3000
       });
     } catch (e) {
       toastRef?.current?.show({
         life: 3000,
         severity: 'error',
-        summary: `Failed to ${isArchived ? 'unarchive' : 'archive'} client.`,
-        detail: `Unable to ${isArchived ? 'unarchive' : 'archive'} the client at this time.`
+        summary: 'Failed to archive client.',
+        detail: 'Unable to archive the client at this time.'
       });
       console.error(e);
     }
