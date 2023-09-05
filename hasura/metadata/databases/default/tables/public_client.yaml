@@ -1,18 +1,22 @@
 table:
   name: client
   schema: public
+object_relationships:
+  - name: contact
+    using:
+      foreign_key_constraint_on: contact_id
 array_relationships:
-- name: dragon_users
-  using:
-    foreign_key_constraint_on:
-      column: client_id
-      table:
-        name: dragon_user
-        schema: public
-- name: projects
-  using:
-    foreign_key_constraint_on:
-      column: client_id
-      table:
-        name: project
-        schema: public
+  - name: dragon_users
+    using:
+      foreign_key_constraint_on:
+        column: client_id
+        table:
+          name: dragon_user
+          schema: public
+  - name: projects
+    using:
+      foreign_key_constraint_on:
+        column: client_id
+        table:
+          name: project
+          schema: public

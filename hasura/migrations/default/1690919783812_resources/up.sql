@@ -1,17 +1,28 @@
 CREATE SCHEMA IF NOT EXISTS "public";
 
+CREATE TABLE contact (
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL,
+
+  created_at timestamp NOT NULL DEFAULT now(),
+  updated_at timestamp NOT NULL DEFAULT now()
+);
+
 CREATE TABLE client (
   id SERIAL PRIMARY KEY,
   name text NOT NULL,
   description text,
   gpt_persona text,
+  contact_id integer REFERENCES contact(id),
+  document text,
 
   start_date timestamp,
   end_date timestamp,
+  archived_at timestamp,
+  deleted_at timestamp,
 
   created_at timestamp NOT NULL DEFAULT now(),
-  updated_at timestamp NOT NULL DEFAULT now(),
-  deleted_at timestamp
+  updated_at timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE contractor (

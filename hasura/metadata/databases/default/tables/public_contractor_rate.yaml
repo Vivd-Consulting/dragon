@@ -2,6 +2,6 @@ table:
   name: contractor_rate
   schema: public
 object_relationships:
-- name: contractor
-  using:
-    foreign_key_constraint_on: contractor_id
+  - name: contractor
+    using:
+      foreign_key_constraint_on: contractor_id

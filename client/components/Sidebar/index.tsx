@@ -54,6 +54,7 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
 
       <SplitButton
         label={user.email}
+        size="small"
         icon="pi pi-user"
         id="user-profile"
         onClick={() => onSelectPath('/manage-account')}
