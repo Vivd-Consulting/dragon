@@ -39,7 +39,6 @@ CREATE TABLE contractor (
   start_date timestamp,
   end_date timestamp,
   archived_at timestamp,
-  deleted_at timestamp,
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now()

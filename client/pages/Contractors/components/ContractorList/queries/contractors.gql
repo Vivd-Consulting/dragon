@@ -15,7 +15,6 @@ query contractors(
     start_date
     end_date
     created_at
-    deleted_at
     archived_at
   }
   contractor_aggregate(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
