@@ -173,9 +173,18 @@ export default function ClientList() {
         <Button
           size="small"
           icon="pi pi-user-edit"
+          tooltip="Edit"
+          tooltipOptions={{ position: 'top' }}
           onClick={() => router.push(`/clients/edit/${data?.id}`)}
         />
-        <Button size="small" icon="pi pi-folder" onClick={confirmArchiveClient} />
+        <Button
+          size="small"
+          tooltip="Archive"
+          tooltipOptions={{ position: 'top' }}
+          severity="danger"
+          icon="pi pi-trash"
+          onClick={confirmArchiveClient}
+        />
       </Row>
     );
   }
