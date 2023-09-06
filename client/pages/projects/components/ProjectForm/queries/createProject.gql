@@ -1,0 +1,21 @@
+mutation createProject(
+  $name: String!
+  $client_id: Int!
+  $github_repo_org: String
+  $github_repo_name: String
+  $description: String!
+  $gpt_persona: String!
+) {
+  insert_project_one(
+    object: {
+      name: $name
+      client_id: $client_id
+      github_repo_org: $github_repo_org
+      github_repo_name: $github_repo_name
+      description: $description
+      gpt_persona: $gpt_persona
+    }
+  ) {
+    id
+  }
+}
