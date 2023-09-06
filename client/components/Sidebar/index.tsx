@@ -80,8 +80,15 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
         <Column className={styles['sidebar-items']}>
           <SidebarItem icon="pi pi-home" label="Home" href="/" onClick={onItemClick} />
 
-          <SidebarItem icon="pi pi-home" label="Clients" href="/clients" onClick={onItemClick} />
-
+          <SidebarGroup
+            icon="pi pi-home"
+            title="Clients"
+            expanded={selectedGroup === 'Clients'}
+            setExpanded={setSelectedGroup}
+          >
+            <SidebarItem label="Clients" href="/clients" onClick={onItemClick} />
+            <SidebarItem label="Projects" href="/projects" onClick={onItemClick} />
+          </SidebarGroup>
           <SidebarItem
             icon="pi pi-home"
             label="Contractors"
