@@ -22,11 +22,11 @@ export default function ContractorForm({
   isInitialDataLoading
 }: ContractorFormPageProps) {
   const { dragonUser } = useAuth();
-  const [createRequest] = useMutation(createContractorMutation, {
+  const [createContractor] = useMutation(createContractorMutation, {
     refetchQueries: ['accountRequests', 'contractors']
   });
 
-  const [updateRequest] = useMutation(updateContractorMutation, {
+  const [updateContractor] = useMutation(updateContractorMutation, {
     refetchQueries: ['accountRequests', 'contractor']
   });
 
@@ -79,14 +79,14 @@ export default function ContractorForm({
 
     try {
       if (initialData) {
-        await updateRequest({
+        await updateContractor({
           variables: {
             ...data,
             userId: dragonUser?.id
           }
         });
       } else {
-        await createRequest({
+        await createContractor({
           variables: {
             ...data,
             userId: dragonUser?.id
