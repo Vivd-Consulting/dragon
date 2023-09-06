@@ -90,7 +90,7 @@ CREATE TABLE project (
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
-  archived_at_at timestamp
+  archived_at timestamp
 );
 
 CREATE TABLE project_contractor (
