@@ -33,7 +33,7 @@ CREATE TABLE contractor (
   contact_id integer REFERENCES contact(id),
   document text,
   rate float NOT NULL,
-  invoice float NOT NULL,
+  invoice integer REFERENCES media(id),
 
 
   start_date timestamp,
