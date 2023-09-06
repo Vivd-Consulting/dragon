@@ -64,8 +64,8 @@ export default function ContractorForm({
             <InputNumber label="Rate" name="rate" isRequired />
             <InputNumber label="Invoice" name="invoice" isRequired />
             <InputTextArea label="GPT Persona" name="gpt_persona" isRequired />
-            <InputCalendar label="Start Date" name="start_date" isRequired />
-            <InputCalendar label="End Date" name="end_date" isRequired />
+            <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
+            <InputCalendar label="End Date" name="end_date" isRequired showIcon />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>
