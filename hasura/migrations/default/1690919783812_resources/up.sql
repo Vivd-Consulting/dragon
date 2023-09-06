@@ -100,7 +100,7 @@ CREATE TABLE project_contractor (
 CREATE TABLE project_time (
   id SERIAL PRIMARY KEY,
   start_time timestamp NOT NULL,
-  end_time timestamp NOT NULL,
+  end_time timestamp,
   description text,
 
   dragon_user_id text NOT NULL REFERENCES dragon_user(id),
