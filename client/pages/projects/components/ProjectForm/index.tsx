@@ -68,7 +68,12 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Clien
             <InputText label="Name" name="name" isRequired autoFocus />
             <InputText label="Github Repo Organization" name="github_repo_org" autoFocus />
             <InputText label="Github Repo Name" name="github_repo_name" autoFocus />
-            <InputDropdown label="Client ID" name="client_id" options={clients} />
+            <InputDropdown
+              placeholder="Select client"
+              label="Client ID"
+              name="client_id"
+              options={clients}
+            />
             <InputTextArea label="Description" name="description" isRequired />
             <InputTextArea label="GPT Persona" name="gpt_persona" isRequired />
 
