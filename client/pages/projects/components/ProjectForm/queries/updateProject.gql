@@ -1,0 +1,26 @@
+mutation updateProject(
+  $id: Int!
+  $name: String!
+  $client_id: Int!
+  $github_repo_org: String
+  $github_repo_name: String
+  $description: String!
+  $gpt_persona: String!
+) {
+  update_project(
+    _set: {
+      id: $id
+      name: $name
+      client_id: $client_id
+      github_repo_org: $github_repo_org
+      github_repo_name: $github_repo_name
+      description: $description
+      gpt_persona: $gpt_persona
+    }
+    where: { id: { _eq: $id } }
+  ) {
+    returning {
+      id
+    }
+  }
+}

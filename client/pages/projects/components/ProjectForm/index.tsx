@@ -8,17 +8,17 @@ import { Form, FormFooterButtons } from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
 
-import updateClientMutation from './queries/updateClient.gql';
+import updateProjectMutation from './queries/updateProject.gql';
 import createProjectMutation from './queries/createProject.gql';
 import clientsQuery from './queries/clients.gql';
 
 // TODO: Add client Type
-interface ClientFormPageProps {
+interface ProjectFormPageProps {
   initialData?: any;
   isInitialDataLoading?: boolean;
 }
 
-export default function ProjectForm({ initialData, isInitialDataLoading }: ClientFormPageProps) {
+export default function ProjectForm({ initialData, isInitialDataLoading }: ProjectFormPageProps) {
   const { dragonUser } = useAuth();
   const { data, loading: isClientsLoading } = useQuery(clientsQuery, {
     fetchPolicy: 'no-cache',
@@ -30,11 +30,11 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Clien
   });
 
   const [createProject] = useMutation(createProjectMutation, {
-    refetchQueries: ['accountRequests']
+    refetchQueries: ['projects']
   });
 
-  const [updateRequest] = useMutation(updateClientMutation, {
-    refetchQueries: ['accountRequests', 'client']
+  const [updateProject] = useMutation(updateProjectMutation, {
+    refetchQueries: ['projects', 'project']
   });
 
   const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Clien
   const clients = convertDataToDropdownOptions(data.client, 'name', 'id');
 
   const defaultValues = initialData
-    ? initialData.client[0]
+    ? initialData.project[0]
     : {
         name: '',
         github_repo_org: '',
@@ -89,7 +89,7 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Clien
 
     try {
       if (initialData) {
-        await updateRequest({
+        await updateProject({
           variables: {
             ...data,
             userId: dragonUser?.id
