@@ -1,7 +1,0 @@
-mutation updateContractor($id: Int!, $archived_at: timestamp) {
-  update_contractor(_set: { archived_at: $archived_at }, where: { id: { _eq: $id } }) {
-    returning {
-      id
-    }
-  }
-}
