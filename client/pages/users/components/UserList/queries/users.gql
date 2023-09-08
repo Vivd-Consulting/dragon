@@ -1,0 +1,17 @@
+query dragon_user($search: String = "%%", $limit: Int, $offset: Int, $order_by: [dragon_user_order_by!]) {
+  dragon_user_aggregate(where: { deleted_at: { _is_null: true }, name: { _ilike: $search } }) {
+    aggregate {
+      count
+    }
+  }
+  dragon_user(
+    where: { deleted_at: { _is_null: true }, name: { _ilike: $search } }
+    limit: $limit
+    offset: $offset
+    order_by: $order_by
+  ) {
+    id
+    name
+    email
+  }
+}
