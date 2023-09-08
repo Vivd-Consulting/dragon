@@ -1,0 +1,25 @@
+mutation updateClient(
+  $id: Int!
+  $name: String!
+  $description: String!
+  $gpt_persona: String!
+  $document: String
+  $start_date: timestamp
+  $end_date: timestamp
+) {
+  update_client(
+    _set: {
+      name: $name
+      description: $description
+      gpt_persona: $gpt_persona
+      document: $document
+      start_date: $start_date
+      end_date: $end_date
+    }
+    where: { id: { _eq: $id } }
+  ) {
+    returning {
+      id
+    }
+  }
+}
