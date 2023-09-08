@@ -3,7 +3,9 @@ query contractor($id: Int!) {
     id
     name
     location
-    rate
+    contractor_rate {
+      rate
+    }
     invoice
     gpt_persona
     start_date

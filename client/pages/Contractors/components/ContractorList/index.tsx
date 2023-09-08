@@ -41,8 +41,6 @@ export default function ContractorList() {
     ? previousData?.contractor_aggregate.aggregate.count
     : data?.contractor_aggregate.aggregate.count;
 
-  console.log(contractors);
-
   return (
     <>
       <Toast ref={toastRef} />
