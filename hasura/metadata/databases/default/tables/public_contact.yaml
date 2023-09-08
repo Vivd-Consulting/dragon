@@ -9,3 +9,10 @@ array_relationships:
         table:
           name: client
           schema: public
+  - name: contractors
+    using:
+      foreign_key_constraint_on:
+        column: contact_id
+        table:
+          name: contractor
+          schema: public
