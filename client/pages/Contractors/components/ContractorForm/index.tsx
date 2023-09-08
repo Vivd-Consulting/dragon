@@ -9,10 +9,10 @@ import { Form, FormFooterButtons } from 'components/Form';
 import { useAuth } from 'hooks/useAuth';
 
 import createContractorMutation from './queries/createContractor.gql';
-import updateContractorMutation from './queries/updateContractor.gql';
 import createContractorRateMutation from './queries/createContractorRate.gql';
+import updateContractorMutation from './queries/updateContractor.gql';
 
-// TODO: Add client Type
+// TODO: Add Contractor Type
 interface ContractorFormPageProps {
   initialData?: any;
   isInitialDataLoading?: boolean;
