@@ -1,0 +1,29 @@
+mutation updateContractor(
+  $id: Int!
+  $name: String!
+  $location: String!
+  $rate_id: Int!
+  $invoice: float8!
+  $gpt_persona: String!
+  $document: String
+  $start_date: timestamp
+  $end_date: timestamp
+) {
+  update_contractor(
+    _set: {
+      name: $name
+      location: $location
+      rate_id: $rate_id
+      invoice: $invoice
+      gpt_persona: $gpt_persona
+      document: $document
+      start_date: $start_date
+      end_date: $end_date
+    }
+    where: { id: { _eq: $id } }
+  ) {
+    returning {
+      id
+    }
+  }
+}

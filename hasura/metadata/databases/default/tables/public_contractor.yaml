@@ -1,6 +1,13 @@
 table:
   name: contractor
   schema: public
+object_relationships:
+  - name: contact
+    using:
+      foreign_key_constraint_on: contact_id
+  - name: contractor_rate
+    using:
+      foreign_key_constraint_on: rate_id
 array_relationships:
   - name: contractor_rates
     using:

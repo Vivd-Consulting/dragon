@@ -25,15 +25,31 @@ CREATE TABLE client (
   updated_at timestamp NOT NULL DEFAULT now()
 );
 
-CREATE TABLE contractor (
+CREATE TABLE contractor_rate (
   id SERIAL PRIMARY KEY,
-  name text NOT NULL,
-  description text,
-  gpt_persona text,
+  rate float NOT NULL,
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
   deleted_at timestamp
+);
+
+CREATE TABLE contractor (
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL,
+  location text NOT NULL,
+  gpt_persona text,
+  document text,
+  contact_id integer REFERENCES contact(id),
+  rate_id integer NOT NULL REFERENCES contractor_rate(id),
+  invoice float NOT NULL,
+
+  start_date timestamp,
+  end_date timestamp,
+  archived_at timestamp,
+
+  created_at timestamp NOT NULL DEFAULT now(),
+  updated_at timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE dragon_user (
@@ -60,18 +76,6 @@ CREATE TABLE media (
   mimetype text,
 
   user_id text NOT NULL REFERENCES dragon_user(id),
-
-  created_at timestamp NOT NULL DEFAULT now(),
-  updated_at timestamp NOT NULL DEFAULT now(),
-  deleted_at timestamp
-);
-
-CREATE TABLE contractor_rate (
-  id SERIAL PRIMARY KEY,
-  rate float NOT NULL,
-  description text,
-
-  contractor_id integer NOT NULL REFERENCES contractor(id),
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
