@@ -23,7 +23,7 @@ import archiveProjectMutation from './queries/archiveProject.gql';
 
 export default function ProjectList() {
   const [client, setClient] = useState<{ label: string; value: any } | undefined>(undefined);
-  const [searchTerm, setSearchTerm] = useState(undefined);
+  const [searchText, setSearchText] = useState<string | undefined>('doe');
 
   const { data: clientsData } = useQuery(clientsQuery);
 
@@ -39,11 +39,11 @@ export default function ProjectList() {
         client_id: {
           _eq: client
         },
-        // github_repo_name: { _eq: searchTerm }
-        _or: {
-          github_repo_name: { _eq: searchTerm || undefined },
-          github_repo_org: { _eq: searchTerm || undefined }
-        }
+        search: `%${searchText}%`
+        // _or: [
+        //   { github_repo_name: { _ilike: searchText || undefined } },
+        //   { github_repo_org: { _ilike: searchText || undefined } }
+        // ]
       }
     }
   });
@@ -76,8 +76,8 @@ export default function ProjectList() {
         />
         <InputText
           placeholder="Search by"
-          value={searchTerm}
-          // onChange={e => setSearchTerm(e.target.value)}
+          value={searchText}
+          onChange={e => setSearchText(e.target.value)}
         />
       </Row>
 
