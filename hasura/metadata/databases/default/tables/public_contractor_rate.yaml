@@ -5,3 +5,11 @@ object_relationships:
   - name: contractor
     using:
       foreign_key_constraint_on: contractor_id
+array_relationships:
+  - name: contractors
+    using:
+      foreign_key_constraint_on:
+        column: rate_id
+        table:
+          name: contractor
+          schema: public
