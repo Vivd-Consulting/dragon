@@ -4,6 +4,7 @@ query contractor($id: Int!) {
     name
     location
     contractor_rate {
+      id
       rate
     }
     invoice
