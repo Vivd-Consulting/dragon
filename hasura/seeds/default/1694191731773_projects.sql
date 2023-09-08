@@ -1,0 +1,4 @@
+SET check_function_bodies = false;
+INSERT INTO public.project (id, name, description, gpt_persona, github_repo_org, github_repo_name, client_id, created_at, updated_at, archived_at) VALUES (1, 'Mission Maker', 'Mission maker is where we manage missions, uses TypeScript, Hasura...', 'Team struggles with linting', 'Vivd-Consulting', 'mm-next', 1, '2023-09-08 16:47:48.142035', '2023-09-08 16:47:48.142035', NULL);
+INSERT INTO public.project (id, name, description, gpt_persona, github_repo_org, github_repo_name, client_id, created_at, updated_at, archived_at) VALUES (2, 'thebotoxcourse website', 'The main website for thebotoxcourse', 'Django project, team struggles with taking over a poorly organized codebase', 'lkuich', 'thebotoxcourse', 2, '2023-09-08 16:48:42.347983', '2023-09-08 16:48:42.347983', NULL);
+SELECT pg_catalog.setval('public.project_id_seq', 2, true);

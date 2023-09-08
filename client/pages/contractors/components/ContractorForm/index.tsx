@@ -9,7 +9,6 @@ import { Form, FormFooterButtons } from 'components/Form';
 import { useAuth } from 'hooks/useAuth';
 
 import createContractorMutation from './queries/createContractor.gql';
-import createContractorRateMutation from './queries/createContractorRate.gql';
 import updateContractorMutation from './queries/updateContractor.gql';
 
 // TODO: Add Contractor Type
@@ -26,8 +25,6 @@ export default function ContractorForm({
   const [createContractor] = useMutation(createContractorMutation, {
     refetchQueries: ['contractors']
   });
-
-  const [createContractorRate] = useMutation(createContractorRateMutation);
 
   const [updateContractor] = useMutation(updateContractorMutation, {
     refetchQueries: ['contractors', 'contractor']
@@ -48,6 +45,7 @@ export default function ContractorForm({
         gpt_persona: '',
         location: '',
         rate: undefined,
+        rate_id: undefined,
         invoice: undefined,
         document: '',
         start_date: '',
@@ -58,13 +56,13 @@ export default function ContractorForm({
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
+      <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="request-form">
         {({ InputText, InputTextArea, InputCalendar, InputNumber }) => (
           <>
             <InputText label="Name" name="name" isRequired autoFocus />
             <InputText label="Location" name="location" isRequired />
             <InputText label="Document" name="document" />
-            <InputNumber label="Rate" name="rate" isRequired />
+            <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
             <InputNumber label="Invoice" name="invoice" isRequired />
             <InputTextArea label="GPT Persona" name="gpt_persona" isRequired />
             <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
@@ -82,22 +80,18 @@ export default function ContractorForm({
 
     try {
       if (initialData) {
-        const contractorRateId = await _createContractorRate(data.rate);
-
         await updateContractor({
           variables: {
             ...data,
-            rate_id: contractorRateId,
+            rate: data.contractor_rate.rate,
+            rate_id: data.contractor_rate.id,
             userId: dragonUser?.id
           }
         });
       } else {
-        const contractorRateId = await _createContractorRate(data.rate);
-
-        const newContractor = await createContractor({
+        await createContractor({
           variables: {
             ...data,
-            rate_id: contractorRateId,
             userId: dragonUser?.id
           }
         });
@@ -125,17 +119,5 @@ export default function ContractorForm({
     }
 
     setLoading(false);
-  }
-
-  async function _createContractorRate(rate) {
-    const newContractorRate = await createContractorRate({
-      variables: {
-        rate
-      }
-    });
-
-    const { id: contractorRateId } = newContractorRate.data.insert_contractor_rate_one;
-
-    return contractorRateId;
   }
 }
