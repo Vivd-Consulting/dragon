@@ -3,6 +3,7 @@ mutation updateContractor(
   $name: String!
   $location: String!
   $rate_id: Int!
+  $rate: float8
   $invoice: float8!
   $gpt_persona: String!
   $document: String
@@ -22,6 +23,11 @@ mutation updateContractor(
     }
     where: { id: { _eq: $id } }
   ) {
+    returning {
+      id
+    }
+  }
+  update_contractor_rate(where: { id: { _eq: $rate_id } }, _set: { rate: $rate }) {
     returning {
       id
     }
