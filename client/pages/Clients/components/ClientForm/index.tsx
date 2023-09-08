@@ -19,11 +19,11 @@ interface ClientFormPageProps {
 
 export default function ClientForm({ initialData, isInitialDataLoading }: ClientFormPageProps) {
   const { dragonUser } = useAuth();
-  const [createRequest] = useMutation(createClientMutation, {
+  const [createClient] = useMutation(createClientMutation, {
     refetchQueries: ['accountRequests']
   });
 
-  const [updateRequest] = useMutation(updateClientMutation, {
+  const [updateClient] = useMutation(updateClientMutation, {
     refetchQueries: ['accountRequests', 'client']
   });
 
@@ -57,8 +57,8 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
             <InputTextArea label="Description" name="description" isRequired />
             <InputTextArea label="GPT Persona" name="gpt_persona" isRequired />
             <InputText label="Document" name="document" />
-            <InputCalendar label="Start Date" name="start_date" isRequired />
-            <InputCalendar label="End Date" name="end_date" isRequired />
+            <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
+            <InputCalendar label="End Date" name="end_date" isRequired showIcon />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>
@@ -72,14 +72,14 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
 
     try {
       if (initialData) {
-        await updateRequest({
+        await updateClient({
           variables: {
             ...data,
             userId: dragonUser?.id
           }
         });
       } else {
-        await createRequest({
+        await createClient({
           variables: {
             ...data,
             userId: dragonUser?.id
