@@ -1,23 +1,31 @@
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
-import { Tooltip } from 'primereact/tooltip';
+import { InputText } from 'primereact/inputtext';
 
 import { Row } from 'components/Group';
-import { dateFormat } from 'utils';
+import { Dropdown } from 'primereact/dropdown';
+import { convertDataToDropdownOptions, dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
+
+import clientsQuery from '../queries/clients.gql';
 
 import projectsQuery from './queries/projects.gql';
 import archiveProjectMutation from './queries/archiveProject.gql';
 
 export default function ProjectList() {
+  const [client, setClient] = useState<{ label: string; value: any } | undefined>(undefined);
+  const [searchTerm, setSearchTerm] = useState(undefined);
+
+  const { data: clientsData } = useQuery(clientsQuery);
+
   const {
     query: { loading, previousData, data },
     paginationValues,
@@ -26,7 +34,15 @@ export default function ProjectList() {
     fetchPolicy: 'no-cache',
     variables: {
       where: {
-        archived_at: { _is_null: true }
+        archived_at: { _is_null: true },
+        client_id: {
+          _eq: client
+        },
+        // github_repo_name: { _eq: searchTerm }
+        _or: {
+          github_repo_name: { _eq: searchTerm || undefined },
+          github_repo_org: { _eq: searchTerm || undefined }
+        }
       }
     }
   });
@@ -42,9 +58,27 @@ export default function ProjectList() {
     ? previousData?.project_aggregate.aggregate.count
     : data?.project_aggregate.aggregate.count;
 
+  const clients = convertDataToDropdownOptions(clientsData?.client, 'name', 'id');
+
   return (
     <>
       <Toast ref={toastRef} />
+
+      <Row align="center" px={2} pb={4}>
+        <Dropdown
+          filter
+          showClear
+          value={client}
+          onChange={e => setClient(e.value)}
+          placeholder="Select client"
+          options={clients}
+        />
+        <InputText
+          placeholder="Search by"
+          value={searchTerm}
+          // onChange={e => setSearchTerm(e.target.value)}
+        />
+      </Row>
 
       <DataTable
         value={projects}
@@ -119,19 +153,7 @@ export default function ProjectList() {
 
         <Column
           body={({ archived_at }) => {
-            const isArchived = !!archived_at;
-            const archivedDate = dateFormat(archived_at);
-
-            return (
-              <>
-                <Tooltip target=".pi-check" />
-                <i
-                  data-pr-tooltip={isArchived ? archivedDate : ''}
-                  data-pr-position="bottom"
-                  className={`pi ${isArchived ? 'pi-check text-green-500' : 'pi-minus'}`}
-                />
-              </>
-            );
+            return <i className="pi pi-times-circle" />;
           }}
           field="archived_at"
           header="Archived"

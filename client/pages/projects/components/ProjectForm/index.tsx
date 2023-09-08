@@ -6,11 +6,13 @@ import { Toast } from 'primereact/toast';
 
 import { Form, FormFooterButtons } from 'components/Form';
 
+import { convertDataToDropdownOptions } from 'utils';
 import { useAuth } from 'hooks/useAuth';
+
+import clientsQuery from '../queries/clients.gql';
 
 import updateProjectMutation from './queries/updateProject.gql';
 import createProjectMutation from './queries/createProject.gql';
-import clientsQuery from './queries/clients.gql';
 
 // TODO: Add client Type
 interface ProjectFormPageProps {
@@ -127,13 +129,4 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
 
     setLoading(false);
   }
-}
-
-function convertDataToDropdownOptions(data: any[], labelKey: string, valueKey: string) {
-  const options = data?.map(item => ({
-    label: item[labelKey] as string,
-    value: item[valueKey]
-  }));
-
-  return options;
 }
