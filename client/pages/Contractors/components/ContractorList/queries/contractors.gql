@@ -10,7 +10,10 @@ query contractors(
     location
     gpt_persona
     document
-    rate
+    contractor_rate {
+      id
+      rate
+    }
     invoice
     start_date
     end_date

@@ -10,6 +10,7 @@ import { useAuth } from 'hooks/useAuth';
 
 import createContractorMutation from './queries/createContractor.gql';
 import updateContractorMutation from './queries/updateContractor.gql';
+import createContractorRateMutation from './queries/createContractorRate.gql';
 
 // TODO: Add client Type
 interface ContractorFormPageProps {
@@ -23,11 +24,13 @@ export default function ContractorForm({
 }: ContractorFormPageProps) {
   const { dragonUser } = useAuth();
   const [createContractor] = useMutation(createContractorMutation, {
-    refetchQueries: ['accountRequests', 'contractors']
+    refetchQueries: ['contractors']
   });
 
+  const [createContractorRate] = useMutation(createContractorRateMutation);
+
   const [updateContractor] = useMutation(updateContractorMutation, {
-    refetchQueries: ['accountRequests', 'contractor']
+    refetchQueries: ['contractors', 'contractor']
   });
 
   const [loading, setLoading] = useState(false);
@@ -86,9 +89,18 @@ export default function ContractorForm({
           }
         });
       } else {
-        await createContractor({
+        const newContractorRate = await createContractorRate({
+          variables: {
+            rate: data.rate
+          }
+        });
+
+        const { id: contractorRateId } = newContractorRate.data.insert_contractor_rate_one;
+
+        const newContractor = await createContractor({
           variables: {
             ...data,
+            rate_id: contractorRateId,
             userId: dragonUser?.id
           }
         });
