@@ -91,3 +91,12 @@ export async function checkLinkIsSafe(link) {
 export const dateFormat = date => {
   return dayjs(date).format('MMM D, HH:mm');
 };
+
+export function convertDataToDropdownOptions(data: any[], labelKey: string, valueKey: string) {
+  const options = data?.map(item => ({
+    label: item[labelKey] as string,
+    value: item[valueKey]
+  }));
+
+  return options;
+}
