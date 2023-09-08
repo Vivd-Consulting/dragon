@@ -82,20 +82,17 @@ export default function ContractorForm({
 
     try {
       if (initialData) {
+        const contractorRateId = await _createContractorRate(data.rate);
+
         await updateContractor({
           variables: {
             ...data,
+            rate_id: contractorRateId,
             userId: dragonUser?.id
           }
         });
       } else {
-        const newContractorRate = await createContractorRate({
-          variables: {
-            rate: data.rate
-          }
-        });
-
-        const { id: contractorRateId } = newContractorRate.data.insert_contractor_rate_one;
+        const contractorRateId = await _createContractorRate(data.rate);
 
         const newContractor = await createContractor({
           variables: {
@@ -128,5 +125,17 @@ export default function ContractorForm({
     }
 
     setLoading(false);
+  }
+
+  async function _createContractorRate(rate) {
+    const newContractorRate = await createContractorRate({
+      variables: {
+        rate
+      }
+    });
+
+    const { id: contractorRateId } = newContractorRate.data.insert_contractor_rate_one;
+
+    return contractorRateId;
   }
 }
