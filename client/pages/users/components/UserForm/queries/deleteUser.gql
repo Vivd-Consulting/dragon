@@ -1,5 +1,0 @@
-mutation deleteUser($id: Int!) {
-  delete_dragon_user_by_pk(id: $id) {
-    id
-  }
-}
