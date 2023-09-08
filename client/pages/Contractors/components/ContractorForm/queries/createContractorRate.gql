@@ -1,5 +1,0 @@
-mutation createContractorRate($rate: float8!) {
-  insert_contractor_rate_one(object: { rate: $rate }) {
-    id
-  }
-}
