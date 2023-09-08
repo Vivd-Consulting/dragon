@@ -98,10 +98,10 @@ CREATE TABLE project (
 );
 
 CREATE TABLE project_contractor (
-  dragon_user_id text NOT NULL REFERENCES dragon_user(id),
+  contractor_id text NOT NULL REFERENCES contractor(id),
   project_id int NOT NULL REFERENCES project(id),
 
-  PRIMARY KEY (dragon_user_id, project_id)
+  PRIMARY KEY (contractor_id, project_id)
 );
 
 CREATE TABLE project_time (

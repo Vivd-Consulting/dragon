@@ -1,4 +1,0 @@
-SET check_function_bodies = false;
-INSERT INTO public.contractor (id, name, location, gpt_persona, contact_id, document, rate, invoice, start_date, end_date, archived_at, deleted_at, created_at, updated_at) VALUES (5, 'Dogan Saglam', 'Turkey', 'Test persona.', NULL, '', 20, 1500, '2023-09-04 21:00:00', '2023-09-24 21:00:00', NULL, NULL, '2023-09-06 10:33:20.747319', '2023-09-06 10:33:20.747319');
-INSERT INTO public.contractor (id, name, location, gpt_persona, contact_id, document, rate, invoice, start_date, end_date, archived_at, deleted_at, created_at, updated_at) VALUES (6, 'John Doe', 'Canada', 'Test persona/', NULL, '', 20, 1500, '2023-09-09 21:00:00', '2023-11-09 21:00:00', NULL, NULL, '2023-09-06 10:33:45.080929', '2023-09-06 10:33:45.080929');
-SELECT pg_catalog.setval('public.contractor_id_seq', 6, true);

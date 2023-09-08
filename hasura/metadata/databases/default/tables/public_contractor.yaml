@@ -9,17 +9,17 @@ object_relationships:
     using:
       foreign_key_constraint_on: rate_id
 array_relationships:
-  - name: contractor_rates
-    using:
-      foreign_key_constraint_on:
-        column: contractor_id
-        table:
-          name: contractor_rate
-          schema: public
   - name: dragon_users
     using:
       foreign_key_constraint_on:
         column: contractor_id
         table:
           name: dragon_user
+          schema: public
+  - name: projects
+    using:
+      foreign_key_constraint_on:
+        column: contractor_id
+        table:
+          name: project_contractor
           schema: public
