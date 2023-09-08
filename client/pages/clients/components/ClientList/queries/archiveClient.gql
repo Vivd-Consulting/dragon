@@ -1,0 +1,7 @@
+mutation updateClient($id: Int!, $archived_at: timestamp) {
+  update_client(_set: { archived_at: $archived_at }, where: { id: { _eq: $id } }) {
+    returning {
+      id
+    }
+  }
+}
