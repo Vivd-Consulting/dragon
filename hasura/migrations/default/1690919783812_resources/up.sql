@@ -86,12 +86,15 @@ CREATE TABLE project (
   id SERIAL PRIMARY KEY,
   name text NOT NULL,
   description text,
+  gpt_persona text,
+  github_repo_org text,
+  github_repo_name text,
 
   client_id integer NOT NULL REFERENCES client(id),
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
-  deleted_at timestamp
+  archived_at timestamp
 );
 
 CREATE TABLE project_contractor (

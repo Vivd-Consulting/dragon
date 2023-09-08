@@ -1,0 +1,11 @@
+query project($id: Int!) {
+  project(where: { id: { _eq: $id } }) {
+    id
+    name
+    client_id
+    github_repo_org
+    github_repo_name
+    description
+    gpt_persona
+  }
+}
