@@ -20,7 +20,7 @@ export default function Projects() {
             <Row justify="between" align="center" mx={4} mt={4}>
               <h2 className="my-0">Projects</h2>
               <Button
-                onClick={() => router.push('/clients/projects/create')}
+                onClick={() => router.push('/projects/create')}
                 label="Add Project"
                 type="button"
                 icon="pi pi-plus"

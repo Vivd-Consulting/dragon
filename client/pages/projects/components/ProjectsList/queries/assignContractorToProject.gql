@@ -1,0 +1,6 @@
+mutation assignContractorToProject($contractorId: Int!, $projectId: Int!) {
+  insert_project_contractor_one(object: { contractor_id: $contractorId, project_id: $projectId }) {
+    project_id
+    contractor_id
+  }
+}

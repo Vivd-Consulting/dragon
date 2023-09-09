@@ -1,0 +1,11 @@
+query contractors(
+  $limit: Int
+  $offset: Int
+  $order_by: [contractor_order_by!]
+  $where: contractor_bool_exp
+) {
+  contractor(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    id
+    name
+  }
+}
