@@ -185,7 +185,7 @@ export default function ProjectList() {
           icon="pi pi-user-edit"
           tooltip="Edit"
           tooltipOptions={{ position: 'top' }}
-          onClick={() => router.push(`/projects/edit/${data?.id}`)}
+          onClick={() => router.push(`/clients/projects/edit/${data?.id}`)}
         />
         <Button
           size="small"

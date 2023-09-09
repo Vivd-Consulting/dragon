@@ -87,7 +87,7 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
             setExpanded={setSelectedGroup}
           >
             <SidebarItem label="Clients" href="/clients" onClick={onItemClick} />
-            <SidebarItem label="Projects" href="/projects" onClick={onItemClick} />
+            <SidebarItem label="Projects" href="/clients/projects" onClick={onItemClick} />
           </SidebarGroup>
           <SidebarItem
             icon="pi pi-home"
