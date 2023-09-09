@@ -114,7 +114,7 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
         life: 3000
       });
 
-      router.push('/clients/projects');
+      router.push('/projects');
     } catch {
       setLoading(false);
 

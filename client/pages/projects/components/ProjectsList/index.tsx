@@ -7,8 +7,8 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
-import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
 
 import { Row } from 'components/Group';
 import { InputTextDebounced } from 'components/Form';
@@ -18,15 +18,19 @@ import { convertDataToDropdownOptions, dateFormat } from 'utils';
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 import clientsQuery from '../queries/clients.gql';
+import contractorsQuery from '../queries/contractors.gql';
 
 import projectsQuery from './queries/projects.gql';
 import archiveProjectMutation from './queries/archiveProject.gql';
+import assignContractorToProjectMutation from './queries/assignContractorToProject.gql';
 
 export default function ProjectList() {
-  const [client, setClient] = useState<{ label: string; value: any } | undefined>(undefined);
+  const [selectedClient, setSelectedClient] = useState<number[] | undefined>(undefined);
+
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
 
   const { data: clientsData } = useQuery(clientsQuery);
+  const { data: contractorsData } = useQuery(contractorsQuery);
 
   const {
     query: { loading, previousData, data },
@@ -38,7 +42,7 @@ export default function ProjectList() {
       where: {
         archived_at: { _is_null: true },
         client_id: {
-          _eq: client
+          _eq: selectedClient
         },
         _or: [
           { github_repo_name: { _ilike: searchText || undefined } },
@@ -52,6 +56,10 @@ export default function ProjectList() {
     refetchQueries: ['projects', 'project']
   });
 
+  const [assignContractorToProject] = useMutation(assignContractorToProjectMutation, {
+    refetchQueries: ['projects', 'project']
+  });
+
   const toastRef = useRef<Toast>(null);
 
   const projects = loading ? previousData?.project : data?.project;
@@ -61,6 +69,8 @@ export default function ProjectList() {
 
   const clients = convertDataToDropdownOptions(clientsData?.client, 'name', 'id');
 
+  const contractors = convertDataToDropdownOptions(contractorsData?.contractor, 'name', 'id');
+
   return (
     <>
       <Toast ref={toastRef} />
@@ -69,8 +79,8 @@ export default function ProjectList() {
         <Dropdown
           filter
           showClear
-          value={client}
-          onChange={e => setClient(e.value)}
+          value={selectedClient}
+          onChange={e => setSelectedClient(e.value)}
           placeholder="Select client"
           options={clients}
         />
@@ -167,7 +177,11 @@ export default function ProjectList() {
   );
 
   function useActionButtons(data) {
+    const [selectedContractors, setSelectedContractors] = useState<number[] | undefined>(undefined);
+
     const router = useRouter();
+
+    const selectedContractorsLength = selectedContractors?.length || 0;
 
     const confirmArchiveProject = () => {
       confirmDialog({
@@ -178,6 +192,17 @@ export default function ProjectList() {
       });
     };
 
+    const confirmAssignContractorToProject = () => {
+      confirmDialog({
+        message: `Are you sure you want to assign contractor${
+          selectedContractorsLength > 1 ? 's' : ''
+        } to ${data.name}?`,
+        header: 'Save Contractor',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => _assignContractorToProject(data, selectedContractors)
+      });
+    };
+
     return (
       <Row>
         <Button
@@ -185,7 +210,7 @@ export default function ProjectList() {
           icon="pi pi-user-edit"
           tooltip="Edit"
           tooltipOptions={{ position: 'top' }}
-          onClick={() => router.push(`/clients/projects/edit/${data?.id}`)}
+          onClick={() => router.push(`/projects/edit/${data?.id}`)}
         />
         <Button
           size="small"
@@ -195,8 +220,45 @@ export default function ProjectList() {
           icon="pi pi-trash"
           onClick={confirmArchiveProject}
         />
+        <MultiSelect
+          filter
+          showClear
+          display="chip"
+          value={selectedContractors}
+          onChange={e => setSelectedContractors(e.value)}
+          placeholder="Assign contractor"
+          options={contractors}
+        />
+        {!!selectedContractorsLength && (
+          <Button
+            size="small"
+            tooltip="Save"
+            tooltipOptions={{ position: 'top' }}
+            icon="pi pi-save"
+            onClick={confirmAssignContractorToProject}
+          />
+        )}
       </Row>
     );
+  }
+
+  async function _assignContractorToProject(data, contractorId) {
+    try {
+      await assignContractorToProject({
+        variables: {
+          projectId: data.id,
+          contractorId: contractorId[0]
+        }
+      });
+    } catch (e) {
+      toastRef?.current?.show({
+        life: 3000,
+        severity: 'error',
+        summary: 'Failed to assign contractor.',
+        detail: 'Unable to assign contractor to the project at this time.'
+      });
+      console.error(e);
+    }
   }
 
   async function _archiveProject(data) {
