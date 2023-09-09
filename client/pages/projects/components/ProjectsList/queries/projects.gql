@@ -4,14 +4,7 @@ query projects(
   $order_by: [project_order_by!]
   $where: project_bool_exp
 ) {
-  project(
-    limit: $limit
-    offset: $offset
-    order_by: $order_by
-    where: {
-      _or: [{ github_repo_name: { _ilike: $search } }, { github_repo_org: { _ilike: $search } }]
-    }
-  ) {
+  project(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     id
     name
     github_repo_org

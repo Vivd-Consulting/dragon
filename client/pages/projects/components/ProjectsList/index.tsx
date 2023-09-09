@@ -11,6 +11,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 
 import { Row } from 'components/Group';
+import { InputTextDebounced } from 'components/Form';
 
 import { convertDataToDropdownOptions, dateFormat } from 'utils';
 
@@ -23,7 +24,7 @@ import archiveProjectMutation from './queries/archiveProject.gql';
 
 export default function ProjectList() {
   const [client, setClient] = useState<{ label: string; value: any } | undefined>(undefined);
-  const [searchText, setSearchText] = useState<string | undefined>('doe');
+  const [searchText, setSearchText] = useState<string | undefined>(undefined);
 
   const { data: clientsData } = useQuery(clientsQuery);
 
@@ -39,11 +40,10 @@ export default function ProjectList() {
         client_id: {
           _eq: client
         },
-        search: `%${searchText}%`
-        // _or: [
-        //   { github_repo_name: { _ilike: searchText || undefined } },
-        //   { github_repo_org: { _ilike: searchText || undefined } }
-        // ]
+        _or: [
+          { github_repo_name: { _ilike: searchText || undefined } },
+          { github_repo_org: { _ilike: searchText || undefined } }
+        ]
       }
     }
   });
@@ -74,10 +74,10 @@ export default function ProjectList() {
           placeholder="Select client"
           options={clients}
         />
-        <InputText
+        <InputTextDebounced
           placeholder="Search by"
           value={searchText}
-          onChange={e => setSearchText(e.target.value)}
+          onChange={e => setSearchText(e)}
         />
       </Row>
 
