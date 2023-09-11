@@ -1,0 +1,6 @@
+query contractors($where: contractor_bool_exp) {
+  contractor(where: $where) {
+    id
+    name
+  }
+}
