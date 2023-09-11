@@ -193,11 +193,11 @@ export default function ProjectList() {
   );
 
   function useActionButtons(data) {
-    const [selectedContractors, setSelectedContractors] = useState<number[] | undefined>(undefined);
+    const assignedContractors = data?.contractors?.map(x => x.contractor.id);
+
+    const [selectedContractors, setSelectedContractors] = useState(assignedContractors);
 
     const router = useRouter();
-
-    const selectedContractorsLength = selectedContractors?.length || 0;
 
     const confirmArchiveProject = () => {
       confirmDialog({
@@ -209,18 +209,7 @@ export default function ProjectList() {
     };
 
     const confirmAssignContractorToProject = () => {
-      if (!selectedContractors) {
-        return;
-      }
-
-      confirmDialog({
-        message: `Are you sure you want to assign contractor${
-          selectedContractorsLength > 1 ? 's' : ''
-        } to ${data.name}?`,
-        header: 'Save Contractor',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => _assignContractorToProject(data, selectedContractors, setSelectedContractors)
-      });
+      _assignContractorToProject(data, selectedContractors, setSelectedContractors);
     };
 
     return (
@@ -243,21 +232,20 @@ export default function ProjectList() {
         <MultiSelect
           filter
           showClear
+          closeIcon="pi pi-check text-green-600"
           display="chip"
           value={selectedContractors}
-          onChange={e => setSelectedContractors(e.value)}
+          onChange={e => {
+            const _contractor = e.value;
+
+            setSelectedContractors(_contractor);
+
+            // confirmAssignContractorToProject(_contractor);
+          }}
+          onHide={confirmAssignContractorToProject}
           placeholder="Assign contractor"
           options={contractors}
         />
-        {!!selectedContractorsLength && (
-          <Button
-            size="small"
-            tooltip="Save"
-            tooltipOptions={{ position: 'top' }}
-            icon="pi pi-save"
-            onClick={confirmAssignContractorToProject}
-          />
-        )}
       </Row>
     );
   }

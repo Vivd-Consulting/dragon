@@ -16,6 +16,7 @@ query projects(
     }
     contractors {
       contractor {
+        id
         name
       }
     }
