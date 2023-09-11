@@ -163,6 +163,19 @@ export default function ProjectList() {
         />
 
         <Column
+          header="Contractors"
+          body={({ contractors }) => (
+            <>
+              {contractors.map(({ contractor }, idx) => (
+                <Row key={contractor.name + idx}>{contractor.name}</Row>
+              ))}
+            </>
+          )}
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
           body={({ archived_at }) => {
             return <i className="pi pi-times-circle" />;
           }}
