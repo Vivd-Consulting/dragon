@@ -193,6 +193,10 @@ export default function ProjectList() {
     };
 
     const confirmAssignContractorToProject = () => {
+      if (!selectedContractors) {
+        return;
+      }
+
       confirmDialog({
         message: `Are you sure you want to assign contractor${
           selectedContractorsLength > 1 ? 's' : ''
@@ -242,13 +246,23 @@ export default function ProjectList() {
     );
   }
 
-  async function _assignContractorToProject(data, contractorId) {
+  async function _assignContractorToProject(data, contractorIds: number[]) {
+    const ids = contractorIds.map(id => ({
+      contractor_id: id,
+      project_id: data.id
+    }));
+
     try {
       await assignContractorToProject({
         variables: {
-          projectId: data.id,
-          contractorId: contractorId[0]
+          ids
         }
+      });
+      toastRef?.current?.show({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Contractor assigned.',
+        life: 3000
       });
     } catch (e) {
       toastRef?.current?.show({

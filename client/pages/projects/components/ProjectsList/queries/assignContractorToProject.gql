@@ -1,6 +1,5 @@
-mutation assignContractorToProject($contractorId: Int!, $projectId: Int!) {
-  insert_project_contractor_one(object: { contractor_id: $contractorId, project_id: $projectId }) {
-    project_id
-    contractor_id
+mutation assignContractorToProject($ids: [project_contractor_insert_input!]!) {
+  insert_project_contractor(objects: $ids) {
+    affected_rows
   }
 }
