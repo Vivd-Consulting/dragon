@@ -23,6 +23,7 @@ import contractorsQuery from '../queries/contractors.gql';
 import projectsQuery from './queries/projects.gql';
 import archiveProjectMutation from './queries/archiveProject.gql';
 import assignContractorToProjectMutation from './queries/assignContractorToProject.gql';
+import deleteProjectContractorRelationMutation from './queries/deleteProjectContractorRelation.gql';
 
 export default function ProjectList() {
   const [selectedClient, setSelectedClient] = useState<number[] | undefined>(undefined);
@@ -55,6 +56,8 @@ export default function ProjectList() {
   const [archiveProject] = useMutation(archiveProjectMutation, {
     refetchQueries: ['projects', 'project']
   });
+
+  const [deleteProjectContratorRelation] = useMutation(deleteProjectContractorRelationMutation);
 
   const [assignContractorToProject] = useMutation(assignContractorToProjectMutation, {
     refetchQueries: ['projects', 'project']
@@ -216,7 +219,7 @@ export default function ProjectList() {
         } to ${data.name}?`,
         header: 'Save Contractor',
         icon: 'pi pi-exclamation-triangle',
-        accept: () => _assignContractorToProject(data, selectedContractors)
+        accept: () => _assignContractorToProject(data, selectedContractors, setSelectedContractors)
       });
     };
 
@@ -259,7 +262,7 @@ export default function ProjectList() {
     );
   }
 
-  async function _assignContractorToProject(data, contractorIds: number[]) {
+  async function _assignContractorToProject(data, contractorIds: number[], setSelectedContractors) {
     const ids = contractorIds.map(id => ({
       contractor_id: id,
       project_id: data.id
@@ -271,6 +274,9 @@ export default function ProjectList() {
           ids
         }
       });
+
+      setSelectedContractors(undefined);
+
       toastRef?.current?.show({
         severity: 'success',
         summary: 'Success',
@@ -294,6 +300,12 @@ export default function ProjectList() {
     try {
       await archiveProject({
         variables: { id: data.id, archived_at: date }
+      });
+
+      await deleteProjectContratorRelation({
+        variables: {
+          project_id: data.id
+        }
       });
 
       toastRef?.current?.show({
