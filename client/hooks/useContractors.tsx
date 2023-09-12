@@ -36,11 +36,11 @@ export function useProjectContractors(projectId) {
   });
 
   const [createProjectContractor] = useMutation(PROJECT_CONTRACTORS_CREATE, {
-    refetchQueries: ['projectContractors']
+    refetchQueries: ['projectContractors', 'projects']
   });
 
   const [deleteProjectContractor] = useMutation(PROJECT_CONTRACTORS_DELETE, {
-    refetchQueries: ['projectContractors']
+    refetchQueries: ['projectContractors', 'projects']
   });
 
   if (loading) {

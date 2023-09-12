@@ -118,10 +118,8 @@ export default function ProjectList() {
           className="white-space-nowrap"
         />
         <Column
-          field="created_at"
-          header="Created At"
-          body={({ created_at }) => <span>{dateFormat(created_at)}</span>}
-          sortable
+          field="client.name"
+          header="Client Name"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
@@ -132,55 +130,30 @@ export default function ProjectList() {
           className="white-space-nowrap"
         />
         <Column
-          field="description"
-          header="Description"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          field="gpt_persona"
-          header="GPT Persona"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          field="github_repo_org"
-          header="Github Repo Organization"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
+          body={({ github_repo_org, github_repo_name }) => {
+            const repoUrl =
+              github_repo_name &&
+              github_repo_org &&
+              `https://github.com/${github_repo_org}/${github_repo_name}`;
+
+            if (!repoUrl) {
+              return null;
+            }
+
+            return (
+              <a
+                href={repoUrl ?? ''}
+                rel="noopener noreferrer"
+                target="_blank"
+                className="flex items-center gap-2 hover:text-blue-500"
+              >
+                <div className="pi pi-link" />
+                {github_repo_name}
+              </a>
+            );
+          }}
           field="github_repo_name"
           header="Github Repo Name"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          field="client.name"
-          header="Client Name"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-
-        <Column
-          header="Contractors"
-          body={({ contractors }) => (
-            <>
-              {contractors.map(({ contractor }, idx) => (
-                <Row key={contractor.name + idx}>{contractor.name}</Row>
-              ))}
-            </>
-          )}
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-
-        <Column
-          body={({ archived_at }) => {
-            return <i className="pi pi-times-circle" />;
-          }}
-          field="archived_at"
-          header="Archived"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
