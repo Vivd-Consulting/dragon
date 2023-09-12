@@ -139,7 +139,7 @@ export default function ClientList() {
           size="small"
           tooltip="Projects"
           tooltipOptions={{ position: 'top' }}
-          icon="pi pi-sign-in"
+          icon="pi pi-code"
           onClick={() => router.push(`/clients/${data?.id}/projects`)}
         />
         <Button

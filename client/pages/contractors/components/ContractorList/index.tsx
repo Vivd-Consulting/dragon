@@ -84,6 +84,14 @@ export default function ContractorList() {
           className="white-space-nowrap"
         />
         <Column
+          body={({ contractor_rate }) => {
+            const rate = `${contractor_rate.rate.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD'
+            })}/hr`;
+
+            return <Row>{rate}</Row>;
+          }}
           field="contractor_rate.rate"
           header="Rate"
           headerClassName="white-space-nowrap"
