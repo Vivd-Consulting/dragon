@@ -1,7 +1,6 @@
 import { useMutation } from '@apollo/client';
+import { useRouter } from 'next/router';
 import { useRef } from 'react';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -14,42 +13,40 @@ import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
-import timersQuery from './queries/timers.gql';
-import deleteTimeMutation from './queries/deleteTime.gql';
+import contractorsQuery from './queries/contractors.gql';
+import archiveContractorMutation from './queries/archiveContractor.gql';
 
-dayjs.extend(utc);
-
-export default function TimeTrackerList() {
+export default function ContractorList() {
   const {
     query: { loading, previousData, data },
     paginationValues,
     onPage
-  } = usePaginatedQuery(timersQuery, {
+  } = usePaginatedQuery(contractorsQuery, {
     fetchPolicy: 'no-cache',
     variables: {
       where: {
-        deleted_at: { _is_null: true }
+        archived_at: { _is_null: true }
       }
     }
   });
 
-  const [deleteTimer] = useMutation(deleteTimeMutation, {
-    refetchQueries: ['timers']
+  const [archiveContractor] = useMutation(archiveContractorMutation, {
+    refetchQueries: ['contractors', 'contractor']
   });
 
   const toastRef = useRef<Toast>(null);
 
-  const timers = loading ? previousData?.project_time : data?.project_time;
+  const contractors = loading ? previousData?.contractor : data?.contractor;
   const totalRecords = loading
-    ? previousData?.project_time_aggregate.aggregate.count
-    : data?.project_time_aggregate.aggregate.count;
+    ? previousData?.contractor_aggregate.aggregate.count
+    : data?.contractor_aggregate.aggregate.count;
 
   return (
     <>
       <Toast ref={toastRef} />
 
       <DataTable
-        value={timers}
+        value={contractors}
         paginator
         lazy
         onPage={onPage}
@@ -64,8 +61,8 @@ export default function TimeTrackerList() {
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
         rowsPerPageOptions={[10, 25, 50, 100]}
-        emptyMessage="No Times found."
-        data-cy="times-table"
+        emptyMessage="No Contractors found."
+        data-cy="contractors-table"
       >
         <Column
           field="id"
@@ -75,40 +72,76 @@ export default function TimeTrackerList() {
           className="white-space-nowrap"
         />
         <Column
-          field="project.client.name"
-          header="Client"
+          field="created_at"
+          header="Created At"
+          body={({ created_at }) => <span>{dateFormat(created_at)}</span>}
           sortable
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
         <Column
-          field="project.name"
-          header="Project"
-          sortable
+          field="name"
+          header="Name"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          field="gpt_persona"
+          header="GPT Persona"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          field="location"
+          header="Location"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          field="document"
+          header="Document"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          field="contractor_rate.rate"
+          header="Rate"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          field="invoice"
+          header="Invoice"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          body={({ start_date }) => <span>{dateFormat(start_date)}</span>}
+          field="start_date"
+          header="Start Date"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
         <Column
-          field="start_time"
-          header="Start Time"
-          body={({ start_time }) => <span>{dateFormat(start_time)}</span>}
-          sortable
+          body={({ end_date }) => <span>{dateFormat(end_date)}</span>}
+          field="end_date"
+          header="End Date"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
+
         <Column
-          field="end_time"
-          header="End Time"
-          body={({ end_time }) => <span>{dateFormat(end_time)}</span>}
-          sortable
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          field="duration"
-          header="Duration"
-          body={({ start_time, end_time }) => <span>{diffMinutes(start_time, end_time)}</span>}
-          sortable
+          body={({ archived_at }) => {
+            return <i className="pi pi-times-circle" />;
+          }}
+          field="archived_at"
+          header="Archived"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
@@ -118,17 +151,26 @@ export default function TimeTrackerList() {
   );
 
   function useActionButtons(data) {
+    const router = useRouter();
+
     const confirmArchiveClient = () => {
       confirmDialog({
-        message: 'Are you sure you want to delete this entry?',
-        header: 'Delete Time Entry',
+        message: `Are you sure you want to archive ${data.name}?`,
+        header: 'Archive Contractor',
         icon: 'pi pi-exclamation-triangle',
-        accept: () => _deleteTime(data)
+        accept: () => _archiveContractor(data)
       });
     };
 
     return (
       <Row>
+        <Button
+          size="small"
+          tooltip="Edit"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-user-edit"
+          onClick={() => router.push(`/contractors/edit/${data?.id}`)}
+        />
         <Button
           size="small"
           severity="danger"
@@ -141,41 +183,28 @@ export default function TimeTrackerList() {
     );
   }
 
-  async function _deleteTime(data) {
+  async function _archiveContractor(data) {
     const date = new Date();
 
     try {
-      await deleteTimer({
-        variables: { id: data.id, deleted_at: date }
+      await archiveContractor({
+        variables: { id: data.id, archived_at: date }
       });
 
       toastRef?.current?.show({
         severity: 'success',
         summary: 'Success',
-        detail: 'Time Entry deleted',
+        detail: 'Contractor is archived',
         life: 3000
       });
     } catch (e) {
       toastRef?.current?.show({
         life: 3000,
         severity: 'error',
-        summary: 'Failed to delete Time Entry.',
-        detail: 'Unable to delete the Time Entry at this time.'
+        summary: 'Failed to archive contractor.',
+        detail: 'Unable to archive the contractor at this time.'
       });
       console.error(e);
     }
   }
-}
-
-function nowUTC() {
-  return dayjs.utc();
-}
-
-function dateUTC(date) {
-  return dayjs.utc(date);
-}
-
-function diffMinutes(start, end) {
-  // TODO: Return difference as hours:minutes:seconds
-  return dateUTC(end).diff(dateUTC(start), 'minutes');
 }

@@ -57,7 +57,7 @@ export function TimerCard({ project }) {
           timerId: project.timerId,
           endTime: new Date()
         },
-        refetchQueries: ['userProjects']
+        refetchQueries: ['userProjects', 'timers']
       });
     } else {
       setTimeSinceStart(0);
@@ -75,7 +75,7 @@ export function TimerCard({ project }) {
           projectId: project.id,
           startTime: new Date()
         },
-        refetchQueries: ['userProjects']
+        refetchQueries: ['userProjects', 'timers']
       });
     }
   }
