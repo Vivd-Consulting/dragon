@@ -90,8 +90,6 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
             <SidebarItem label="Projects" href="/projects" onClick={onItemClick} />
           </SidebarGroup>
 
-          <SidebarItem icon="pi pi-code" label="Tasks" href="/tasks" onClick={onItemClick} />
-
           <SidebarItem
             icon="pi pi-users"
             label="Contractors"
@@ -99,12 +97,16 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
             onClick={onItemClick}
           />
 
+          <SidebarItem icon="pi pi-list" label="Tasks" href="/tasks" onClick={onItemClick} />
+
           <SidebarItem
             icon="pi pi-clock"
             label="Time Tracker"
             href="/time-tracker"
             onClick={onItemClick}
           />
+
+          <SidebarItem icon="pi pi-key" label="Secrets" href="/secrets" onClick={onItemClick} />
 
           {/* <SidebarItem
             icon="pi pi-users"
