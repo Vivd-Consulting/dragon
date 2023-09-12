@@ -157,6 +157,7 @@ export default function ProjectList({ clientId }) {
 
     return (
       <Row>
+        <AssignContractorProjectDropdown projectId={data?.id} />
         <Button
           size="small"
           icon="pi pi-user-edit"
@@ -172,7 +173,6 @@ export default function ProjectList({ clientId }) {
           icon="pi pi-trash"
           onClick={confirmArchiveProject}
         />
-        <AssignContractorProjectDropdown projectId={data?.id} />
       </Row>
     );
   }
