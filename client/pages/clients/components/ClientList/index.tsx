@@ -73,28 +73,8 @@ export default function ClientList() {
           className="white-space-nowrap"
         />
         <Column
-          field="created_at"
-          header="Created At"
-          body={({ created_at }) => <span>{dateFormat(created_at)}</span>}
-          sortable
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
           field="name"
           header="Name"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          field="description"
-          header="Description"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          field="gpt_persona"
-          header="GPT Persona"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
@@ -129,15 +109,6 @@ export default function ClientList() {
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
-        <Column
-          body={({ archived_at }) => {
-            return <i className="pi pi-times-circle" />;
-          }}
-          field="archived_at"
-          header="Archived"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
         <Column body={useActionButtons} />
       </DataTable>
     </>
@@ -163,6 +134,13 @@ export default function ClientList() {
           tooltip="Edit"
           tooltipOptions={{ position: 'top' }}
           onClick={() => router.push(`/clients/edit/${data?.id}`)}
+        />
+        <Button
+          size="small"
+          tooltip="Projects"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-code"
+          onClick={() => router.push(`/clients/${data?.id}/projects`)}
         />
         <Button
           size="small"
