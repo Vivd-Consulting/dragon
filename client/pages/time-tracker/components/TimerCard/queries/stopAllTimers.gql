@@ -1,0 +1,7 @@
+mutation stopAllTimers($userId: String!, $endTime: timestamp!) {
+  update_project_time(_set: { end_time: $endTime }, where: { dragon_user_id: { _eq: $userId } }) {
+    returning {
+      id
+    }
+  }
+}

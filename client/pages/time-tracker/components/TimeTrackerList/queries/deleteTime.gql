@@ -1,0 +1,7 @@
+mutation deleteTime($id: Int!, $deleted_at: timestamp!) {
+  update_project_time(_set: { deleted_at: $deleted_at }, where: { id: { _eq: $id } }) {
+    returning {
+      id
+    }
+  }
+}
