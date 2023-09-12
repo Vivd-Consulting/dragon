@@ -1,5 +1,0 @@
-mutation deleteProjectContractorRelation($project_id: Int!) {
-  delete_project_contractor(where: { project_id: { _eq: $project_id } }) {
-    affected_rows
-  }
-}

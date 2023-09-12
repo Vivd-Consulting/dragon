@@ -1,5 +1,0 @@
-mutation assignContractorToProject($ids: [project_contractor_insert_input!]!) {
-  insert_project_contractor(objects: $ids) {
-    affected_rows
-  }
-}

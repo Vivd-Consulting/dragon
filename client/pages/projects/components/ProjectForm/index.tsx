@@ -6,7 +6,6 @@ import { Toast } from 'primereact/toast';
 
 import { Form, FormFooterButtons } from 'components/Form';
 
-import { convertDataToDropdownOptions } from 'utils';
 import { useAuth } from 'hooks/useAuth';
 
 import clientsQuery from '../queries/clients.gql';
@@ -47,8 +46,6 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
     return null;
   }
 
-  const clients = convertDataToDropdownOptions(data.client, 'name', 'id');
-
   const defaultValues = initialData
     ? initialData.project[0]
     : {
@@ -74,7 +71,9 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
               placeholder="Select client"
               label="Client ID"
               name="client_id"
-              options={clients}
+              optionLabel="name"
+              optionValue="id"
+              options={data?.client}
             />
             <InputTextArea label="Description" name="description" isRequired />
             <InputTextArea label="GPT Persona" name="gpt_persona" isRequired />
