@@ -17,27 +17,16 @@ import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
-import clientsQuery from '../queries/clients.gql';
-
 import projectsQuery from './queries/projects.gql';
 import archiveProjectMutation from './queries/archiveProject.gql';
 
-export default function ProjectList() {
-  const [selectedClient, setSelectedClient] = useState<number[] | undefined>(undefined);
-
+export default function ProjectList({ clientId }) {
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
 
-  const { data: clientsData } = useQuery(clientsQuery);
-
   const where: any = {
+    client_id: { _eq: clientId },
     archived_at: { _is_null: true }
   };
-
-  if (selectedClient) {
-    where.client_id = {
-      _eq: selectedClient
-    };
-  }
 
   if (searchText) {
     where._or = [
@@ -69,21 +58,13 @@ export default function ProjectList() {
     ? previousData?.project_aggregate.aggregate.count
     : data?.project_aggregate.aggregate.count;
 
+  console.log(projects);
+
   return (
     <>
       <Toast ref={toastRef} />
 
       <Row align="center" px={2} pb={4}>
-        <Dropdown
-          filter
-          showClear
-          value={selectedClient}
-          onChange={e => setSelectedClient(e.value)}
-          placeholder="Select client"
-          optionLabel="name"
-          optionValue="id"
-          options={clientsData?.client}
-        />
         <InputTextDebounced
           placeholder="Search by"
           value={searchText}

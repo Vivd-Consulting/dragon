@@ -74,9 +74,10 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
               optionLabel="name"
               optionValue="id"
               options={data?.client}
+              isRequired
             />
-            <InputTextArea label="Description" name="description" isRequired />
-            <InputTextArea label="GPT Persona" name="gpt_persona" isRequired />
+            <InputTextArea label="Description" name="description" />
+            <InputTextArea label="GPT Persona" name="gpt_persona" />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>

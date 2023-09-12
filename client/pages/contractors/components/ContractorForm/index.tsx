@@ -63,10 +63,10 @@ export default function ContractorForm({
             <InputText label="Location" name="location" isRequired />
             <InputText label="Document" name="document" />
             <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
-            <InputNumber label="Invoice" name="invoice" isRequired />
-            <InputTextArea label="GPT Persona" name="gpt_persona" isRequired />
+            <InputNumber label="Invoice" name="invoice" />
+            <InputTextArea label="GPT Persona" name="gpt_persona" />
             <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
-            <InputCalendar label="End Date" name="end_date" isRequired showIcon />
+            <InputCalendar label="End Date" name="end_date" showIcon />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>
