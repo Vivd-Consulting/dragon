@@ -61,7 +61,6 @@ export default function TimeTrackerPage() {
           </Row>
         }
       >
-        <h2>Time Tracker (Tablet View)</h2>
         <Row wrap>
           {projects.map(project => (
             <TimerCard key={project.id} project={project} />
