@@ -98,8 +98,8 @@ CREATE TABLE project (
 );
 
 CREATE TABLE project_contractor (
-  contractor_id text NOT NULL REFERENCES contractor(id),
-  project_id int NOT NULL REFERENCES project(id),
+  contractor_id integer NOT NULL REFERENCES contractor(id),
+  project_id integer NOT NULL REFERENCES project(id),
 
   PRIMARY KEY (contractor_id, project_id)
 );

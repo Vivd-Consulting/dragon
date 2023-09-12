@@ -27,10 +27,6 @@ export default function Projects() {
                 raised
               />
             </Row>
-            {/* TODO: Add Filter Inputs */}
-            <Row justify="between" align="center" mx={4} mt={4}>
-              hello
-            </Row>
           </Column>
         }
       >

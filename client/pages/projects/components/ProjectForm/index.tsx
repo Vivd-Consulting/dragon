@@ -8,9 +8,10 @@ import { Form, FormFooterButtons } from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
 
+import clientsQuery from '../queries/clients.gql';
+
 import updateProjectMutation from './queries/updateProject.gql';
 import createProjectMutation from './queries/createProject.gql';
-import clientsQuery from './queries/clients.gql';
 
 // TODO: Add client Type
 interface ProjectFormPageProps {
@@ -45,8 +46,6 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
     return null;
   }
 
-  const clients = convertDataToDropdownOptions(data.client, 'name', 'id');
-
   const defaultValues = initialData
     ? initialData.project[0]
     : {
@@ -72,7 +71,9 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
               placeholder="Select client"
               label="Client ID"
               name="client_id"
-              options={clients}
+              optionLabel="name"
+              optionValue="id"
+              options={data?.client}
             />
             <InputTextArea label="Description" name="description" isRequired />
             <InputTextArea label="GPT Persona" name="gpt_persona" isRequired />
@@ -127,13 +128,4 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
 
     setLoading(false);
   }
-}
-
-function convertDataToDropdownOptions(data: any[], labelKey: string, valueKey: string) {
-  const options = data?.map(item => ({
-    label: item[labelKey] as string,
-    value: item[valueKey]
-  }));
-
-  return options;
 }

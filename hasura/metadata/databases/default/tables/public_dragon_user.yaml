@@ -16,6 +16,13 @@ array_relationships:
         table:
           name: media
           schema: public
+  - name: project_contractors
+    using:
+      foreign_key_constraint_on:
+        column: dragon_user_id
+        table:
+          name: project_contractor
+          schema: public
   - name: project_times
     using:
       foreign_key_constraint_on:
