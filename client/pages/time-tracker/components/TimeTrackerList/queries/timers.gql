@@ -1,0 +1,23 @@
+query timers(
+  $limit: Int
+  $offset: Int
+  $order_by: [project_time_order_by!]
+  $where: project_time_bool_exp
+) {
+  project_time(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    id
+    project {
+      name
+      client {
+        name
+      }
+    }
+    start_time
+    end_time
+  }
+  project_time_aggregate(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    aggregate {
+      count
+    }
+  }
+}

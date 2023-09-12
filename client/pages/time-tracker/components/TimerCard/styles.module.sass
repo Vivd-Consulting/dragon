@@ -1,0 +1,30 @@
+.bigButton
+  width: 400px
+  height: 400px
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-wrap: wrap
+  font-size: 1.5rem
+  font-weight: bold
+  color: #fff
+  background-color: var(--blue-600)
+  border: none
+  border-radius: 0.5rem
+  cursor: pointer
+  transition: background-color 0.2s ease-in-out
+
+  &:hover
+    background-color: var(--blue-500)
+
+  &:active
+    background-color: var(--blue-700)
+
+.isActive
+  background-color: var(--green-600)
+
+  &:hover
+    background-color: var(--green-500)
+
+  &:active
+    background-color: var(--green-700)

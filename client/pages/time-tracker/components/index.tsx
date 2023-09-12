@@ -7,22 +7,21 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
-import { Tooltip } from 'primereact/tooltip';
 
 import { Row } from 'components/Group';
 import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
-import projectsQuery from './queries/projects.gql';
-import archiveProjectMutation from './queries/archiveProject.gql';
+import contractorsQuery from './queries/contractors.gql';
+import archiveContractorMutation from './queries/archiveContractor.gql';
 
-export default function ProjectList() {
+export default function ContractorList() {
   const {
     query: { loading, previousData, data },
     paginationValues,
     onPage
-  } = usePaginatedQuery(projectsQuery, {
+  } = usePaginatedQuery(contractorsQuery, {
     fetchPolicy: 'no-cache',
     variables: {
       where: {
@@ -31,23 +30,23 @@ export default function ProjectList() {
     }
   });
 
-  const [archiveProject] = useMutation(archiveProjectMutation, {
-    refetchQueries: ['projects', 'project']
+  const [archiveContractor] = useMutation(archiveContractorMutation, {
+    refetchQueries: ['contractors', 'contractor']
   });
 
   const toastRef = useRef<Toast>(null);
 
-  const projects = loading ? previousData?.project : data?.project;
+  const contractors = loading ? previousData?.contractor : data?.contractor;
   const totalRecords = loading
-    ? previousData?.project_aggregate.aggregate.count
-    : data?.project_aggregate.aggregate.count;
+    ? previousData?.contractor_aggregate.aggregate.count
+    : data?.contractor_aggregate.aggregate.count;
 
   return (
     <>
       <Toast ref={toastRef} />
 
       <DataTable
-        value={projects}
+        value={contractors}
         paginator
         lazy
         onPage={onPage}
@@ -62,8 +61,8 @@ export default function ProjectList() {
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
         rowsPerPageOptions={[10, 25, 50, 100]}
-        emptyMessage="No Projects found."
-        data-cy="projects-table"
+        emptyMessage="No Contractors found."
+        data-cy="contractors-table"
       >
         <Column
           field="id"
@@ -86,52 +85,60 @@ export default function ProjectList() {
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
-        <Column
-          field="description"
-          header="Description"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
+
         <Column
           field="gpt_persona"
           header="GPT Persona"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
+
         <Column
-          field="github_repo_org"
-          header="Github Repo Organization"
+          field="location"
+          header="Location"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          field="document"
+          header="Document"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          field="contractor_rate.rate"
+          header="Rate"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          field="invoice"
+          header="Invoice"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
+        <Column
+          body={({ start_date }) => <span>{dateFormat(start_date)}</span>}
+          field="start_date"
+          header="Start Date"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
         <Column
-          field="github_repo_name"
-          header="Github Repo Name"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          field="client.name"
-          header="Client Name"
+          body={({ end_date }) => <span>{dateFormat(end_date)}</span>}
+          field="end_date"
+          header="End Date"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
 
         <Column
           body={({ archived_at }) => {
-            const isArchived = !!archived_at;
-            const archivedDate = dateFormat(archived_at);
-
-            return (
-              <>
-                <Tooltip target=".pi-check" />
-                <i
-                  data-pr-tooltip={isArchived ? archivedDate : ''}
-                  data-pr-position="bottom"
-                  className={`pi ${isArchived ? 'pi-check text-green-500' : 'pi-minus'}`}
-                />
-              </>
-            );
+            return <i className="pi pi-times-circle" />;
           }}
           field="archived_at"
           header="Archived"
@@ -146,12 +153,12 @@ export default function ProjectList() {
   function useActionButtons(data) {
     const router = useRouter();
 
-    const confirmArchiveProject = () => {
+    const confirmArchiveClient = () => {
       confirmDialog({
         message: `Are you sure you want to archive ${data.name}?`,
-        header: 'Archive Project',
+        header: 'Archive Contractor',
         icon: 'pi pi-exclamation-triangle',
-        accept: () => _archiveProject(data)
+        accept: () => _archiveContractor(data)
       });
     };
 
@@ -159,43 +166,43 @@ export default function ProjectList() {
       <Row>
         <Button
           size="small"
-          icon="pi pi-user-edit"
           tooltip="Edit"
           tooltipOptions={{ position: 'top' }}
-          onClick={() => router.push(`/projects/edit/${data?.id}`)}
+          icon="pi pi-user-edit"
+          onClick={() => router.push(`/contractors/edit/${data?.id}`)}
         />
         <Button
           size="small"
+          severity="danger"
           tooltip="Archive"
           tooltipOptions={{ position: 'top' }}
-          severity="danger"
           icon="pi pi-trash"
-          onClick={confirmArchiveProject}
+          onClick={confirmArchiveClient}
         />
       </Row>
     );
   }
 
-  async function _archiveProject(data) {
+  async function _archiveContractor(data) {
     const date = new Date();
 
     try {
-      await archiveProject({
+      await archiveContractor({
         variables: { id: data.id, archived_at: date }
       });
 
       toastRef?.current?.show({
         severity: 'success',
         summary: 'Success',
-        detail: 'Project is archived',
+        detail: 'Contractor is archived',
         life: 3000
       });
     } catch (e) {
       toastRef?.current?.show({
         life: 3000,
         severity: 'error',
-        summary: 'Failed to archive project.',
-        detail: 'Unable to archive the project at this time.'
+        summary: 'Failed to archive contractor.',
+        detail: 'Unable to archive the contractor at this time.'
       });
       console.error(e);
     }
