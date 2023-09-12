@@ -14,6 +14,12 @@ query projects(
     client {
       name
     }
+    contractors {
+      contractor {
+        id
+        name
+      }
+    }
   }
   project_aggregate(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     aggregate {
