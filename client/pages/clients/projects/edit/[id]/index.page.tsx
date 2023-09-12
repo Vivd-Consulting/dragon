@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 
 import { Card } from 'primereact/card';
 
-import ProjectForm from 'pages/projects/components/ProjectForm';
+import ProjectForm from '../../components/ProjectForm';
 
 import projectQuery from '../queries/project.gql';
 
