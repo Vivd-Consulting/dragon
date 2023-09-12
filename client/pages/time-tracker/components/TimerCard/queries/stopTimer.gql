@@ -1,0 +1,10 @@
+mutation stopTimer($timerId: Int!, $endTime: timestamp!) {
+  update_project_time(
+    _set: { end_time: $endTime }
+    where: { id: { _eq: $timerId } }
+  ) {
+    returning {
+      id
+    }
+  }
+}
