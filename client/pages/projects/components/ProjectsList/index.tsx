@@ -8,22 +8,19 @@ import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
-import { MultiSelect } from 'primereact/multiselect';
 
+import { AssignContractorProjectDropdown } from 'components/AssignContractorProjectDropdown';
 import { Row } from 'components/Group';
 import { InputTextDebounced } from 'components/Form';
 
-import { convertDataToDropdownOptions, dateFormat } from 'utils';
+import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 import clientsQuery from '../queries/clients.gql';
-import contractorsQuery from '../queries/contractors.gql';
 
 import projectsQuery from './queries/projects.gql';
 import archiveProjectMutation from './queries/archiveProject.gql';
-import assignContractorToProjectMutation from './queries/assignContractorToProject.gql';
-import deleteProjectContractorRelationMutation from './queries/deleteProjectContractorRelation.gql';
 
 export default function ProjectList() {
   const [selectedClient, setSelectedClient] = useState<number[] | undefined>(undefined);
@@ -31,7 +28,24 @@ export default function ProjectList() {
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
 
   const { data: clientsData } = useQuery(clientsQuery);
-  const { data: contractorsData } = useQuery(contractorsQuery);
+
+  const where: any = {
+    archived_at: { _is_null: true }
+  };
+
+  if (selectedClient) {
+    where.client_id = {
+      _eq: selectedClient
+    };
+  }
+
+  if (searchText) {
+    where._or = [
+      { name: { _ilike: `%${searchText}%` } },
+      { github_repo_name: { _ilike: `%${searchText}%` } },
+      { github_repo_org: { _ilike: `%${searchText}%` } }
+    ];
+  }
 
   const {
     query: { loading, previousData, data },
@@ -40,26 +54,11 @@ export default function ProjectList() {
   } = usePaginatedQuery(projectsQuery, {
     fetchPolicy: 'no-cache',
     variables: {
-      where: {
-        archived_at: { _is_null: true },
-        client_id: {
-          _eq: selectedClient
-        },
-        _or: [
-          { github_repo_name: { _ilike: searchText || undefined } },
-          { github_repo_org: { _ilike: searchText || undefined } }
-        ]
-      }
+      where
     }
   });
 
   const [archiveProject] = useMutation(archiveProjectMutation, {
-    refetchQueries: ['projects', 'project']
-  });
-
-  const [deleteProjectContratorRelation] = useMutation(deleteProjectContractorRelationMutation);
-
-  const [assignContractorToProject] = useMutation(assignContractorToProjectMutation, {
     refetchQueries: ['projects', 'project']
   });
 
@@ -69,10 +68,6 @@ export default function ProjectList() {
   const totalRecords = loading
     ? previousData?.project_aggregate.aggregate.count
     : data?.project_aggregate.aggregate.count;
-
-  const clients = convertDataToDropdownOptions(clientsData?.client, 'name', 'id');
-
-  const contractors = convertDataToDropdownOptions(contractorsData?.contractor, 'name', 'id');
 
   return (
     <>
@@ -85,7 +80,9 @@ export default function ProjectList() {
           value={selectedClient}
           onChange={e => setSelectedClient(e.value)}
           placeholder="Select client"
-          options={clients}
+          optionLabel="name"
+          optionValue="id"
+          options={clientsData?.client}
         />
         <InputTextDebounced
           placeholder="Search by"
@@ -193,10 +190,6 @@ export default function ProjectList() {
   );
 
   function useActionButtons(data) {
-    const assignedContractors = data?.contractors?.map(x => x.contractor.id);
-
-    const [selectedContractors, setSelectedContractors] = useState(assignedContractors);
-
     const router = useRouter();
 
     const confirmArchiveProject = () => {
@@ -206,10 +199,6 @@ export default function ProjectList() {
         icon: 'pi pi-exclamation-triangle',
         accept: () => _archiveProject(data)
       });
-    };
-
-    const confirmAssignContractorToProject = () => {
-      _assignContractorToProject(data, selectedContractors, setSelectedContractors);
     };
 
     return (
@@ -229,57 +218,9 @@ export default function ProjectList() {
           icon="pi pi-trash"
           onClick={confirmArchiveProject}
         />
-        <MultiSelect
-          filter
-          showClear
-          closeIcon="pi pi-check text-green-600"
-          display="chip"
-          value={selectedContractors}
-          onChange={e => {
-            const _contractor = e.value;
-
-            setSelectedContractors(_contractor);
-
-            // confirmAssignContractorToProject(_contractor);
-          }}
-          onHide={confirmAssignContractorToProject}
-          placeholder="Assign contractor"
-          options={contractors}
-        />
+        <AssignContractorProjectDropdown projectId={data?.id} />
       </Row>
     );
-  }
-
-  async function _assignContractorToProject(data, contractorIds: number[], setSelectedContractors) {
-    const ids = contractorIds.map(id => ({
-      contractor_id: id,
-      project_id: data.id
-    }));
-
-    try {
-      await assignContractorToProject({
-        variables: {
-          ids
-        }
-      });
-
-      setSelectedContractors(undefined);
-
-      toastRef?.current?.show({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Contractor assigned.',
-        life: 3000
-      });
-    } catch (e) {
-      toastRef?.current?.show({
-        life: 3000,
-        severity: 'error',
-        summary: 'Failed to assign contractor.',
-        detail: 'Unable to assign contractor to the project at this time.'
-      });
-      console.error(e);
-    }
   }
 
   async function _archiveProject(data) {
@@ -288,12 +229,6 @@ export default function ProjectList() {
     try {
       await archiveProject({
         variables: { id: data.id, archived_at: date }
-      });
-
-      await deleteProjectContratorRelation({
-        variables: {
-          project_id: data.id
-        }
       });
 
       toastRef?.current?.show({
