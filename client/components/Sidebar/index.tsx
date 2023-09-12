@@ -81,7 +81,7 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
           <SidebarItem icon="pi pi-home" label="Home" href="/" onClick={onItemClick} />
 
           <SidebarGroup
-            icon="pi pi-home"
+            icon="pi pi-briefcase"
             title="Clients"
             expanded={selectedGroup === 'Clients'}
             setExpanded={setSelectedGroup}
@@ -89,34 +89,37 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
             <SidebarItem label="Clients" href="/clients" onClick={onItemClick} />
             <SidebarItem label="Projects" href="/projects" onClick={onItemClick} />
           </SidebarGroup>
+
+          <SidebarItem icon="pi pi-code" label="Tasks" href="/tasks" onClick={onItemClick} />
+
           <SidebarItem
-            icon="pi pi-home"
+            icon="pi pi-users"
             label="Contractors"
             href="/contractors"
             onClick={onItemClick}
           />
 
           <SidebarItem
-            icon="pi pi-home"
+            icon="pi pi-clock"
             label="Time Tracker"
             href="/time-tracker"
             onClick={onItemClick}
           />
 
-          <SidebarItem
+          {/* <SidebarItem
             icon="pi pi-users"
             allowedRole={Role.Admin}
             label="Users"
             href="/users"
             onClick={onItemClick}
-          />
+          /> */}
 
-          <SidebarItem
+          {/* <SidebarItem
             icon="pi pi-question-circle"
             label="FAQ"
             href="https://example.com"
             external
-          />
+          /> */}
         </Column>
       </div>
     </>
