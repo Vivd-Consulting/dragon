@@ -1,0 +1,7 @@
+mutation updateProject($id: Int!, $archived_at: timestamp) {
+  update_project(_set: { archived_at: $archived_at }, where: { id: { _eq: $id } }) {
+    returning {
+      id
+    }
+  }
+}

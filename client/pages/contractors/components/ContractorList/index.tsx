@@ -72,55 +72,23 @@ export default function ContractorList() {
           className="white-space-nowrap"
         />
         <Column
-          field="created_at"
-          header="Created At"
-          body={({ created_at }) => <span>{dateFormat(created_at)}</span>}
-          sortable
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
           field="name"
           header="Name"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
-
-        <Column
-          field="gpt_persona"
-          header="GPT Persona"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-
         <Column
           field="location"
           header="Location"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
-
-        <Column
-          field="document"
-          header="Document"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-
         <Column
           field="contractor_rate.rate"
           header="Rate"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
-
-        <Column
-          field="invoice"
-          header="Invoice"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-
         <Column
           body={({ start_date }) => <span>{dateFormat(start_date)}</span>}
           field="start_date"
@@ -132,16 +100,6 @@ export default function ContractorList() {
           body={({ end_date }) => <span>{dateFormat(end_date)}</span>}
           field="end_date"
           header="End Date"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-
-        <Column
-          body={({ archived_at }) => {
-            return <i className="pi pi-times-circle" />;
-          }}
-          field="archived_at"
-          header="Archived"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
