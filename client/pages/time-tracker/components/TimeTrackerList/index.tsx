@@ -234,8 +234,3 @@ function calculateDuration(startTime, endTime) {
     .toString()
     .padStart(2, '0')}`;
 }
-
-function diffMinutes(start, end) {
-  // TODO: Return difference as hours:minutes:seconds
-  return dateUTC(end).diff(dateUTC(start), 'minutes');
-}
