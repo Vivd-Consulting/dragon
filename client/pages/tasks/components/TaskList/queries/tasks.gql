@@ -1,0 +1,16 @@
+query tasks(
+  $limit: Int
+  $offset: Int
+  $order_by: [task_order_by!]
+  $where: task_bool_exp
+) {
+  task(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    id
+    title
+  }
+  task_aggregate(order_by: $order_by, where: $where) {
+    aggregate {
+      count
+    }
+  }
+}
