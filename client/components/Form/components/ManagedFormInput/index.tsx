@@ -22,8 +22,7 @@ type ManagedFormInputsProps = {
 export function ManagedFormInput({ formHook }: ManagedFormInputsProps) {
   const {
     control,
-    formState: { errors },
-    register
+    formState: { errors }
   } = formHook;
 
   // Memoize the form upload inputs, only ditch the state of the error state changes

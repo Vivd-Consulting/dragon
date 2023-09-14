@@ -1,8 +1,0 @@
-query attribution($id: Int!) {
-  attribution(where: { id: { _eq: $id } }) {
-    author
-    title
-    license
-    source_url
-  }
-}

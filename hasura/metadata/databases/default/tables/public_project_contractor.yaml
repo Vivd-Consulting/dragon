@@ -5,9 +5,6 @@ object_relationships:
   - name: contractor
     using:
       foreign_key_constraint_on: contractor_id
-  - name: dragon_user
-    using:
-      foreign_key_constraint_on: dragon_user_id
   - name: project
     using:
       foreign_key_constraint_on: project_id
