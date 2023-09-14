@@ -116,21 +116,24 @@ export default function Duration({ project, isListViewChecked }) {
   function ActionButtons({ onProjectTimerStart, onProjectTimerStop, project }) {
     return (
       <Row>
-        <Button
-          size="small"
-          icon="pi pi-play"
-          tooltip="Start"
-          tooltipOptions={{ position: 'top' }}
-          onClick={() => onProjectTimerStart(project)}
-        />
-        <Button
-          size="small"
-          tooltip="Stop"
-          severity="danger"
-          tooltipOptions={{ position: 'top' }}
-          icon="pi pi-stop-circle"
-          onClick={() => onProjectTimerStop(project)}
-        />
+        {project.isActive ? (
+          <Button
+            size="small"
+            icon="pi pi-play"
+            tooltip="Start"
+            tooltipOptions={{ position: 'top' }}
+            onClick={() => onProjectTimerStart(project)}
+          />
+        ) : (
+          <Button
+            size="small"
+            tooltip="Stop"
+            severity="danger"
+            tooltipOptions={{ position: 'top' }}
+            icon="pi pi-stop-circle"
+            onClick={() => onProjectTimerStop(project)}
+          />
+        )}
       </Row>
     );
   }
