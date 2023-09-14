@@ -174,7 +174,7 @@ export default function TimeTrackerList() {
   );
 
   function useActionButtons(data) {
-    const confirmArchiveClient = () => {
+    const confirmArchiveHistory = () => {
       confirmDialog({
         message: 'Are you sure you want to delete this entry?',
         header: 'Delete Time Entry',
@@ -191,7 +191,7 @@ export default function TimeTrackerList() {
           tooltip="Archive"
           tooltipOptions={{ position: 'top' }}
           icon="pi pi-trash"
-          onClick={confirmArchiveClient}
+          onClick={confirmArchiveHistory}
         />
       </Row>
     );
@@ -232,6 +232,10 @@ function dateUTC(date) {
 }
 
 function calculateDuration(startTime, endTime) {
+  if (!endTime) {
+    return '--:--:--';
+  }
+
   const start = dayjs(startTime);
   const end = dayjs(endTime);
 
