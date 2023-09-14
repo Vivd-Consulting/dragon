@@ -60,6 +60,8 @@ export default function TimeTrackerPage() {
               onChange={e => setIsListViewChecked(e.value)}
               onLabel="Card View"
               offLabel="List View"
+              onIcon="pi pi-th-large"
+              offIcon="pi pi-list"
             />
           </Row>
         }
