@@ -1,0 +1,9 @@
+mutation createTask(
+) {
+  insert_task_one(
+    object: {
+    }
+  ) {
+    id
+  }
+}

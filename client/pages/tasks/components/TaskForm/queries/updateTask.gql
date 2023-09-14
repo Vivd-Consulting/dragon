@@ -1,0 +1,12 @@
+mutation updateTask(
+) {
+  update_task(
+    _set: {
+    }
+    where: { id: { _eq: $id } }
+  ) {
+    returning {
+      id
+    }
+  }
+}

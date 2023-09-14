@@ -108,20 +108,15 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
 
           <SidebarItem icon="pi pi-key" label="Secrets" href="/secrets" onClick={onItemClick} />
 
-          {/* <SidebarItem
-            icon="pi pi-users"
-            allowedRole={Role.Admin}
-            label="Users"
-            href="/users"
-            onClick={onItemClick}
-          /> */}
-
-          {/* <SidebarItem
-            icon="pi pi-question-circle"
-            label="FAQ"
-            href="https://example.com"
-            external
-          /> */}
+          <SidebarGroup
+            icon="pi pi-money-bill"
+            title="Accounting"
+            expanded={selectedGroup === 'Accounting'}
+            setExpanded={setSelectedGroup}
+          >
+            <SidebarItem label="Invoices" href="/accounting/invoices" onClick={onItemClick} />
+            <SidebarItem label="Reports" href="/accounting/reports" onClick={onItemClick} />
+          </SidebarGroup>
         </Column>
       </div>
     </>
