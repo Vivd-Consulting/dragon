@@ -89,6 +89,10 @@ export async function checkLinkIsSafe(link) {
 }
 
 export const dateFormat = date => {
+  if (!date) {
+    return '--:--:--';
+  }
+
   return dayjs(date).format('MMM D, HH:mm');
 };
 
