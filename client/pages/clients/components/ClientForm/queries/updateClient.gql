@@ -1,5 +1,6 @@
 mutation updateClient(
   $id: Int!
+  $logo_id: Int
   $name: String!
   $description: String!
   $gpt_persona: String!
@@ -10,6 +11,7 @@ mutation updateClient(
   update_client(
     _set: {
       name: $name
+      logo_id: $logo_id
       description: $description
       gpt_persona: $gpt_persona
       document: $document

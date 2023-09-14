@@ -1,6 +1,7 @@
 query client($id: Int!) {
   client(where: { id: { _eq: $id } }) {
     id
+    logo_id
     name
     description
     gpt_persona
