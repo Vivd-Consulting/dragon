@@ -1,5 +1,5 @@
+import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { useRef } from 'react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
@@ -8,8 +8,13 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
+import { Calendar } from 'primereact/calendar';
+
+import { Nullable } from 'primereact/ts-helpers';
 
 import { Row } from 'components/Group';
+import { InputTextDebounced } from 'components/Form';
+
 import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
@@ -20,6 +25,25 @@ import deleteTimeMutation from './queries/deleteTime.gql';
 dayjs.extend(utc);
 
 export default function TimeTrackerList() {
+  const [searchText, setSearchText] = useState<string | undefined>(undefined);
+  const [dates, setDates] = useState<Nullable<string | Date | Date[]>>(null);
+
+  const where: any = {
+    deleted_at: { _is_null: true }
+  };
+
+  if (searchText) {
+    where._or = [
+      { project: { client: { name: { _ilike: `%${searchText}%` } } } },
+      { project: { name: { _ilike: `%${searchText}%` } } },
+      { project: { github_repo_name: { _ilike: `%${searchText}%` } } }
+    ];
+  }
+
+  if (dates && Array.isArray(dates) && dates.length > 1 && !!dates[1]) {
+    where._and = [{ start_time: { _gte: dates[0] } }, { end_time: { _lte: dates[1] } }];
+  }
+
   const {
     query: { loading, previousData, data },
     paginationValues,
@@ -27,9 +51,7 @@ export default function TimeTrackerList() {
   } = usePaginatedQuery(timersQuery, {
     fetchPolicy: 'no-cache',
     variables: {
-      where: {
-        deleted_at: { _is_null: true }
-      }
+      where
     }
   });
 
@@ -47,6 +69,35 @@ export default function TimeTrackerList() {
   return (
     <>
       <Toast ref={toastRef} />
+
+      <Row className="pb-4" align="center" justify="between" gap="3">
+        <Row gap="3" align="center">
+          <InputTextDebounced
+            placeholder="Search by name"
+            value={searchText}
+            onChange={e => setSearchText(e)}
+          />
+          <Calendar
+            showButtonBar
+            placeholder="Search by date"
+            value={dates}
+            onChange={e => setDates(e.value)}
+            selectionMode="range"
+            readOnlyInput
+          />
+        </Row>
+
+        <Button
+          size="small"
+          tooltip="Clear filters"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-undo"
+          onClick={() => {
+            setSearchText(undefined);
+            setDates(null);
+          }}
+        />
+      </Row>
 
       <DataTable
         value={timers}
@@ -107,7 +158,9 @@ export default function TimeTrackerList() {
         <Column
           field="duration"
           header="Duration"
-          body={({ start_time, end_time }) => <span>{diffMinutes(start_time, end_time)}</span>}
+          body={({ start_time, end_time }) => (
+            <span>{calculateDuration(start_time, end_time)}</span>
+          )}
           sortable
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
@@ -118,7 +171,7 @@ export default function TimeTrackerList() {
   );
 
   function useActionButtons(data) {
-    const confirmArchiveClient = () => {
+    const confirmArchiveHistory = () => {
       confirmDialog({
         message: 'Are you sure you want to delete this entry?',
         header: 'Delete Time Entry',
@@ -135,7 +188,7 @@ export default function TimeTrackerList() {
           tooltip="Archive"
           tooltipOptions={{ position: 'top' }}
           icon="pi pi-trash"
-          onClick={confirmArchiveClient}
+          onClick={confirmArchiveHistory}
         />
       </Row>
     );
@@ -167,15 +220,19 @@ export default function TimeTrackerList() {
   }
 }
 
-function nowUTC() {
-  return dayjs.utc();
-}
+function calculateDuration(startTime, endTime) {
+  if (!endTime) {
+    return '--:--:--';
+  }
 
-function dateUTC(date) {
-  return dayjs.utc(date);
-}
+  const start = dayjs(startTime);
+  const end = dayjs(endTime);
 
-function diffMinutes(start, end) {
-  // TODO: Return difference as hours:minutes:seconds
-  return dateUTC(end).diff(dateUTC(start), 'minutes');
+  const duration = end.diff(start, 'minute');
+  const roundedDuration = Math.ceil(duration / 30) * 30;
+
+  const hours = Math.floor(roundedDuration / 60);
+  const minutes = roundedDuration % 60;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
 }

@@ -10,7 +10,7 @@ query clients($limit: Int, $offset: Int, $order_by: [client_order_by!], $where: 
     archived_at
     document
   }
-  client_aggregate(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+  client_aggregate(order_by: $order_by, where: $where) {
     aggregate {
       count
     }

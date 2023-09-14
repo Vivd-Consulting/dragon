@@ -21,7 +21,7 @@ query projects(
       }
     }
   }
-  project_aggregate(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+  project_aggregate(order_by: $order_by, where: $where) {
     aggregate {
       count
     }
