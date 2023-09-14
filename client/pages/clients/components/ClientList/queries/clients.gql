@@ -1,6 +1,7 @@
 query clients($limit: Int, $offset: Int, $order_by: [client_order_by!], $where: client_bool_exp) {
   client(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     id
+    logo_id
     name
     description
     gpt_persona

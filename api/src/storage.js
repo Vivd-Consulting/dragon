@@ -13,7 +13,6 @@ const router = express.Router();
 
 const jwtClaim = "https://hasura.io/jwt/claims";
 
-/*
 const uploadMulter = multer({
   storage: multerS3({
     s3: s3Client,
@@ -42,7 +41,6 @@ const uploadMulter = multer({
     },
   }),
 });
-*/
 
 const upload_auth = (req, res, next) => {
   // all uploaded files gets pushed in to this array
@@ -53,17 +51,18 @@ const upload_auth = (req, res, next) => {
   next();
 };
 
-/*
 router.post(
   "/upload",
   upload_auth,
   uploadMulter.array("files", 50),
   async function (req, res, next) {
     try {
-      const type = req.headers["type"] || "image";
-      // const claims = res.locals.token[jwtClaim]
+      // const type = req.headers["type"] || "image";
+      const claims = res.locals.token[jwtClaim]
 
-      const media = await persistMedia(req.saved_files, type);
+      const user_id = claims['x-hasura-user-id'];
+
+      const media = await persistMedia(req.saved_files, user_id);
 
       res.json(media);
     } catch (error) {
@@ -71,26 +70,19 @@ router.post(
     }
   }
 );
-*/
 
 // Update our Media table in the database
-async function persistMedia(files, type, organization) {
+async function persistMedia(files, user_id) {
   const transaction = await knex.transaction();
   const [ids] = await Promise.all(
     files.map(async ({ key, originalname, mimetype }) => {
-      const [attribution] = await knex("attribution")
-        .insert({}, ["id"])
-        .transacting(transaction);
-
       return await knex("media")
         .insert(
           {
             key,
             filename: originalname,
             mimetype,
-            type,
-            attribution_id: attribution.id,
-            organization_id: organization,
+            user_id
           },
           ["id", "key"]
         )

@@ -116,7 +116,7 @@ export const UploadInput = ({
     skip: !fileId
   });
 
-  const { id, attribution_id } = data?.media[0] || {};
+  const { id } = data?.media[0] || {};
 
   const getFormErrorMessage = () => {
     if (!errors) {
@@ -156,6 +156,10 @@ export const UploadInput = ({
     [name, setError]
   );
 
+  console.log({
+    fileId
+  })
+
   return (
     <Column data-cy={`upload-${name}`}>
       {!!label && (
@@ -180,7 +184,6 @@ export const UploadInput = ({
         onError={onError}
         auto={auto}
         mediaId={id}
-        attributionId={attribution_id}
         acceptType={acceptType}
         compression={compression}
         onDelete={onDelete}

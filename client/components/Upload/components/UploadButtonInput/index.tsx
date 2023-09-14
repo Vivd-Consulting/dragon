@@ -1,15 +1,11 @@
 import React, { useRef, useState } from 'react';
+import cx from 'clsx';
 import Compressor from 'compressorjs';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { FileUpload } from 'primereact/fileupload';
 import { ContextMenu } from 'primereact/contextmenu';
 import { Button } from 'primereact/button';
 import { MenuItem } from 'primereact/menuitem';
-
-import { EditAttributionForm } from 'components/AttributionForm';
-import { ModalVisible } from 'components/Modal';
 
 import { useAuth } from 'hooks/useAuth';
 
@@ -27,7 +23,6 @@ type UploadButtonInputProps = {
   acceptType: string;
   auto?: boolean;
   mediaId?: string;
-  attributionId?: string;
   compression?: {
     quality?: number;
     maxWidth?: number;
@@ -47,10 +42,8 @@ export const UploadButtonInput = ({
   acceptType,
   auto = false,
   mediaId,
-  attributionId,
   compression,
-  maxUploadSize,
-  allowCommonsUpload = true
+  maxUploadSize
 }: UploadButtonInputProps) => {
   const fileUploadRef = useRef(null);
   const { token } = useAuth();
@@ -58,9 +51,6 @@ export const UploadButtonInput = ({
   const cmRef = useRef<ContextMenu | null>(null);
 
   const [uploading, setUploading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
-  const pencilIcon = <FontAwesomeIcon icon={faPen} className="pl-1 pr-2" />;
 
   const confirmDelete = () =>
     confirmDialog({
@@ -71,22 +61,6 @@ export const UploadButtonInput = ({
     });
 
   const buttonModel = [
-    {
-      label: 'Edit Attribution',
-      icon: pencilIcon,
-      command: () => {
-        setShowModal(true);
-      }
-    },
-    ...(allowCommonsUpload
-      ? [
-          {
-            label: 'Search Commons',
-            icon: 'pi pi-fw pi-images',
-            command: () => {}
-          }
-        ]
-      : []),
     showDelete && {
       label: 'Delete',
       icon: 'pi pi-fw pi-trash',
@@ -94,21 +68,11 @@ export const UploadButtonInput = ({
     }
   ].filter(Boolean) as MenuItem[]; // Type assertion to MenuItem[] // Filter out any null values from the array
 
-  const acceptsImageOrSound = ACCEPTED_TYPES['image_or_audio'].test(acceptType);
+  // const acceptsImageOrSound = ACCEPTED_TYPES['image_or_audio'].test(acceptType);
+  const hasMedia = !!mediaId;
 
   return (
-    <div className={styles.uploadInput}>
-      {mediaId && attributionId && (
-        <ModalVisible
-          visible={showModal}
-          header="Edit Attribution"
-          onHide={closeModal}
-          footer
-          className={styles.attributionModal}
-        >
-          <EditAttributionForm attributionId={attributionId} onClose={closeModal} />
-        </ModalVisible>
-      )}
+    <div className={cx(styles.uploadInput, hasMedia && styles.noRightBorder)}>
       <FileUpload
         ref={fileUploadRef}
         mode="basic"
@@ -120,7 +84,7 @@ export const UploadButtonInput = ({
         customUpload
         disabled={uploading}
       />
-      {mediaId && acceptsImageOrSound && (
+      {hasMedia && (
         <>
           <ContextMenu model={buttonModel} ref={cmRef as React.RefObject<ContextMenu>} />
           <Button
@@ -134,10 +98,6 @@ export const UploadButtonInput = ({
       )}
     </div>
   );
-
-  function closeModal() {
-    return setShowModal(false);
-  }
 
   async function customUpload(e) {
     const compress = file =>

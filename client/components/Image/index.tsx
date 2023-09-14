@@ -1,4 +1,3 @@
-export * from './components/AddressablePreview';
 export * from './components/PreviewCircularImage';
 export * from './components/PreviewImage';
 export * from './components/ExternalImage';
