@@ -15,7 +15,7 @@ query timers(
     start_time
     end_time
   }
-  project_time_aggregate(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+  project_time_aggregate(order_by: $order_by, where: $where) {
     aggregate {
       count
     }

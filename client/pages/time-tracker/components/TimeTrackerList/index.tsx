@@ -41,9 +41,6 @@ export default function TimeTrackerList() {
   }
 
   if (dates && Array.isArray(dates) && dates.length > 1 && !!dates[1]) {
-    const startDate = dayjs(dates[0]).toISOString();
-    const endDate = dayjs(dates[1]).toISOString();
-
     where._and = [{ start_time: { _gte: dates[0] } }, { end_time: { _lte: dates[1] } }];
   }
 
@@ -221,14 +218,6 @@ export default function TimeTrackerList() {
       console.error(e);
     }
   }
-}
-
-function nowUTC() {
-  return dayjs.utc();
-}
-
-function dateUTC(date) {
-  return dayjs.utc(date);
 }
 
 function calculateDuration(startTime, endTime) {
