@@ -51,8 +51,9 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
       <Toast ref={toast} />
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
-        {({ InputText, InputTextArea, InputCalendar }) => (
+        {({ UploadImageInput, InputText, InputTextArea, InputCalendar }) => (
           <>
+            <UploadImageInput label="Brand Logo" name="logo_id" />
             <InputText label="Name" name="name" isRequired autoFocus />
             <InputTextArea label="Description" name="description" />
             <InputTextArea label="GPT Persona" name="gpt_persona" />
