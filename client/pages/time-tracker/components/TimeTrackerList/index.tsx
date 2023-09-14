@@ -235,14 +235,13 @@ function calculateDuration(startTime, endTime) {
   const start = dayjs(startTime);
   const end = dayjs(endTime);
 
-  const duration = end.diff(start, 'second');
-  const hours = Math.floor(duration / 3600);
-  const minutes = Math.floor((duration % 3600) / 60);
-  const seconds = duration % 60;
+  const duration = end.diff(start, 'minute');
+  const roundedDuration = Math.ceil(duration / 30) * 30;
 
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
-    .toString()
-    .padStart(2, '0')}`;
+  const hours = Math.floor(roundedDuration / 60);
+  const minutes = roundedDuration % 60;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
 }
 
 function diffMinutes(start, end) {
