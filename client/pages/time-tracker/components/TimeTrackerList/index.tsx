@@ -44,10 +44,7 @@ export default function TimeTrackerList() {
     const startDate = dayjs(dates[0]).toISOString();
     const endDate = dayjs(dates[1]).toISOString();
 
-    where._and = [
-      { start_time: { _gte: dayjs(dates[0]).toISOString() } },
-      { end_time: { _lte: dayjs(dates[1]).toISOString() } }
-    ];
+    where._and = [{ start_time: { _gte: dates[0] } }, { end_time: { _lte: dates[1] } }];
   }
 
   const {
@@ -76,19 +73,32 @@ export default function TimeTrackerList() {
     <>
       <Toast ref={toastRef} />
 
-      <Row className="pb-4" align="center" gap="3">
-        <InputTextDebounced
-          placeholder="Search by name"
-          value={searchText}
-          onChange={e => setSearchText(e)}
-        />
-        <Calendar
-          showButtonBar
-          placeholder="Search by date"
-          value={dates}
-          onChange={e => setDates(e.value)}
-          selectionMode="range"
-          readOnlyInput
+      <Row className="pb-4" align="center" justify="between" gap="3">
+        <Row gap="3" align="center">
+          <InputTextDebounced
+            placeholder="Search by name"
+            value={searchText}
+            onChange={e => setSearchText(e)}
+          />
+          <Calendar
+            showButtonBar
+            placeholder="Search by date"
+            value={dates}
+            onChange={e => setDates(e.value)}
+            selectionMode="range"
+            readOnlyInput
+          />
+        </Row>
+
+        <Button
+          size="small"
+          tooltip="Clear filters"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-undo"
+          onClick={() => {
+            setSearchText(undefined);
+            setDates(null);
+          }}
         />
       </Row>
 
