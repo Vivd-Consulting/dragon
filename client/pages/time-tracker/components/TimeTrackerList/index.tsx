@@ -44,10 +44,7 @@ export default function TimeTrackerList() {
     const startDate = dayjs(dates[0]).toISOString();
     const endDate = dayjs(dates[1]).toISOString();
 
-    where._and = [
-      { start_time: { _gte: dayjs(dates[0]).toISOString() } },
-      { end_time: { _lte: dayjs(dates[1]).toISOString() } }
-    ];
+    where._and = [{ start_time: { _gte: dates[0] } }, { end_time: { _lte: dates[1] } }];
   }
 
   const {
@@ -76,19 +73,32 @@ export default function TimeTrackerList() {
     <>
       <Toast ref={toastRef} />
 
-      <Row className="pb-4" align="center" gap="3">
-        <InputTextDebounced
-          placeholder="Search by name"
-          value={searchText}
-          onChange={e => setSearchText(e)}
-        />
-        <Calendar
-          showButtonBar
-          placeholder="Search by date"
-          value={dates}
-          onChange={e => setDates(e.value)}
-          selectionMode="range"
-          readOnlyInput
+      <Row className="pb-4" align="center" justify="between" gap="3">
+        <Row gap="3" align="center">
+          <InputTextDebounced
+            placeholder="Search by name"
+            value={searchText}
+            onChange={e => setSearchText(e)}
+          />
+          <Calendar
+            showButtonBar
+            placeholder="Search by date"
+            value={dates}
+            onChange={e => setDates(e.value)}
+            selectionMode="range"
+            readOnlyInput
+          />
+        </Row>
+
+        <Button
+          size="small"
+          tooltip="Clear filters"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-undo"
+          onClick={() => {
+            setSearchText(undefined);
+            setDates(null);
+          }}
         />
       </Row>
 
@@ -164,7 +174,7 @@ export default function TimeTrackerList() {
   );
 
   function useActionButtons(data) {
-    const confirmArchiveClient = () => {
+    const confirmArchiveHistory = () => {
       confirmDialog({
         message: 'Are you sure you want to delete this entry?',
         header: 'Delete Time Entry',
@@ -181,7 +191,7 @@ export default function TimeTrackerList() {
           tooltip="Archive"
           tooltipOptions={{ position: 'top' }}
           icon="pi pi-trash"
-          onClick={confirmArchiveClient}
+          onClick={confirmArchiveHistory}
         />
       </Row>
     );
@@ -222,15 +232,18 @@ function dateUTC(date) {
 }
 
 function calculateDuration(startTime, endTime) {
+  if (!endTime) {
+    return '--:--:--';
+  }
+
   const start = dayjs(startTime);
   const end = dayjs(endTime);
 
-  const duration = end.diff(start, 'second');
-  const hours = Math.floor(duration / 3600);
-  const minutes = Math.floor((duration % 3600) / 60);
-  const seconds = duration % 60;
+  const duration = end.diff(start, 'minute');
+  const roundedDuration = Math.ceil(duration / 30) * 30;
 
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
-    .toString()
-    .padStart(2, '0')}`;
+  const hours = Math.floor(roundedDuration / 60);
+  const minutes = roundedDuration % 60;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
 }
