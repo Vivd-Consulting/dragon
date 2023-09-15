@@ -141,7 +141,7 @@ CREATE TABLE task (
   priority integer NOT NULL DEFAULT 0,
 
   suggested_asignee_id text REFERENCES dragon_user(id),
-  asignee_id text REFERENCES dragon_user(id),
+  asignee_id integer REFERENCES contractor(id),
   project_id integer NOT NULL REFERENCES project(id),
   suggested_estimate_minutes integer NOT NULL DEFAULT 0,
   estimate_minutes integer NOT NULL DEFAULT 0,
