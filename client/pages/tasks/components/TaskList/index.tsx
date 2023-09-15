@@ -8,6 +8,8 @@ import { Toast } from 'primereact/toast';
 
 import { Row } from 'components/Group';
 
+import { dateFormat } from 'utils';
+
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 import tasksQuery from './queries/tasks.gql';
@@ -16,7 +18,7 @@ export default function TaskList() {
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
 
   const where: any = {
-    archived_at: { _is_null: true }
+    deleted_at: { _is_null: true }
   };
 
   if (searchText) {
@@ -40,6 +42,8 @@ export default function TaskList() {
   const totalRecords = loading
     ? previousData?.task_aggregate.aggregate.count
     : data?.task_aggregate.aggregate.count;
+
+  console.log(tasks);
 
   return (
     <>
@@ -71,6 +75,32 @@ export default function TaskList() {
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
+        <Column
+          field="title"
+          header="Title"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+        <Column
+          field="project.name"
+          header="Project"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+        <Column
+          field="description"
+          body={({ description }) => <span>{truncateText(description)}</span>}
+          header="Description"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+        <Column
+          body={({ due_date }) => <span>{dateFormat(due_date)}</span>}
+          field="due_date"
+          header="Due Date"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
         <Column body={useActionButtons} />
       </DataTable>
     </>
@@ -91,4 +121,12 @@ export default function TaskList() {
       </Row>
     );
   }
+}
+
+function truncateText(str: string, limit = 250) {
+  if (str.length <= limit) {
+    return str;
+  }
+
+  return `${str.substring(0, limit)}...`;
 }
