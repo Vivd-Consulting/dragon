@@ -38,6 +38,7 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
   const defaultValues = initialData
     ? initialData.client[0]
     : {
+        logo_id: '',
         name: '',
         description: '',
         gpt_persona: '',
