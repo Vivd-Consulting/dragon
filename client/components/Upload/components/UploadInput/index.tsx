@@ -158,7 +158,7 @@ export const UploadInput = ({
 
   console.log({
     fileId
-  })
+  });
 
   return (
     <Column data-cy={`upload-${name}`}>
