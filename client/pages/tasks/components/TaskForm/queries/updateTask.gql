@@ -1,7 +1,21 @@
 mutation updateTask(
+  $userId: String!
+  $title: String!
+  $project_id: Int!
+  $asignee_id: Int!
+  $priority: Int!
+  $description: String!
+  $due_date: timestamp
 ) {
   update_task(
     _set: {
+      user_id: $userId
+      title: $title
+      project_id: $project_id
+      asignee_id: $asignee_id
+      priority: $priority
+      description: $description
+      due_date: $due_date
     }
     where: { id: { _eq: $id } }
   ) {
