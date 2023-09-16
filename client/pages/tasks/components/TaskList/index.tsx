@@ -118,6 +118,13 @@ export default function TaskList() {
           tooltipOptions={{ position: 'top' }}
           onClick={() => router.push(`/tasks/edit/${data?.id}`)}
         />
+        <Button
+          size="small"
+          icon="pi pi-eye"
+          tooltip="View"
+          tooltipOptions={{ position: 'top' }}
+          // onClick={() => TODO...}
+        />
       </Row>
     );
   }
