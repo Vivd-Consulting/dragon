@@ -95,9 +95,7 @@ const TASK_ASIGNEES_CREATE = gql`
 
 const TASK_ASIGNEES_DELETE = gql`
   mutation deleteTaskAsignee($taskId: Int!, $asigneeId: Int!) {
-    delete_project_contractor(
-      where: { task_id: { _eq: $taskId }, asignee_id: { _eq: $asigneeId } }
-    ) {
+    delete_task_asignee(where: { task_id: { _eq: $taskId }, asignee_id: { _eq: $asigneeId } }) {
       returning {
         task_id
         asignee_id
