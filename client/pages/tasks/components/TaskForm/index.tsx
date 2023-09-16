@@ -14,10 +14,10 @@ import createTaskMutation from './queries/createTask.gql';
 import updateTaskMutation from './queries/updateTask.gql';
 
 const PRIORITY = [
-  { label: 'Low', value: '0' },
-  { label: 'Medium', value: '1' },
-  { label: 'High', value: '2' },
-  { label: 'Urgent', value: '3' }
+  { name: 'Low', id: 0 },
+  { name: 'Medium', id: 1 },
+  { name: 'High', id: 2 },
+  { name: 'Urgent', id: 3 }
 ];
 
 // TODO: Add Task Type
@@ -71,7 +71,6 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
         description: '',
         priority: undefined,
         due_date: ''
-        // ...
       };
 
   return (
@@ -105,6 +104,8 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
               placeholder="Priority"
               label="Priority"
               name="priority"
+              optionLabel="name"
+              optionValue="id"
               options={PRIORITY}
               isRequired
             />
