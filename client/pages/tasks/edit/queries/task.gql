@@ -1,0 +1,14 @@
+query task($id: Int!) {
+  task(where: { id: { _eq: $id } }) {
+    id
+    project_id
+    asignee_id
+    title
+    priority
+    description
+    due_date
+    project {
+      name
+    }
+  }
+}

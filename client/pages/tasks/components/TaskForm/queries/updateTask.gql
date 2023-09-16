@@ -1,4 +1,5 @@
 mutation updateTask(
+  $id: Int!
   $userId: String!
   $title: String!
   $project_id: Int!
