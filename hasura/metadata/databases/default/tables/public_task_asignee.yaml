@@ -1,0 +1,10 @@
+table:
+  name: task_asignee
+  schema: public
+object_relationships:
+  - name: contractor
+    using:
+      foreign_key_constraint_on: asignee_id
+  - name: task
+    using:
+      foreign_key_constraint_on: task_id

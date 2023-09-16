@@ -141,7 +141,6 @@ CREATE TABLE task (
   priority integer NOT NULL DEFAULT 0,
 
   suggested_asignee_id text REFERENCES dragon_user(id),
-  asignee_id integer REFERENCES contractor(id),
   project_id integer NOT NULL REFERENCES project(id),
   suggested_estimate_minutes integer NOT NULL DEFAULT 0,
   estimate_minutes integer NOT NULL DEFAULT 0,
@@ -154,4 +153,11 @@ CREATE TABLE task (
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),
   deleted_at timestamp
+);
+
+CREATE TABLE task_asignee (
+  asignee_id integer NOT NULL REFERENCES contractor(id),
+  task_id integer NOT NULL REFERENCES task(id),
+
+  PRIMARY KEY (asignee_id, task_id)
 );
