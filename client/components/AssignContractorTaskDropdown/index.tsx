@@ -3,29 +3,29 @@ import { MultiSelect } from 'primereact/multiselect';
 import { useContractors, useTaskContractors } from 'hooks/useTaskContractors';
 
 export function AssignContractorTaskDropdown({ taskId }) {
-  const [asignees] = useContractors();
-  const [taskAsignees, createTaskAsignee, deleteTaskAsignee] = useTaskContractors(taskId);
+  const [assignees] = useContractors();
+  const [taskAssignees, createTaskAssignee, deleteTaskAssignee] = useTaskContractors(taskId);
 
-  const selectedAsignees = taskAsignees.map(({ asignee_id }) => asignee_id);
+  const selectedAssignees = taskAssignees.map(({ assignee_id }) => assignee_id);
 
   return (
     <MultiSelect
       filter
       display="chip"
-      value={selectedAsignees}
+      value={selectedAssignees}
       onChange={({ selectedOption }) => {
         // Check if selectedOption is a contractor object or an id, when deleting a tag it's an id
-        const { id: asignee } =
+        const { id: assignee } =
           typeof selectedOption === 'object' ? selectedOption : { id: selectedOption };
 
-        if (selectedAsignees.includes(asignee)) {
-          deleteTaskAsignee(asignee);
+        if (selectedAssignees.includes(assignee)) {
+          deleteTaskAssignee(assignee);
         } else {
-          createTaskAsignee(asignee);
+          createTaskAssignee(assignee);
         }
       }}
       placeholder="Assign contractor"
-      options={asignees}
+      options={assignees}
       optionLabel="name"
       optionValue="id"
     />

@@ -155,9 +155,9 @@ CREATE TABLE task (
   deleted_at timestamp
 );
 
-CREATE TABLE task_asignee (
-  asignee_id integer NOT NULL REFERENCES contractor(id),
+CREATE TABLE task_assignee (
+  assignee_id integer NOT NULL REFERENCES contractor(id),
   task_id integer NOT NULL REFERENCES task(id),
 
-  PRIMARY KEY (asignee_id, task_id)
+  PRIMARY KEY (assignee_id, task_id)
 );

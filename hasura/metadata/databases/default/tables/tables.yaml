@@ -10,3 +10,4 @@
 - "!include public_project_time.yaml"
 - "!include public_task.yaml"
 - "!include public_task_asignee.yaml"
+- "!include public_task_assignee.yaml"
