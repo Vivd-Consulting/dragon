@@ -7,6 +7,7 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 
 import { Row } from 'components/Group';
+import { AssignContractorTaskDropdown } from 'components/AssignContractorTaskDropdown';
 
 import { dateFormat } from 'utils';
 
@@ -42,8 +43,6 @@ export default function TaskList() {
   const totalRecords = loading
     ? previousData?.task_aggregate.aggregate.count
     : data?.task_aggregate.aggregate.count;
-
-  console.log(tasks);
 
   return (
     <>
@@ -111,6 +110,7 @@ export default function TaskList() {
 
     return (
       <Row>
+        <AssignContractorTaskDropdown taskId={data?.id} />
         <Button
           size="small"
           icon="pi pi-user-edit"
