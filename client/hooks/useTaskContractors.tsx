@@ -28,77 +28,77 @@ const CONTRACTORS = gql`
 `;
 
 export function useTaskContractors(taskId) {
-  const { data, loading, error } = useQuery(TASK_ASIGNEES, {
+  const { data, loading, error } = useQuery(TASK_ASSIGNEES, {
     variables: {
       taskId
     },
     skip: !taskId
   });
 
-  const [createTaskAsignee] = useMutation(TASK_ASIGNEES_CREATE, {
-    refetchQueries: ['taskAsignees', 'tasks']
+  const [createTaskAssignee] = useMutation(TASK_ASSIGNEES_CREATE, {
+    refetchQueries: ['taskAssignees', 'tasks']
   });
 
-  const [deleteTaskAsignee] = useMutation(TASK_ASIGNEES_DELETE, {
-    refetchQueries: ['taskAsignees', 'tasks']
+  const [deleteTaskAssignee] = useMutation(TASK_ASSIGNEES_DELETE, {
+    refetchQueries: ['taskAssignees', 'tasks']
   });
 
   if (loading) {
-    return [[], _createTaskAsignee, _deleteTaskAsignee];
+    return [[], _createTaskAssignee, _deleteTaskAssignee];
   }
 
   if (error) {
     console.error(error);
-    return [[], _createTaskAsignee, _deleteTaskAsignee];
+    return [[], _createTaskAssignee, _deleteTaskAssignee];
   }
 
-  const { task_asignee } = data || [];
+  const { task_assignee } = data || [];
 
-  return [task_asignee, _createTaskAsignee, _deleteTaskAsignee];
+  return [task_assignee, _createTaskAssignee, _deleteTaskAssignee];
 
-  function _createTaskAsignee(asigneeId) {
-    createTaskAsignee({
+  function _createTaskAssignee(assigneeId) {
+    createTaskAssignee({
       variables: {
         taskId,
-        asigneeId
+        assigneeId
       }
     });
   }
 
-  function _deleteTaskAsignee(asigneeId) {
-    deleteTaskAsignee({
+  function _deleteTaskAssignee(assigneeId) {
+    deleteTaskAssignee({
       variables: {
         taskId,
-        asigneeId
+        assigneeId
       }
     });
   }
 }
 
-const TASK_ASIGNEES = gql`
-  query taskAsignees($taskId: Int!) {
-    task_asignee(where: { task_id: { _eq: $taskId } }) {
+const TASK_ASSIGNEES = gql`
+  query taskAssignees($taskId: Int!) {
+    task_assignee(where: { task_id: { _eq: $taskId } }) {
       task_id
-      asignee_id
+      assignee_id
     }
   }
 `;
 
-const TASK_ASIGNEES_CREATE = gql`
-  mutation insertTaskAsignee($taskId: Int!, $asigneeId: Int!) {
-    insert_task_asignee_one(object: { task_id: $taskId, asignee_id: $asigneeId }) {
+const TASK_ASSIGNEES_CREATE = gql`
+  mutation insertTaskAssignee($taskId: Int!, $assigneeId: Int!) {
+    insert_task_assignee_one(object: { task_id: $taskId, assignee_id: $assigneeId }) {
       task_id
-      asignee_id
+      assignee_id
     }
   }
 `;
 
-const TASK_ASIGNEES_DELETE = gql`
-  mutation deleteTaskAsignee($taskId: Int!, $asigneeId: Int!) {
-    delete_task_asignee(where: { task_id: { _eq: $taskId }, asignee_id: { _eq: $asigneeId } }) {
+const TASK_ASSIGNEES_DELETE = gql`
+  mutation deleteTaskAssignee($taskId: Int!, $assigneeId: Int!) {
+    delete_task_assignee(where: { task_id: { _eq: $taskId }, assignee_id: { _eq: $assigneeId } }) {
       returning {
         task_id
-        asignee_id
+        assignee_id
       }
     }
   }
