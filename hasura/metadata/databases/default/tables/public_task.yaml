@@ -14,3 +14,11 @@ object_relationships:
   - name: project
     using:
       foreign_key_constraint_on: project_id
+array_relationships:
+  - name: task_asignees
+    using:
+      foreign_key_constraint_on:
+        column: task_id
+        table:
+          name: task_asignee
+          schema: public
