@@ -67,7 +67,6 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
     : {
         title: '',
         project_id: undefined,
-        asignee_id: undefined,
         description: '',
         priority: undefined,
         due_date: ''
@@ -88,15 +87,6 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
               optionLabel="name"
               optionValue="id"
               options={projectsData?.project}
-              isRequired
-            />
-            <InputDropdown
-              placeholder="Select contractor"
-              label="Contractor"
-              name="asignee_id"
-              optionLabel="name"
-              optionValue="id"
-              options={contractorsData?.contractor}
               isRequired
             />
 

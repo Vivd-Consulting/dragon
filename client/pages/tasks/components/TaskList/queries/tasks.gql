@@ -8,7 +8,6 @@ query tasks($limit: Int, $offset: Int, $order_by: [task_order_by!], $where: task
     project {
       name
     }
-    asignee_id
   }
   task_aggregate(order_by: $order_by, where: $where) {
     aggregate {
