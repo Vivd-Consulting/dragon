@@ -161,3 +161,12 @@ CREATE TABLE task_assignee (
 
   PRIMARY KEY (assignee_id, task_id)
 );
+
+CREATE TABLE task_viewed_by (
+  user_id integer NOT NULL REFERENCES dragon_user(id),
+  task_id integer NOT NULL REFERENCES task(id),
+
+  PRIMARY KEY (user_id, task_id)
+);
+
+
