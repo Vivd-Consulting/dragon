@@ -11,3 +11,4 @@
 - "!include public_task.yaml"
 - "!include public_task_asignee.yaml"
 - "!include public_task_assignee.yaml"
+- "!include public_task_viewed_by.yaml"
