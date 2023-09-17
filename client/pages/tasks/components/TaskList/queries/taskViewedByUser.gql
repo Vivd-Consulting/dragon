@@ -1,0 +1,8 @@
+mutation taskViewedByUser($userId: String!, $taskId: Int!) {
+  insert_task_viewed_by_one(object: { user_id: $userId, task_id: $taskId }) {
+    task {
+      title
+      id
+    }
+  }
+}
