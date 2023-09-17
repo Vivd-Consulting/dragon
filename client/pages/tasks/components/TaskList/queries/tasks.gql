@@ -8,6 +8,11 @@ query tasks($limit: Int, $offset: Int, $order_by: [task_order_by!], $where: task
     project {
       name
     }
+    task_viewed_bies {
+      dragon_user {
+        id
+      }
+    }
   }
   task_aggregate(order_by: $order_by, where: $where) {
     aggregate {
