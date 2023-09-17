@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
+import { useMutation } from '@apollo/client';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -12,11 +13,29 @@ import { AssignContractorTaskDropdown } from 'components/AssignContractorTaskDro
 import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
+import { useAuth } from 'hooks/useAuth';
 
 import tasksQuery from './queries/tasks.gql';
+import taskViewedByUserMutation from './queries/taskViewedByUser.gql';
+
+interface ITaskViewedBy {
+  task_viewed_bies: {
+    dragon_user: {
+      id: string;
+    };
+  }[];
+}
+
+// TODO: Add an accurate interface
+interface ITask extends ITaskViewedBy {}
 
 export default function TaskList() {
+  const { dragonUser } = useAuth();
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
+
+  const [taskViewedByUser] = useMutation(taskViewedByUserMutation, {
+    refetchQueries: ['tasks']
+  });
 
   const where: any = {
     deleted_at: { _is_null: true }
@@ -49,6 +68,11 @@ export default function TaskList() {
       <Toast ref={toastRef} />
 
       <DataTable
+        rowClassName={(data: ITask) =>
+          data.task_viewed_bies.find(({ dragon_user }) => dragon_user.id === dragonUser.id)
+            ? 'opacity-80'
+            : ''
+        }
         value={tasks}
         paginator
         lazy
@@ -123,10 +147,37 @@ export default function TaskList() {
           icon="pi pi-eye"
           tooltip="View"
           tooltipOptions={{ position: 'top' }}
-          // onClick={() => TODO...}
+          onClick={() => _taskViewedByUser(data)}
         />
       </Row>
     );
+  }
+
+  async function _taskViewedByUser(data) {
+    try {
+      await taskViewedByUser({
+        variables: {
+          taskId: data?.id,
+          userId: dragonUser?.id
+        }
+      });
+
+      // Show success toast
+      toastRef?.current?.show({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Task Viewed!!',
+        life: 3000
+      });
+    } catch {
+      // Show error toast
+      toastRef?.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to view task!',
+        life: 3000
+      });
+    }
   }
 }
 
