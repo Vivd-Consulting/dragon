@@ -14,6 +14,13 @@ import {
   deleteUser,
 } from './users.js';
 
+import {
+  getSecret,
+  createSecret,
+  deleteSecret,
+  updateSecret,
+} from './secrets.js';
+
 export const typeDefs = gql`
   scalar jsonb
 
@@ -72,8 +79,7 @@ export const typeDefs = gql`
     auth0Users(role: Role): [Auth0User]
     auth0Profile: Auth0Profile
     userRole(user_id: String!): String
-    balance: Float
-    totalBalance: Float
+    getSecret(path: String!): String
   }
 
   type Mutation {
@@ -86,6 +92,9 @@ export const typeDefs = gql`
     inviteUser(name: String!, email: String!, role: String!): Auth0User
     resetUserPassword(user_id: String!): Boolean
     deleteUser(user_id: String!): Boolean
+    createSecret(path: String!, value: String!): Boolean
+    updateSecret(path: String!, value: String!): Boolean
+    deleteSecret(path: String!): Boolean
   }
 `;
 
@@ -149,6 +158,13 @@ export const resolvers = {
       }
 
       return getRole(args.user_id);
+    },
+    getSecret: async (parent, args, context) => {
+      // if (!isAdmin(context)) {
+      //   return null;
+      // }
+
+      return getSecret({ path: args.path });
     }
   },
   Mutation: {
@@ -179,6 +195,33 @@ export const resolvers = {
       }
 
       return deleteUser(args.user_id);
+    },
+    createSecret: (parent, args, context) => {
+      // if (!isAdmin(context)) {
+      //   return null;
+      // }
+
+      const { path, value } = args;
+
+      return createSecret({ path, value });
+    },
+    updateSecret: async (parent, args, context) => {
+      // if (!isAdmin(context)) {
+      //   return null;
+      // }
+
+      const { path, value } = args;
+
+      return updateSecret({ path, value });
+    },
+    deleteSecret: async (parent, args, context) => {
+      // if (!isAdmin(context)) {
+      //   return null;
+      // }
+
+      const { path } = args;
+
+      return deleteSecret({ path });
     },
   },
   jsonb: GraphQLJSON,
