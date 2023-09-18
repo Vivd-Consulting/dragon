@@ -18,8 +18,6 @@ export default function EditTask() {
   });
   const task = data?.task_by_pk;
 
-  console.log(task)
-
   return (
     <Card>
       <h1>Edit Task</h1>

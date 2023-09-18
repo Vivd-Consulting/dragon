@@ -156,10 +156,6 @@ export const UploadInput = ({
     [name, setError]
   );
 
-  console.log({
-    fileId
-  });
-
   return (
     <Column data-cy={`upload-${name}`}>
       {!!label && (
