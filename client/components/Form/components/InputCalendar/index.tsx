@@ -38,15 +38,22 @@ export function InputCalendar({
       tutorial={tutorial}
     >
       {(field, fieldState) => {
+        const value = field.value
+          ? typeof field.value === 'string'
+            ? new Date(field.value)
+            : field.value
+          : null;
+
         return (
           <Calendar
             id={field.name}
-            {...field}
             className={cx({ 'p-invalid': fieldState.error })}
             onChange={e => {
               onChange && onChange(e.value);
               return field.onChange(e);
             }}
+            {...field}
+            value={value}
             {...props}
           />
         );

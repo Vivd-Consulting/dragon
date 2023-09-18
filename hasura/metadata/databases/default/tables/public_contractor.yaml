@@ -23,3 +23,10 @@ array_relationships:
         table:
           name: project_contractor
           schema: public
+  - name: task_assignees
+    using:
+      foreign_key_constraint_on:
+        column: assignee_id
+        table:
+          name: task_assignee
+          schema: public

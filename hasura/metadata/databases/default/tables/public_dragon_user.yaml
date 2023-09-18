@@ -23,12 +23,12 @@ array_relationships:
         table:
           name: project_time
           schema: public
-  - name: tasks
+  - name: task_viewed_by
     using:
       foreign_key_constraint_on:
-        column: asignee_id
+        column: user_id
         table:
-          name: task
+          name: task_viewed_by
           schema: public
   - name: tasksBySuggestedAsigneeId
     using:

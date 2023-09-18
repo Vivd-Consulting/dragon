@@ -1,0 +1,11 @@
+mutation taskViewedByUser($userId: String!, $taskId: Int!) {
+  insert_task_viewed_by_one(
+    object: { user_id: $userId, task_id: $taskId }
+    on_conflict: { constraint: task_viewed_by_pkey, update_columns: viewed_at }
+  ) {
+    task {
+      title
+      id
+    }
+  }
+}

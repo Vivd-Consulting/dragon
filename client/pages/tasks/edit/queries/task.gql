@@ -1,0 +1,13 @@
+query task($id: Int!) {
+  task_by_pk(id: $id) {
+    id
+    project_id
+    title
+    priority
+    description
+    due_date
+    project {
+      name
+    }
+  }
+}
