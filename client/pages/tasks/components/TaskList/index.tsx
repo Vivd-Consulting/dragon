@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
@@ -19,7 +20,7 @@ import tasksQuery from './queries/tasks.gql';
 import taskViewedByUserMutation from './queries/taskViewedByUser.gql';
 
 interface ITaskViewedBy {
-  task_viewed_bies: {
+  task_viewed_by: {
     dragon_user: {
       id: string;
     };
@@ -69,8 +70,8 @@ export default function TaskList() {
 
       <DataTable
         rowClassName={(data: ITask) =>
-          data.task_viewed_bies.find(({ dragon_user }) => dragon_user.id === dragonUser.id)
-            ? 'opacity-80'
+          data.task_viewed_by.find(({ dragon_user }) => dragon_user.id === dragonUser.id)
+            ? 'surface-50'
             : ''
         }
         value={tasks}
@@ -112,7 +113,7 @@ export default function TaskList() {
         />
         <Column
           field="description"
-          body={({ description }) => <span>{truncateText(description)}</span>}
+          body={({ description }) => <span>{_.truncate(description, { length: 250 })}</span>}
           header="Description"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
@@ -179,12 +180,4 @@ export default function TaskList() {
       });
     }
   }
-}
-
-function truncateText(str: string, limit = 250) {
-  if (str.length <= limit) {
-    return str;
-  }
-
-  return `${str.substring(0, limit)}...`;
 }

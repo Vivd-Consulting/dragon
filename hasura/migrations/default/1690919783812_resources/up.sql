@@ -163,10 +163,10 @@ CREATE TABLE task_assignee (
 );
 
 CREATE TABLE task_viewed_by (
-  user_id integer NOT NULL REFERENCES dragon_user(id),
+  user_id text NOT NULL REFERENCES dragon_user(id),
   task_id integer NOT NULL REFERENCES task(id),
+  
+  viewed_at timestamp NOT NULL DEFAULT now(),
 
   PRIMARY KEY (user_id, task_id)
 );
-
-
