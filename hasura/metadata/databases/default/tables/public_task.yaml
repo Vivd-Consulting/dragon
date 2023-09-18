@@ -8,20 +8,10 @@ object_relationships:
   - name: dragonUserByUserId
     using:
       foreign_key_constraint_on: user_id
-  - name: dragon_user
-    using:
-      foreign_key_constraint_on: asignee_id
   - name: project
     using:
       foreign_key_constraint_on: project_id
 array_relationships:
-  - name: task_asignees
-    using:
-      foreign_key_constraint_on:
-        column: task_id
-        table:
-          name: task_asignee
-          schema: public
   - name: task_assignees
     using:
       foreign_key_constraint_on:
@@ -29,7 +19,7 @@ array_relationships:
         table:
           name: task_assignee
           schema: public
-  - name: task_viewed_bies
+  - name: task_viewed_by
     using:
       foreign_key_constraint_on:
         column: task_id

@@ -11,15 +11,18 @@ export default function EditTask() {
   const router = useRouter();
   const { id: taskId } = router.query;
 
-  const { data: task, loading: isTaskLoading } = useQuery(taskQuery, {
+  const { data, loading: isTaskLoading } = useQuery(taskQuery, {
     variables: {
       id: taskId
     }
   });
+  const task = data?.task_by_pk;
+
+  console.log(task)
 
   return (
     <Card>
-      <h1>Edit Client</h1>
+      <h1>Edit Task</h1>
       <TaskForm initialData={task} isInitialDataLoading={isTaskLoading} />
     </Card>
   );

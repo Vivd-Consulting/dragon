@@ -8,7 +8,7 @@ query tasks($limit: Int, $offset: Int, $order_by: [task_order_by!], $where: task
     project {
       name
     }
-    task_viewed_bies {
+    task_viewed_by {
       dragon_user {
         id
       }

@@ -3,7 +3,7 @@ mutation createTask(
   $title: String!
   $project_id: Int!
   $priority: Int!
-  $description: String!
+  $description: String
   $due_date: timestamp
 ) {
   insert_task_one(

@@ -1,5 +1,5 @@
 query task($id: Int!) {
-  task(where: { id: { _eq: $id } }) {
+  task_by_pk(id: $id) {
     id
     project_id
     title

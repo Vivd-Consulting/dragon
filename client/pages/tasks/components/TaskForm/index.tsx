@@ -8,7 +8,6 @@ import { Form, FormFooterButtons } from 'components/Form';
 import { useAuth } from 'hooks/useAuth';
 
 import projectsQuery from '../queries/projects.gql';
-import contractorsQuery from '../queries/contractors.gql';
 
 import createTaskMutation from './queries/createTask.gql';
 import updateTaskMutation from './queries/updateTask.gql';
@@ -37,46 +36,32 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
     }
   });
 
-  const { data: contractorsData, loading: isContractorsLoading } = useQuery(contractorsQuery, {
-    fetchPolicy: 'no-cache',
-    variables: {
-      where: {
-        archived_at: { _is_null: true }
-      }
-    }
-  });
-
   const [createTask] = useMutation(createTaskMutation, {
     refetchQueries: ['tasks']
   });
 
   const [updateTask] = useMutation(updateTaskMutation, {
-    refetchQueries: ['tasks', 'task']
+    refetchQueries: ['tasks', 'task_by_pk']
   });
 
   const [loading, setLoading] = useState(false);
   const toast = useRef<any>(null);
   const router = useRouter();
 
-  if (isInitialDataLoading || isProjectLoading || isContractorsLoading) {
+  if (isInitialDataLoading || isProjectLoading) {
     return null;
   }
 
-  const defaultValues = initialData
-    ? initialData.task[0]
-    : {
-        title: '',
-        project_id: undefined,
-        description: '',
-        priority: undefined,
-        due_date: ''
-      };
+  const defaultData = {
+    ...initialData,
+    due_date: new Date(initialData?.due_date)
+  };
 
   return (
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
+      <Form defaultValues={defaultData} onSubmit={onSubmit} data-cy="request-form">
         {({ InputText, InputDropdown, InputTextArea, InputCalendar }) => (
           <>
             <InputText label="Title" name="title" isRequired autoFocus />
