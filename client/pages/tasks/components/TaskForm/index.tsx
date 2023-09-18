@@ -1,46 +1,86 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 
 import { Form, FormFooterButtons } from 'components/Form';
+import { useAuth } from 'hooks/useAuth';
+
+import projectsQuery from '../queries/projects.gql';
 
 import createTaskMutation from './queries/createTask.gql';
 import updateTaskMutation from './queries/updateTask.gql';
 
-export default function TaskForm({ initialData, isInitialDataLoading }) {
+const PRIORITY = [
+  { name: 'Low', id: 0 },
+  { name: 'Medium', id: 1 },
+  { name: 'High', id: 2 },
+  { name: 'Urgent', id: 3 }
+];
+
+// TODO: Add Task Type
+interface TaskFormPageProps {
+  initialData?: any;
+  isInitialDataLoading?: boolean;
+}
+
+export default function TaskForm({ initialData, isInitialDataLoading }: TaskFormPageProps) {
+  const { dragonUser } = useAuth();
+  const { data: projectsData, loading: isProjectLoading } = useQuery(projectsQuery, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      where: {
+        archived_at: { _is_null: true }
+      }
+    }
+  });
+
   const [createTask] = useMutation(createTaskMutation, {
     refetchQueries: ['tasks']
   });
 
   const [updateTask] = useMutation(updateTaskMutation, {
-    refetchQueries: ['tasks', 'task']
+    refetchQueries: ['tasks', 'task_by_pk']
   });
 
   const [loading, setLoading] = useState(false);
   const toast = useRef<any>(null);
   const router = useRouter();
 
-  if (isInitialDataLoading) {
+  if (isInitialDataLoading || isProjectLoading) {
     return null;
   }
-
-  const defaultValues = initialData
-    ? initialData.task[0]
-    : {
-        name: ''
-        // ...
-      };
 
   return (
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
-        {({ InputText }) => (
+      <Form defaultValues={initialData} onSubmit={onSubmit} data-cy="request-form">
+        {({ InputText, InputDropdown, InputTextArea, InputCalendar }) => (
           <>
-            <InputText label="Name" name="name" isRequired autoFocus />
+            <InputText label="Title" name="title" isRequired autoFocus />
+            <InputDropdown
+              placeholder="Select project"
+              label="Project"
+              name="project_id"
+              optionLabel="name"
+              optionValue="id"
+              options={projectsData?.project}
+              isRequired
+            />
+
+            <InputDropdown
+              placeholder="Priority"
+              label="Priority"
+              name="priority"
+              optionLabel="name"
+              optionValue="id"
+              options={PRIORITY}
+              isRequired
+            />
+            <InputTextArea label="Description" name="description" />
+            <InputCalendar label="Due Date" name="due_date" showIcon />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>
@@ -56,15 +96,15 @@ export default function TaskForm({ initialData, isInitialDataLoading }) {
       if (initialData) {
         await updateTask({
           variables: {
-            ...data
-            // ...
+            ...data,
+            userId: dragonUser?.id
           }
         });
       } else {
         await createTask({
           variables: {
-            ...data
-            // ...
+            ...data,
+            userId: dragonUser?.id
           }
         });
       }

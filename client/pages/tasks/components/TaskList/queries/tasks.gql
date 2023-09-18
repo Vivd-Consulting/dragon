@@ -1,12 +1,18 @@
-query tasks(
-  $limit: Int
-  $offset: Int
-  $order_by: [task_order_by!]
-  $where: task_bool_exp
-) {
+query tasks($limit: Int, $offset: Int, $order_by: [task_order_by!], $where: task_bool_exp) {
   task(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     id
     title
+    priority
+    description
+    due_date
+    project {
+      name
+    }
+    task_viewed_by {
+      dragon_user {
+        id
+      }
+    }
   }
   task_aggregate(order_by: $order_by, where: $where) {
     aggregate {
