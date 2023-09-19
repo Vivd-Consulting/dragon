@@ -4,7 +4,7 @@ mutation updateContractor(
   $location: String!
   $rate_id: Int!
   $rate: float8
-  $invoice: float8!
+  $invoice: float8
   $gpt_persona: String!
   $document: String
   $start_date: timestamp

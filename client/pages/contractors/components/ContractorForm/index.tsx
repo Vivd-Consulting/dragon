@@ -92,6 +92,7 @@ export default function ContractorForm({
         await createContractor({
           variables: {
             ...data,
+            rate: data.contractor_rate.rate,
             userId: dragonUser?.id
           }
         });
