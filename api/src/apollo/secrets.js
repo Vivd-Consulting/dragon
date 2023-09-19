@@ -3,8 +3,6 @@ import { GetParameterCommand, PutParameterCommand, DeleteParameterCommand } from
 import { ssmClient } from "../aws.js";
 
 export function getSecret({ path }) {
-  if (path === undefined) throw new Error('Missing required parameter');
-
   const params = {
     Name: path,
     WithDecryption: true
@@ -15,8 +13,6 @@ export function getSecret({ path }) {
 }
 
 export function createSecret({ path, value }) {
-  if (path || value === undefined) throw new Error('Missing required parameter');
-
   const params = {
     Name: path,
     Value: value,
@@ -28,8 +24,6 @@ export function createSecret({ path, value }) {
 }
 
 export function deleteSecret({ path }) {
-  if (path === undefined) throw new Error('Missing required parameter');
-
   const params = {
     Name: path
   };

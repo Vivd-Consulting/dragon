@@ -92,8 +92,8 @@ export const typeDefs = gql`
     inviteUser(name: String!, email: String!, role: String!): Auth0User
     resetUserPassword(user_id: String!): Boolean
     deleteUser(user_id: String!): Boolean
-    createSecret(path: String!, value: String!): Boolean
-    updateSecret(path: String!, value: String!): Boolean
+    createSecret(path: String!, value: String!, project_id: Int!, description: String): Boolean
+    updateSecret(path: String!, value: String!, project_id: Int, description: String): Boolean
     deleteSecret(path: String!): Boolean
   }
 `;
@@ -164,7 +164,8 @@ export const resolvers = {
       //   return null;
       // }
 
-      return getSecret({ path: args.path });
+      const secret = await getSecret({ path: args.path });
+      return secret.Parameter.Value;
     }
   },
   Mutation: {
@@ -196,23 +197,43 @@ export const resolvers = {
 
       return deleteUser(args.user_id);
     },
-    createSecret: (parent, args, context) => {
+    createSecret: async (parent, args, context) => {
+      // TODO:
       // if (!isAdmin(context)) {
       //   return null;
       // }
 
-      const { path, value } = args;
+      const { path, value, project_id, description } = args;
 
-      return createSecret({ path, value });
+      console.log({ path, value })
+
+      // Create the secret in SSM
+      await createSecret({ path, value });
+
+      // Create the secret in the DB, don't store the value, just path and metadata
+      await knex('secret').insert({
+        path,
+        project_id,
+        description,
+      });
     },
     updateSecret: async (parent, args, context) => {
       // if (!isAdmin(context)) {
       //   return null;
       // }
 
-      const { path, value } = args;
+      const { path, value, project_id, description } = args;
 
-      return updateSecret({ path, value });
+      await updateSecret({ path, value });
+
+      await knex('secret')
+        .where({ path })
+        .update({
+          project_id,
+          description,
+          path,
+          updated_at: new Date(),
+        });
     },
     deleteSecret: async (parent, args, context) => {
       // if (!isAdmin(context)) {
@@ -221,7 +242,13 @@ export const resolvers = {
 
       const { path } = args;
 
-      return deleteSecret({ path });
+      await deleteSecret({ path });
+
+      await knex('secret')
+        .where({ path })
+        .update({
+          deleted_at: new Date(),
+        });
     },
   },
   jsonb: GraphQLJSON,
