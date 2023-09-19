@@ -205,8 +205,6 @@ export const resolvers = {
 
       const { path, value, project_id, description } = args;
 
-      console.log({ path, value })
-
       // Create the secret in SSM
       await createSecret({ path, value });
 
