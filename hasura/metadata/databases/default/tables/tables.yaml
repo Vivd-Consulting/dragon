@@ -8,6 +8,7 @@
 - "!include public_project.yaml"
 - "!include public_project_contractor.yaml"
 - "!include public_project_time.yaml"
+- "!include public_secret.yaml"
 - "!include public_task.yaml"
 - "!include public_task_assignee.yaml"
 - "!include public_task_viewed_by.yaml"
