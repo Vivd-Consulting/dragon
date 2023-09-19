@@ -3,7 +3,7 @@ mutation createContractor(
   $gpt_persona: String!
   $location: String!
   $rate: float8!
-  $invoice: float8!
+  $invoice: float8
   $document: String
   $start_date: timestamp
   $end_date: timestamp
