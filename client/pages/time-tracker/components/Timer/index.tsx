@@ -14,7 +14,8 @@ import userProjectsQuery from './queries/userProjects.gql';
 import Duration from './components/Duration';
 
 export default function Timer({ isListViewChecked }) {
-  const query = 'Agents';
+  // TODO: Add filter here
+  const query = '';
 
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
