@@ -70,7 +70,7 @@ export default function TaskList() {
 
       <DataTable
         rowClassName={(data: ITask) =>
-          data.task_viewed_by.find(({ dragon_user }) => dragon_user.id === dragonUser.id)
+          data?.task_viewed_by?.find(({ dragon_user }) => dragon_user.id === dragonUser.id)
             ? 'surface-50'
             : ''
         }
