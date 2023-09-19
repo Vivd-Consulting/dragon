@@ -1,0 +1,34 @@
+query userProjects(
+  $userId: String!
+  $limit: Int
+  $offset: Int
+  $order_by: [project_contractor_order_by!]
+  $where: project_contractor_bool_exp
+) {
+  dragon_user(where: { id: { _eq: $userId } }) {
+    name
+    contractor {
+      id
+      name
+      projects(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+        project {
+          id
+          name
+          project_times {
+            id
+            start_time
+            end_time
+          }
+          client {
+            name
+          }
+        }
+      }
+      projects_aggregate(where: $where) {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+}

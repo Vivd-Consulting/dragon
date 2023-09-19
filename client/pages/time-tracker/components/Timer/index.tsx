@@ -1,25 +1,82 @@
+import _ from 'lodash';
+
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
 import { dateFormat } from 'utils';
 import { Row } from 'components/Group';
 
+import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
+import { useAuth } from 'hooks/useAuth';
+
+import userProjectsQuery from './queries/userProjects.gql';
+
 import Duration from './components/Duration';
 
-export default function Timer({ isListViewChecked, projects }) {
+export default function Timer({ isListViewChecked }) {
+  const query = 'Agents';
+
+  const { dragonUser } = useAuth();
+  const { id: userId } = dragonUser;
+
+  const {
+    query: { loading, previousData, data },
+    paginationValues,
+    onPage
+  } = usePaginatedQuery(userProjectsQuery, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      userId,
+      where: {
+        _or: [
+          { project: { name: { _ilike: `%${query}%` } } },
+          { project: { github_repo_name: { _ilike: `%${query}%` } } },
+          { project: { client: { name: { _ilike: `%${query}%` } } } }
+        ]
+      }
+    }
+  });
+
+  const totalRecords = loading
+    ? _.get(previousData, 'dragon_user[0].contractor.projects_aggregate.aggregate.count', 0)
+    : _.get(data, 'dragon_user[0].contractor.projects_aggregate.aggregate.count', 0);
+
+  const _data = loading ? previousData : data;
+  const projects = _.get(_data, 'dragon_user[0].contractor.projects', []).map(({ project }) => {
+    const timers = project.project_times;
+
+    if (timers?.length > 0) {
+      const activeTimer = timers.find(timer => !timer.end_time);
+
+      if (activeTimer) {
+        return {
+          ...project,
+          isActive: true,
+          timerId: activeTimer.id,
+          startTime: activeTimer.start_time
+        };
+      }
+    }
+
+    return {
+      ...project,
+      isActive: false
+    };
+  });
+
   if (isListViewChecked) {
     return (
       <DataTable
         value={projects}
-        //   paginator
+        paginator
         lazy
-        //   onPage={onPage}
-        //   first={paginationValues.first}
-        //   rows={paginationValues.rows}
-        //   onSort={onPage}
-        //   sortField={paginationValues.sortField}
-        //   sortOrder={paginationValues.sortOrder}
-        //   totalRecords={totalRecords}
+        onPage={onPage}
+        first={paginationValues.first}
+        rows={paginationValues.rows}
+        onSort={onPage}
+        sortField={paginationValues.sortField}
+        sortOrder={paginationValues.sortOrder}
+        totalRecords={totalRecords}
         removableSort
         responsiveLayout="scroll"
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
