@@ -58,8 +58,6 @@ export default function ProjectList({ clientId }) {
     ? previousData?.project_aggregate.aggregate.count
     : data?.project_aggregate.aggregate.count;
 
-  console.log(projects);
-
   return (
     <>
       <Toast ref={toastRef} />
