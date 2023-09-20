@@ -20,7 +20,6 @@ export default function TimeTrackerPage() {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
 
-
   return (
     <Column gap="4" fullWidth>
       <Card
