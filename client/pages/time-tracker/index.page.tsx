@@ -20,35 +20,6 @@ export default function TimeTrackerPage() {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
 
-  const { data } = useQuery(userProjectsQuery, {
-    variables: {
-      userId
-    },
-    fetchPolicy: 'network-only'
-  });
-
-  const projects = _.get(data, 'dragon_user[0].contractor.projects', []).map(({ project }) => {
-    const timers = project.project_times;
-
-    if (timers?.length > 0) {
-      const activeTimer = timers.find(timer => !timer.end_time);
-
-      if (activeTimer) {
-        return {
-          ...project,
-          isActive: true,
-          timerId: activeTimer.id,
-          startTime: activeTimer.start_time
-        };
-      }
-    }
-
-    return {
-      ...project,
-      isActive: false
-    };
-  });
-
   return (
     <Column gap="4" fullWidth>
       <Card
@@ -66,7 +37,7 @@ export default function TimeTrackerPage() {
           </Row>
         }
       >
-        <Timer isListViewChecked={isListViewChecked} projects={projects} />
+        <Timer isListViewChecked={isListViewChecked} />
       </Card>
 
       <Card
