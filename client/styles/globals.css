@@ -41,3 +41,9 @@ a {
   border-radius: 7px !important;
   overflow-x: visible !important;
 }
+
+.logo-img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+}
