@@ -10,6 +10,7 @@ import { Button } from 'primereact/button';
 import { useInterval } from 'ahooks';
 
 import { Row } from 'components/Group';
+import { S3Image } from 'components/Image';
 
 import { useAuth } from 'hooks/useAuth';
 
@@ -59,6 +60,7 @@ export default function Duration({ project, isListViewChecked }) {
         onClick={() => projectTimerStart(project)}
       >
         <div className="flex flex-column align-items-center">
+          <S3Image s3Key={project?.client?.logo?.key} className="logo-img" />
           <span className="text-sm">{project.client.name}</span>
           {project.isActive && <p>{project.name}</p>}
           {project.isActive ? formattedTime : project.name}

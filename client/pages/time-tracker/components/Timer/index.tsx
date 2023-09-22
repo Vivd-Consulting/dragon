@@ -8,6 +8,7 @@ import { dateFormat } from 'utils';
 
 import { Row } from 'components/Group';
 import { InputTextDebounced } from 'components/Form';
+import { S3Image } from 'components/Image';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 import { useAuth } from 'hooks/useAuth';
@@ -105,6 +106,13 @@ export default function Timer({ isListViewChecked }) {
             field="id"
             header="ID"
             sortable
+            headerClassName="white-space-nowrap"
+            className="white-space-nowrap"
+          />
+
+          <Column
+            header="Logo"
+            body={({ client }) => <S3Image s3Key={client?.logo?.key} className="logo-img" />}
             headerClassName="white-space-nowrap"
             className="white-space-nowrap"
           />
