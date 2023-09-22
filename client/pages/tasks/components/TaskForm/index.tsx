@@ -6,18 +6,12 @@ import { Toast } from 'primereact/toast';
 
 import { Form, FormFooterButtons } from 'components/Form';
 import { useAuth } from 'hooks/useAuth';
+import { useTaskPriorities } from 'hooks/useTaskPriorities';
 
 import projectsQuery from '../queries/projects.gql';
 
 import createTaskMutation from './queries/createTask.gql';
 import updateTaskMutation from './queries/updateTask.gql';
-
-const PRIORITY = [
-  { name: 'Low', id: 0 },
-  { name: 'Medium', id: 1 },
-  { name: 'High', id: 2 },
-  { name: 'Urgent', id: 3 }
-];
 
 // TODO: Add Task Type
 interface TaskFormPageProps {
@@ -26,7 +20,11 @@ interface TaskFormPageProps {
 }
 
 export default function TaskForm({ initialData, isInitialDataLoading }: TaskFormPageProps) {
+  const [selectedProject, setSelectedProject] = useState(null);
+
   const { dragonUser } = useAuth();
+  const TASK_PRIORITY = useTaskPriorities(selectedProject ?? initialData?.project_id);
+
   const { data: projectsData, loading: isProjectLoading } = useQuery(projectsQuery, {
     fetchPolicy: 'no-cache',
     variables: {
@@ -67,6 +65,7 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
               optionLabel="name"
               optionValue="id"
               options={projectsData?.project}
+              onChange={e => setSelectedProject(e.target.value)}
               isRequired
             />
 
@@ -76,7 +75,7 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
               name="priority"
               optionLabel="name"
               optionValue="id"
-              options={PRIORITY}
+              options={TASK_PRIORITY}
               isRequired
             />
             <InputTextArea label="Description" name="description" />
