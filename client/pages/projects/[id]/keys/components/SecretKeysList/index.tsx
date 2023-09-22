@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
 import { DataTable } from 'primereact/datatable';
@@ -14,10 +13,21 @@ import { Row } from 'components/Group';
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 import useClipboard from 'hooks/useClipboard';
 
+import SecretKeyFormModal from '../SecretKeyFormModal';
+
 import secretsQuery from './queries/secrets.gql';
 import getSecretQuery from './queries/getSecret.gql';
+import customDeleteSecretMutation from './queries/deleteSecret.gql';
+import nativeDeleteSecretMutation from './queries/delete_secret.gql';
 
 export default function SecretKeysList({ projectId }) {
+  const [customDeleteSecret] = useMutation(customDeleteSecretMutation, {
+    refetchQueries: ['secrets']
+  });
+  const [nativeDeleteSecret] = useMutation(nativeDeleteSecretMutation, {
+    refetchQueries: ['secrets']
+  });
+
   const {
     query: { loading, previousData, data },
     paginationValues,
@@ -79,8 +89,9 @@ export default function SecretKeysList({ projectId }) {
 
   function useActionButtons(data) {
     const [value, setValue] = useState('*****');
+    const [isDeletingKey, setIsDeletingKey] = useState(false);
+    const [isKeyRevealed, setIsKeyRevealed] = useState(false);
     const [shouldGetSecret, setShouldGetSecret] = useState(false);
-    const router = useRouter();
 
     const { hasCopied, copyToClipboard } = useClipboard();
 
@@ -93,16 +104,21 @@ export default function SecretKeysList({ projectId }) {
 
     useEffect(() => {
       if (!loading && secret) {
-        setValue(secret?.getSecret);
+        if (isKeyRevealed) {
+          setValue(secret?.getSecret);
+        } else {
+          copyToClipboard(secret?.getSecret);
+          setShouldGetSecret(false);
+        }
       }
-    }, [secret, loading]);
+    }, [secret, loading, isKeyRevealed, copyToClipboard]);
 
     const confirmDeleteKey = () => {
       confirmDialog({
-        message: `Are you sure you want to archive ${data.name}?`,
-        header: 'Archive Project',
+        message: `Are you sure you want to delete ${data?.path}'s key?`,
+        header: 'Delete Key',
         icon: 'pi pi-exclamation-triangle',
-        accept: () => _archiveProject(data)
+        accept: () => _deleteKey(data)
       });
     };
 
@@ -110,9 +126,9 @@ export default function SecretKeysList({ projectId }) {
       <Row>
         <InputText value={value} />
 
-        {shouldGetSecret ? (
+        {isKeyRevealed ? (
           <Button
-            loading={loading}
+            loading={isKeyRevealed && loading}
             loadingIcon="pi pi-spin pi-spinner"
             size="small"
             icon="pi pi-eye-slash"
@@ -120,6 +136,7 @@ export default function SecretKeysList({ projectId }) {
             tooltipOptions={{ position: 'top' }}
             onClick={() => {
               setShouldGetSecret(false);
+              setIsKeyRevealed(false);
               setValue('*****');
             }}
           />
@@ -129,19 +146,33 @@ export default function SecretKeysList({ projectId }) {
             icon="pi pi-eye"
             tooltip="View"
             tooltipOptions={{ position: 'top' }}
-            onClick={() => setShouldGetSecret(true)}
+            onClick={() => {
+              setShouldGetSecret(true);
+              setIsKeyRevealed(true);
+            }}
           />
         )}
         <Button
-          disabled={!shouldGetSecret}
           size="small"
+          loading={!isKeyRevealed && loading}
+          loadingIcon="pi pi-spin pi-spinner"
           icon={`pi ${hasCopied ? 'pi-check' : 'pi-clone'}`}
           tooltip={hasCopied ? 'Copied' : 'Copy'}
           tooltipOptions={{ position: 'top' }}
-          onClick={() => copyToClipboard(value)}
+          onClick={() => {
+            if (isKeyRevealed) {
+              copyToClipboard(value);
+              return;
+            }
+
+            setShouldGetSecret(true);
+          }}
         />
+        <SecretKeyFormModal projectId={projectId} initialData={data} toUpdateSecretKey />
         <Button
           severity="danger"
+          loading={isDeletingKey}
+          loadingIcon="pi pi-spin pi-spinner"
           size="small"
           icon="pi pi-trash"
           tooltip="Delete"
@@ -150,26 +181,40 @@ export default function SecretKeysList({ projectId }) {
         />
       </Row>
     );
-  }
 
-  async function _archiveProject(data) {
-    const date = new Date();
+    async function _deleteKey(data) {
+      setIsDeletingKey(true);
 
-    try {
-      toastRef?.current?.show({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Project is archived',
-        life: 3000
-      });
-    } catch (e) {
-      toastRef?.current?.show({
-        life: 3000,
-        severity: 'error',
-        summary: 'Failed to archive project.',
-        detail: 'Unable to archive the project at this time.'
-      });
-      console.error(e);
+      try {
+        await customDeleteSecret({
+          variables: {
+            path: data.path
+          }
+        });
+
+        await nativeDeleteSecret({
+          variables: {
+            path: data.path
+          }
+        });
+
+        toastRef?.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Key is deleted.',
+          life: 3000
+        });
+      } catch (e) {
+        toastRef?.current?.show({
+          life: 3000,
+          severity: 'error',
+          summary: 'Failed to delete key.',
+          detail: 'Unable to delete the key at this time.'
+        });
+        console.error(e);
+      } finally {
+        setIsDeletingKey(false);
+      }
     }
   }
 }
