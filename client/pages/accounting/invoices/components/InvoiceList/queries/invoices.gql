@@ -1,0 +1,35 @@
+query invoices(
+  $limit: Int
+  $offset: Int
+  $order_by: [invoice_order_by!]
+  $where: invoice_bool_exp
+) {
+  invoice(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    id
+    client {
+      name
+      projects {
+        contractors {
+          contractor {
+            id
+            name
+            contractor_rate {
+              rate
+            }
+          }
+        }
+        project_times {
+          start_time
+          end_time
+        }
+      }
+    }
+    submitted_at
+    paid_at
+  }
+  invoice_aggregate(order_by: $order_by, where: $where) {
+    aggregate {
+      count
+    }
+  }
+}
