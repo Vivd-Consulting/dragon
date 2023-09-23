@@ -52,6 +52,36 @@ CREATE TABLE contractor (
   updated_at timestamp NOT NULL DEFAULT now()
 );
 
+CREATE TABLE invoice (
+  id SERIAL PRIMARY KEY,
+
+  client_id integer REFERENCES client(id),
+  contractor_id integer REFERENCES contractor(id),
+
+  submitted_at timestamp,
+  due_date timestamp,
+  paid_at timestamp,
+
+  archived_at timestamp,
+
+  created_at timestamp NOT NULL DEFAULT now(),
+  updated_at timestamp NOT NULL DEFAULT now()
+);
+
+CREATE TABLE invoice_item (
+  id SERIAL PRIMARY KEY,
+  description text,
+  currency text NOT NULL DEFAULT 'CAD',
+  price float NOT NULL,
+  tax float NOT NULL,
+
+  invoice_id integer REFERENCES invoice(id),
+
+  deleted_at timestamp,
+  created_at timestamp NOT NULL DEFAULT now(),
+  updated_at timestamp NOT NULL DEFAULT now()
+);
+
 CREATE TABLE dragon_user (
   id text NOT NULL PRIMARY KEY,
   name text NOT NULL,
@@ -89,6 +119,8 @@ CREATE TABLE project (
   gpt_persona text,
   github_repo_org text,
   github_repo_name text,
+  tax_rate float NOT NULL DEFAULT 0.5,
+  currency text NOT NULL DEFAULT 'CAD',
 
   client_id integer NOT NULL REFERENCES client(id),
 
@@ -112,6 +144,8 @@ CREATE TABLE project_time (
 
   dragon_user_id text NOT NULL REFERENCES dragon_user(id),
   project_id integer NOT NULL REFERENCES project(id),
+  invoice_id integer REFERENCES invoice(id),
+  new_time float,
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),

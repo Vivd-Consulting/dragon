@@ -16,6 +16,13 @@ array_relationships:
         table:
           name: dragon_user
           schema: public
+  - name: invoices
+    using:
+      foreign_key_constraint_on:
+        column: client_id
+        table:
+          name: invoice
+          schema: public
   - name: projects
     using:
       foreign_key_constraint_on:
