@@ -3,8 +3,8 @@ mutation createProject(
   $client_id: Int!
   $github_repo_org: String
   $github_repo_name: String
-  $description: String!
-  $gpt_persona: String!
+  $description: String
+  $gpt_persona: String
 ) {
   insert_project_one(
     object: {
