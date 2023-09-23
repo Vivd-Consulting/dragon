@@ -21,6 +21,9 @@ query userProjects(
           }
           client {
             name
+            logo {
+              key
+            }
           }
         }
       }

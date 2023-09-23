@@ -7,6 +7,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
+import { Badge } from 'primereact/badge';
 
 import { Row } from 'components/Group';
 import { AssignContractorTaskDropdown } from 'components/AssignContractorTaskDropdown';
@@ -29,6 +30,13 @@ interface ITaskViewedBy {
 
 // TODO: Add an accurate interface
 interface ITask extends ITaskViewedBy {}
+
+export const TASK_PRIORITY = [
+  { name: 'Low', id: 0, severity: 'success' },
+  { name: 'Medium', id: 1, severity: 'info' },
+  { name: 'High', id: 2, severity: 'warning' },
+  { name: 'Urgent', id: 3, severity: 'danger' }
+] as const;
 
 export default function TaskList() {
   const { dragonUser } = useAuth();
@@ -96,6 +104,20 @@ export default function TaskList() {
           field="id"
           header="ID"
           sortable
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+        <Column
+          header="Priority"
+          body={({ priority }) => {
+            const taskPriority = TASK_PRIORITY.find(x => x.id === priority);
+
+            if (!taskPriority) {
+              return null;
+            }
+
+            return <Badge value={taskPriority.name} severity={taskPriority.severity} />;
+          }}
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
