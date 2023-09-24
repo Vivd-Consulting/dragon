@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { useMutation, useQuery } from '@apollo/client';
 import { useEffect, useRef, useState } from 'react';
 
@@ -70,19 +71,17 @@ export default function SecretKeysList({ projectId }) {
         data-cy="secret-keys-table"
       >
         <Column
-          field="projects.client.name"
-          header="Client Name"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          field="path"
-          header="Name"
+          body={({ path }) => {
+            const key = _.last(_.split(path, '/'));
+
+            return <span>{key}</span>;
+          }}
+          header="Key"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
 
-        <Column header="Key" body={useActionButtons} />
+        <Column header="Value" body={useActionButtons} />
       </DataTable>
     </>
   );
@@ -94,6 +93,8 @@ export default function SecretKeysList({ projectId }) {
     const [shouldGetSecret, setShouldGetSecret] = useState(false);
 
     const { hasCopied, copyToClipboard } = useClipboard();
+
+    const projectName = _.get(data, 'projects.name');
 
     const { data: secret, loading } = useQuery(getSecretQuery, {
       variables: {
@@ -121,6 +122,8 @@ export default function SecretKeysList({ projectId }) {
         accept: () => _deleteKey(data)
       });
     };
+
+    const pseudoInitialData = { path: _.last(_.split(data.path, '/')) };
 
     return (
       <Row>
@@ -168,7 +171,12 @@ export default function SecretKeysList({ projectId }) {
             setShouldGetSecret(true);
           }}
         />
-        <SecretKeyFormModal projectId={projectId} initialData={data} toUpdateSecretKey />
+        <SecretKeyFormModal
+          projectId={projectId}
+          projectName={projectName}
+          initialData={pseudoInitialData}
+          toUpdateSecretKey
+        />
         <Button
           severity="danger"
           loading={isDeletingKey}
