@@ -11,10 +11,8 @@ import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
-import { Tooltip } from 'primereact/tooltip';
 
 import { Row } from 'components/Group';
-import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
@@ -34,8 +32,6 @@ export default function InvoiceList() {
       }
     }
   });
-
-  console.log(data);
 
   const [archiveInvoice] = useMutation(archiveInvoiceMutation, {
     refetchQueries: ['invoices']
@@ -181,17 +177,17 @@ export default function InvoiceList() {
       <Row>
         <Button
           size="small"
-          icon="pi pi-user-edit"
-          tooltip="Edit"
+          tooltip="View"
           tooltipOptions={{ position: 'top' }}
-          onClick={() => router.push(`/clients/edit/${data?.id}`)}
+          icon="pi pi-eye"
+          // onClick={...}
         />
         <Button
           size="small"
-          tooltip="Projects"
+          icon="pi pi-user-edit"
+          tooltip="Edit"
           tooltipOptions={{ position: 'top' }}
-          icon="pi pi-code"
-          onClick={() => router.push(`/clients/${data?.id}/projects`)}
+          onClick={() => router.push(`/accounting/invoices/${data.id}/edit`)}
         />
         <Button
           size="small"
