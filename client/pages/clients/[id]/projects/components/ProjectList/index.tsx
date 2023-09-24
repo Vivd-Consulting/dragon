@@ -165,6 +165,13 @@ export default function ProjectList({ clientId }) {
         />
         <Button
           size="small"
+          tooltip="Secret Keys"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-key"
+          onClick={() => router.push(`/projects/${data?.id}/keys`)}
+        />
+        <Button
+          size="small"
           tooltip="Archive"
           tooltipOptions={{ position: 'top' }}
           severity="danger"

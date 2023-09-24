@@ -12,12 +12,14 @@ import updateSecretKeyMutation from './queries/updateSecret.gql';
 
 interface SecretKeyFormModalPageProps {
   projectId: string | string[];
+  projectName: string;
   toUpdateSecretKey?: boolean;
   initialData?: any;
 }
 
 export default function SecretKeyFormModal({
   projectId,
+  projectName,
   initialData,
   toUpdateSecretKey = false
 }: SecretKeyFormModalPageProps) {
@@ -57,7 +59,7 @@ export default function SecretKeyFormModal({
         <Button label="Add Keys" icon="pi pi-plus" onClick={() => setVisible(true)} />
       )}
       <Dialog
-        header={toUpdateSecretKey ? 'Update Key' : 'Create Key'}
+        header={toUpdateSecretKey ? 'Update Secret Key' : 'Create Secret Key'}
         visible={visible}
         style={{ width: '70vw' }}
         onHide={() => setVisible(false)}
@@ -70,7 +72,7 @@ export default function SecretKeyFormModal({
         >
           {({ InputText }) => (
             <>
-              <InputText label="Path" name="path" isRequired autoFocus />
+              <InputText label="Key" name="path" isRequired autoFocus />
               <InputText label="Value" name="value" isRequired />
 
               <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
@@ -85,9 +87,12 @@ export default function SecretKeyFormModal({
 
     try {
       if (initialData) {
+        const prefixedPath = validifySecretKey(projectName, data.path);
+
         await updateSecretKey({
           variables: {
             ...data,
+            path: prefixedPath,
             projectId: +projectId
           }
         });
@@ -99,9 +104,12 @@ export default function SecretKeyFormModal({
           life: 3000
         });
       } else {
+        const prefixedPath = validifySecretKey(projectName, data.path);
+
         await createSecretKey({
           variables: {
             ...data,
+            path: prefixedPath,
             projectId: +projectId
           }
         });
@@ -127,5 +135,12 @@ export default function SecretKeyFormModal({
       setVisible(false);
       setLoading(false);
     }
+  }
+
+  function validifySecretKey(name: string, path: string) {
+    const validProjectName = name.replace(/\s+/g, '-');
+    const validPath = path.replace(/\s+/g, '-');
+
+    return `/${validProjectName}/${validPath}`;
   }
 }
