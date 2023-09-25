@@ -104,3 +104,12 @@ export function convertDataToDropdownOptions(data: any[], labelKey: string, valu
 
   return options;
 }
+
+export function getNextWeek() {
+  const today = dayjs();
+  const nextWeek = today.add(7, 'day');
+
+  const iso8601Date = nextWeek.format();
+
+  return iso8601Date;
+}
