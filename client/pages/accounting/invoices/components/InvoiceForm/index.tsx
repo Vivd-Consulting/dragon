@@ -17,6 +17,7 @@ import ProjectTimersTable from './components/ProjectTimersTable';
 
 import createInvoiceMutation from './queries/createInvoice.gql';
 import createInvoiceItemMutation from './queries/createInvoiceItem.gql';
+import updateInvoiceMutation from './queries/updateInvoice.gql';
 import updateProjectTimesMutation from './queries/updateProjectTimes.gql';
 
 // TODO: Add invoice Type
@@ -44,6 +45,10 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
     refetchQueries: ['invoices']
   });
 
+  const [updateInvoice] = useMutation(updateInvoiceMutation, {
+    refetchQueries: ['invoices', 'invoice']
+  });
+
   const toast = useRef<any>(null);
   const router = useRouter();
 
@@ -54,7 +59,7 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
   const nextWeek = getNextWeek();
 
   const defaultValues = initialData
-    ? initialData.client[0]
+    ? initialData.invoice[0]
     : {
         name: '',
         client_id: '',
@@ -96,12 +101,11 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
 
     try {
       if (initialData) {
-        // await updateClient({
-        //   variables: {
-        //     ...data,
-        //     userId: dragonUser?.id
-        //   }
-        // });
+        await updateInvoice({
+          variables: {
+            ...data
+          }
+        });
       } else {
         // first create invoice
         const newInvoice = await createInvoice({
@@ -131,11 +135,11 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
       toast?.current?.show({
         severity: 'success',
         summary: 'Success',
-        detail: 'Account Request Submitted!',
+        detail: 'Invoice is created.',
         life: 3000
       });
 
-      router.push('/clients');
+      router.push('/accounting/invoices');
     } catch {
       setLoading(false);
 
@@ -143,7 +147,7 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
       toast?.current?.show({
         severity: 'error',
         summary: 'Error',
-        detail: 'Failed to submit Account Request',
+        detail: 'Failed to create invoice.',
         life: 3000
       });
     }
