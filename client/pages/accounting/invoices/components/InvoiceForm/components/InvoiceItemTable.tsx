@@ -1,9 +1,10 @@
-import { Row } from 'components/Group';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
+
+import { Row } from 'components/Group';
 
 export default function InvoiceItemTable({ items, onAddItems }) {
   const onRowEditComplete = e => {
