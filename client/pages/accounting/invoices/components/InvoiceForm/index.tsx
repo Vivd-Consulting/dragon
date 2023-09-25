@@ -116,9 +116,11 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
 
         const invoiceId = _.get(newInvoice, 'data.insert_invoice_one.id');
 
-        // await updateProjectTimes({
-        //   variables: {}
-        // });
+        await updateProjectTimes({
+          variables: {
+            invoiceId
+          }
+        });
 
         for (const item of items) {
           await createInvoiceItem({
