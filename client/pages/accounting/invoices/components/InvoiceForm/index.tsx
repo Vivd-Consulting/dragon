@@ -1,20 +1,23 @@
+import _ from 'lodash';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
 
 import { Form, FormFooterButtons } from 'components/Form';
 
-import { useContractors } from 'hooks/useContractors';
 import { useClientsQuery } from 'hooks/useClientsQuery';
 import { useAuth } from 'hooks/useAuth';
 
 import { getNextWeek } from 'utils';
 
-import projectTimesQuery from './queries/projectTimes.gql';
+import InvoiceItemTable from './components/InvoiceItemTable';
+import ProjectTimersTable from './components/ProjectTimersTable';
+
+import createInvoiceMutation from './queries/createInvoice.gql';
+import createInvoiceItemMutation from './queries/createInvoiceItem.gql';
+import updateProjectTimesMutation from './queries/updateProjectTimes.gql';
 
 // TODO: Add invoice Type
 interface InvoiceFormPageProps {
@@ -23,26 +26,28 @@ interface InvoiceFormPageProps {
 }
 
 export default function InvoiceForm({ initialData, isInitialDataLoading }: InvoiceFormPageProps) {
-  const [expandedRows, setExpandedRows] = useState([]);
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const { dragonUser } = useAuth();
   const [clients, isClientsLoading] = useClientsQuery();
-  const [contractors] = useContractors();
 
-  const { data: projectTimesData, loading: isProjectTimesLoading } = useQuery(projectTimesQuery);
+  const [createInvoice] = useMutation(createInvoiceMutation, {
+    refetchQueries: ['invoices']
+  });
 
-  // const [createClient] = useMutation(createClientMutation, {
-  //   refetchQueries: ['accountRequests']
-  // });
+  const [createInvoiceItem] = useMutation(createInvoiceItemMutation, {
+    refetchQueries: ['invoices']
+  });
 
-  // const [updateClient] = useMutation(updateClientMutation, {
-  //   refetchQueries: ['accountRequests', 'client']
-  // });
+  const [updateProjectTimes] = useMutation(updateProjectTimesMutation, {
+    refetchQueries: ['invoices']
+  });
 
-  const [loading, setLoading] = useState(false);
   const toast = useRef<any>(null);
   const router = useRouter();
 
-  if (isInitialDataLoading || isClientsLoading || isProjectTimesLoading) {
+  if (isInitialDataLoading || isClientsLoading) {
     return null;
   }
 
@@ -56,32 +61,6 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
         contractor_id: '',
         due_date: nextWeek
       };
-
-  const headerTemplate = data => {
-    return <span className="vertical-align-middle ml-2 font-bold line-height-3">{data.name}</span>;
-  };
-
-  const projectTimesRowExpansionTemplate = data => {
-    return (
-      <div className="p-3">
-        <h5>Project Times for {data.name}</h5>
-        <DataTable value={data.project_times}>
-          <Column
-            field="start_time"
-            header="Start Time"
-            body={rowData => <span>{rowData.start_time}</span>}
-            sortable
-          />
-          <Column
-            field="end_time"
-            header="End Time"
-            body={rowData => <span>{rowData.end_time}</span>}
-            sortable
-          />
-        </DataTable>
-      </div>
-    );
-  };
 
   return (
     <>
@@ -99,32 +78,11 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
               options={clients}
               isRequired
             />
-            <InputDropdown
-              placeholder="Select client"
-              label="Contractor"
-              name="contractor_id"
-              optionLabel="name"
-              optionValue="id"
-              options={contractors}
-              isRequired
-            />
 
-            <DataTable
-              value={projectTimesData.project}
-              expandedRows={expandedRows}
-              // @ts-ignore
-              onRowToggle={e => setExpandedRows(e.data)}
-              rowExpansionTemplate={projectTimesRowExpansionTemplate}
-              dataKey="id"
-              tableStyle={{ minWidth: '60rem' }}
-            >
-              <Column expander style={{ width: '5rem' }} />
-              <Column field="name" header="Project Name" sortable />
-              {/* Add more columns as needed */}
-            </DataTable>
-
-            <InputText label="Name" name="name" isRequired autoFocus />
             <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
+            <ProjectTimersTable />
+
+            <InvoiceItemTable items={items} onAddItems={setItems} />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>
@@ -145,12 +103,28 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
         //   }
         // });
       } else {
-        // await createClient({
-        //   variables: {
-        //     ...data,
-        //     userId: dragonUser?.id
-        //   }
+        // first create invoice
+        const newInvoice = await createInvoice({
+          variables: {
+            ...data
+          }
+        });
+
+        const invoiceId = _.get(newInvoice, 'data.insert_invoice_one.id');
+
+        // await updateProjectTimes({
+        //   variables: {}
         // });
+
+        for (const item of items) {
+          await createInvoiceItem({
+            variables: {
+              //@ts-ignore
+              ...item,
+              invoiceId
+            }
+          });
+        }
       }
 
       // Show success toast
