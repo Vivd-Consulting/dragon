@@ -1,11 +1,11 @@
 mutation createContractor(
   $name: String!
-  $gpt_persona: String!
+  $gpt_persona: String
   $location: String!
   $rate: float8!
   $invoice: float8
   $document: String
-  $start_date: timestamp
+  $start_date: timestamp!
   $end_date: timestamp
 ) {
   insert_contractor_one(
