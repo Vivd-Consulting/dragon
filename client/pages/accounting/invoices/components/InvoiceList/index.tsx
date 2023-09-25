@@ -107,7 +107,7 @@ export default function InvoiceList() {
           body={({ client }) => {
             const projectTimes = _.get(client, 'projects[0].project_times');
 
-            const { totalTime } = calculateTotalTimeAndCost(projectTimes, 20);
+            const { totalTime } = calculateTotalTimeAndCost(projectTimes);
 
             return <span>{totalTime}</span>;
           }}
@@ -120,6 +120,7 @@ export default function InvoiceList() {
           body={({ client }) => {
             const projectTimes = _.get(client, 'projects[0].project_times');
 
+            // TODO: Add dynamic rates here
             const { totalCost } = calculateTotalTimeAndCost(projectTimes, 20);
 
             return <span>{totalCost}</span>;

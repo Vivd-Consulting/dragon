@@ -1,0 +1,7 @@
+query invoice($id: Int!) {
+  invoice(where: { id: { _eq: $id } }) {
+    due_date
+    id
+    client_id
+  }
+}
