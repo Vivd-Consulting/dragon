@@ -87,13 +87,13 @@ export default function SecretKeyFormModal({
 
     try {
       if (initialData) {
-        const prefixedPath = validifySecretKey(projectName, data.path);
+        const formatedSecretKey = formatSecretKey(projectName, data.path, projectId as string);
 
         await updateSecretKey({
           variables: {
             ...data,
-            path: prefixedPath,
-            projectId: +projectId
+            path: formatedSecretKey,
+            projectId: Number(projectId)
           }
         });
 
@@ -104,13 +104,13 @@ export default function SecretKeyFormModal({
           life: 3000
         });
       } else {
-        const prefixedPath = validifySecretKey(projectName, data.path);
+        const formatedSecretKey = formatSecretKey(projectName, data.path, projectId as string);
 
         await createSecretKey({
           variables: {
             ...data,
-            path: prefixedPath,
-            projectId: +projectId
+            path: formatedSecretKey,
+            projectId: Number(projectId)
           }
         });
 
@@ -137,10 +137,10 @@ export default function SecretKeyFormModal({
     }
   }
 
-  function validifySecretKey(name: string, path: string) {
+  function formatSecretKey(name: string, path: string, projectId: string) {
     const validProjectName = name.replace(/\s+/g, '-');
     const validPath = path.replace(/\s+/g, '-');
 
-    return `/${validProjectName}/${validPath}`;
+    return '/' + validProjectName + projectId + '/' + validPath;
   }
 }
