@@ -1,15 +1,20 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
+import { Column } from 'primereact/column';
 
 import { Form, FormFooterButtons } from 'components/Form';
 
+import { useContractors } from 'hooks/useContractors';
+import { useClientsQuery } from 'hooks/useClientsQuery';
 import { useAuth } from 'hooks/useAuth';
 
-import createClientMutation from './queries/createClient.gql';
-import updateClientMutation from './queries/updateClient.gql';
+import { getNextWeek } from 'utils';
+import { DataTable } from 'primereact/datatable';
+
+import projectTimesQuery from './queries/projectTimes.gql';
 
 // TODO: Add invoice Type
 interface InvoiceFormPageProps {
@@ -18,49 +23,108 @@ interface InvoiceFormPageProps {
 }
 
 export default function InvoiceForm({ initialData, isInitialDataLoading }: InvoiceFormPageProps) {
+  const [expandedRows, setExpandedRows] = useState([]);
   const { dragonUser } = useAuth();
-  const [createClient] = useMutation(createClientMutation, {
-    refetchQueries: ['accountRequests']
-  });
+  const [clients, isClientsLoading] = useClientsQuery();
+  const [contractors] = useContractors();
 
-  const [updateClient] = useMutation(updateClientMutation, {
-    refetchQueries: ['accountRequests', 'client']
-  });
+  const { data: projectTimesData, loading: isProjectTimesLoading } = useQuery(projectTimesQuery);
+
+  console.log(projectTimesData);
+  // const [createClient] = useMutation(createClientMutation, {
+  //   refetchQueries: ['accountRequests']
+  // });
+
+  // const [updateClient] = useMutation(updateClientMutation, {
+  //   refetchQueries: ['accountRequests', 'client']
+  // });
 
   const [loading, setLoading] = useState(false);
   const toast = useRef<any>(null);
   const router = useRouter();
 
-  if (isInitialDataLoading) {
+  if (isInitialDataLoading || isClientsLoading || isProjectTimesLoading) {
     return null;
   }
+
+  const nextWeek = getNextWeek();
 
   const defaultValues = initialData
     ? initialData.client[0]
     : {
-        logo_id: '',
         name: '',
-        description: '',
-        gpt_persona: '',
-        document: '',
-        start_date: '',
-        end_data: ''
+        client_id: '',
+        contractor_id: '',
+        due_date: nextWeek
       };
+
+  const headerTemplate = data => {
+    return <span className="vertical-align-middle ml-2 font-bold line-height-3">{data.name}</span>;
+  };
+
+  const projectTimesRowExpansionTemplate = data => {
+    return (
+      <div className="p-3">
+        <h5>Project Times for {data.name}</h5>
+        <DataTable value={data.project_times}>
+          <Column
+            field="start_time"
+            header="Start Time"
+            body={rowData => <span>{rowData.start_time}</span>}
+            sortable
+          />
+          <Column
+            field="end_time"
+            header="End Time"
+            body={rowData => <span>{rowData.end_time}</span>}
+            sortable
+          />
+        </DataTable>
+      </div>
+    );
+  };
 
   return (
     <>
       <Toast ref={toast} />
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
-        {({ UploadImageInput, InputText, InputTextArea, InputCalendar }) => (
+        {({ InputText, InputCalendar, InputDropdown }) => (
           <>
-            <UploadImageInput label="Brand Logo" name="logo_id" />
+            <InputDropdown
+              placeholder="Select client"
+              label="Client"
+              name="client_id"
+              optionLabel="name"
+              optionValue="id"
+              options={clients}
+              isRequired
+            />
+            <InputDropdown
+              placeholder="Select client"
+              label="Contractor"
+              name="contractor_id"
+              optionLabel="name"
+              optionValue="id"
+              options={contractors}
+              isRequired
+            />
+
+            <DataTable
+              value={projectTimesData.project}
+              expandedRows={expandedRows}
+              onRowToggle={e => setExpandedRows(e.data)}
+              rowExpansionTemplate={projectTimesRowExpansionTemplate}
+              dataKey="id"
+              tableStyle={{ minWidth: '60rem' }}
+            >
+              <Column expander style={{ width: '5rem' }} />
+              <Column field="name" header="Project Name" sortable />
+              {/* Add more columns as needed */}
+            </DataTable>
+
             <InputText label="Name" name="name" isRequired autoFocus />
-            <InputTextArea label="Description" name="description" />
-            <InputTextArea label="GPT Persona" name="gpt_persona" />
-            <InputText label="Document" name="document" />
-            <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
-            <InputCalendar label="End Date" name="end_date" showIcon />
+            <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>
@@ -74,19 +138,19 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
 
     try {
       if (initialData) {
-        await updateClient({
-          variables: {
-            ...data,
-            userId: dragonUser?.id
-          }
-        });
+        // await updateClient({
+        //   variables: {
+        //     ...data,
+        //     userId: dragonUser?.id
+        //   }
+        // });
       } else {
-        await createClient({
-          variables: {
-            ...data,
-            userId: dragonUser?.id
-          }
-        });
+        // await createClient({
+        //   variables: {
+        //     ...data,
+        //     userId: dragonUser?.id
+        //   }
+        // });
       }
 
       // Show success toast
