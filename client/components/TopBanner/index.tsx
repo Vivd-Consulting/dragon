@@ -19,7 +19,11 @@ export default function TopBanner() {
 
   return (
     <>
-      <PSidebar visible={mobileSidebarVisible} onHide={() => setMobileSidebarVisible(false)}>
+      <PSidebar
+        className="menu-sidebar"
+        visible={mobileSidebarVisible}
+        onHide={() => setMobileSidebarVisible(false)}
+      >
         <MobileSidebar onItemClick={() => setMobileSidebarVisible(false)} />
       </PSidebar>
       <Row className={styles.topBanner} align="center" justify="start">

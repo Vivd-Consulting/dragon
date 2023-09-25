@@ -45,7 +45,7 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
     <>
       <Column align="center" className="gap-3 py-1">
         <Link href="/">
-          <img src="/vercel.svg" alt="Dragon" className={styles['sidebar-logo']} />
+          <img src="/dragon_logo.png" alt="Dragon" className={styles['sidebar-logo']} />
         </Link>
         <a href="/" className={styles['sidebar-title']}>
           <h2 className="mt-0 mb-2">Dragon {isAdmin ? 'Admin' : 'Dash'}</h2>
@@ -73,7 +73,7 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
               })
           }
         ]}
-        className="p-button-raised p-button-secondary p-button-text mb-2"
+        className="mb-2"
       />
 
       <div className={styles['sidebar-items-container']}>
