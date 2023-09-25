@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
 
 import { Form, FormFooterButtons } from 'components/Form';
 
@@ -12,7 +13,6 @@ import { useClientsQuery } from 'hooks/useClientsQuery';
 import { useAuth } from 'hooks/useAuth';
 
 import { getNextWeek } from 'utils';
-import { DataTable } from 'primereact/datatable';
 
 import projectTimesQuery from './queries/projectTimes.gql';
 
@@ -30,7 +30,6 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
 
   const { data: projectTimesData, loading: isProjectTimesLoading } = useQuery(projectTimesQuery);
 
-  console.log(projectTimesData);
   // const [createClient] = useMutation(createClientMutation, {
   //   refetchQueries: ['accountRequests']
   // });
@@ -113,6 +112,7 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
             <DataTable
               value={projectTimesData.project}
               expandedRows={expandedRows}
+              // @ts-ignore
               onRowToggle={e => setExpandedRows(e.data)}
               rowExpansionTemplate={projectTimesRowExpansionTemplate}
               dataKey="id"
