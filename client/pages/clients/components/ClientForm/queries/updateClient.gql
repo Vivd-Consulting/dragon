@@ -2,10 +2,10 @@ mutation updateClient(
   $id: Int!
   $logo_id: Int
   $name: String!
-  $description: String!
-  $gpt_persona: String!
+  $description: String
+  $gpt_persona: String
   $document: String
-  $start_date: timestamp
+  $start_date: timestamp!
   $end_date: timestamp
 ) {
   update_client(

@@ -106,8 +106,6 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
             onClick={onItemClick}
           />
 
-          <SidebarItem icon="pi pi-key" label="Secrets" href="/secrets" onClick={onItemClick} />
-
           <SidebarGroup
             icon="pi pi-money-bill"
             title="Accounting"
