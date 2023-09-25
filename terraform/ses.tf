@@ -3,23 +3,23 @@
 # are generated must be set in the domain's DNS configuration prior to use.
 
 resource "aws_ses_domain_identity" "main" {
-  count  = var.tf_env == "local" ? 1 : 0
-  domain = var.domain
+  count  = var.tf_env == "stg" ? 1 : 0
+  domain = trimprefix(var.domain, "stg.")
 }
 
 resource "aws_ses_domain_dkim" "main" {
-  count  = var.tf_env == "local" ? 1 : 0
+  count  = var.tf_env == "stg" ? 1 : 0
   domain = aws_ses_domain_identity.main[0].domain
 }
 
 resource "aws_ses_domain_mail_from" "main" {
-  count            = var.tf_env == "local" ? 1 : 0
+  count            = var.tf_env == "stg" ? 1 : 0
   domain           = aws_ses_domain_identity.main[0].domain
   mail_from_domain = "mail.${aws_ses_domain_identity.main[0].domain}"
 }
 
 resource "aws_ses_identity_notification_topic" "bounce" {
-  count                    = var.tf_env == "local" ? 1 : 0
+  count                    = var.tf_env == "stg" ? 1 : 0
   topic_arn                = aws_sns_topic.aws_notifications[0].arn
   notification_type        = "Bounce"
   identity                 = aws_ses_domain_identity.main[0].domain
@@ -27,7 +27,7 @@ resource "aws_ses_identity_notification_topic" "bounce" {
 }
 
 resource "aws_ses_identity_notification_topic" "complaint" {
-  count                    = var.tf_env == "local" ? 1 : 0
+  count                    = var.tf_env == "stg" ? 1 : 0
   topic_arn                = aws_sns_topic.aws_notifications[0].arn
   notification_type        = "Complaint"
   identity                 = aws_ses_domain_identity.main[0].domain

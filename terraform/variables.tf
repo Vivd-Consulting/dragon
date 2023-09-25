@@ -1,15 +1,11 @@
 ##### General #####
 
-data "aws_caller_identity" "current" {
-  count = var.tf_env != "local" ? 1 : 0
-}
+data "aws_caller_identity" "current" {}
 
-data "aws_region" "current" {
-  count = var.tf_env != "local" ? 1 : 0
-}
+data "aws_region" "current" {}
 
 variable "tf_env" {
-  description = "Terraform environment name. (local/stg/prd)"
+  description = "Terraform environment name. (stg/prd)"
   type        = string
 }
 
@@ -121,22 +117,12 @@ variable "api_auth0_admin_role_id" {
   type        = string
 }
 
-variable "api_auth0_user_role_id" {
-  description = "Auth0 role ID for the user role."
+variable "api_auth0_client_role_id" {
+  description = "Auth0 role ID for the client role."
   type        = string
 }
 
-variable "api_fb_app_id" {
-  description = "FB app ID."
-  type        = string
-}
-
-variable "api_fb_app_secret" {
-  description = "FB app secret."
-  type        = string
-}
-
-variable "api_fb_admin_bm" {
-  description = "FB BM key."
+variable "api_auth0_contractor_role_id" {
+  description = "Auth0 role ID for the contractor role."
   type        = string
 }
