@@ -1,10 +1,8 @@
 data "aws_kms_key" "ebs" {
-  count  = var.tf_env != "local" ? 1 : 0
   key_id = "alias/aws/ebs"
 }
 
 data "aws_ami" "ecs_optimized" {
-  count       = var.tf_env != "local" ? 1 : 0
   owners      = ["amazon"]
   most_recent = true
 
@@ -15,32 +13,29 @@ data "aws_ami" "ecs_optimized" {
 }
 
 resource "aws_ecs_cluster" "cluster" {
-  count = var.tf_env != "local" ? 1 : 0
-  name  = "${var.project}-${var.tf_env}"
+  name = "${var.project}-${var.tf_env}"
 }
 
 resource "aws_ecs_cluster_capacity_providers" "ecs_ci" {
-  count        = var.tf_env != "local" ? 1 : 0
-  cluster_name = aws_ecs_cluster.cluster[0].name
+  cluster_name = aws_ecs_cluster.cluster.name
 
   capacity_providers = [
-    aws_ecs_capacity_provider.ecs_ci[0].name
+    aws_ecs_capacity_provider.ecs_ci.name
   ]
 
   default_capacity_provider_strategy {
     base              = 0
     weight            = 100
-    capacity_provider = aws_ecs_capacity_provider.ecs_ci[0].name
+    capacity_provider = aws_ecs_capacity_provider.ecs_ci.name
   }
 }
 
 resource "aws_ecs_capacity_provider" "ecs_ci" {
-  count = var.tf_env != "local" ? 1 : 0
-  name  = "${var.project}-${var.tf_env}"
+  name = "${var.project}-${var.tf_env}"
 
   auto_scaling_group_provider {
     managed_termination_protection = "ENABLED"
-    auto_scaling_group_arn         = aws_autoscaling_group.ecs_ci[0].arn
+    auto_scaling_group_arn         = aws_autoscaling_group.ecs_ci.arn
 
     managed_scaling {
       maximum_scaling_step_size = 2
@@ -53,12 +48,10 @@ resource "aws_ecs_capacity_provider" "ecs_ci" {
 }
 
 resource "aws_launch_template" "ecs_ci" {
-  count = var.tf_env != "local" ? 1 : 0
-  name  = "${var.project}-${var.tf_env}"
-
+  name                   = "${var.project}-${var.tf_env}"
   instance_type          = "t3.small"
-  image_id               = data.aws_ami.ecs_optimized[0].id
-  vpc_security_group_ids = [aws_security_group.ecs_ci[0].id]
+  image_id               = data.aws_ami.ecs_optimized.id
+  vpc_security_group_ids = [aws_security_group.ecs_ci.id]
 
   block_device_mappings {
     device_name = "/dev/xvda"
@@ -68,7 +61,7 @@ resource "aws_launch_template" "ecs_ci" {
       volume_type           = "gp3"
       delete_on_termination = true
       encrypted             = true
-      kms_key_id            = data.aws_kms_key.ebs[0].arn
+      kms_key_id            = data.aws_kms_key.ebs.arn
     }
   }
 
@@ -94,16 +87,14 @@ EOT
 }
 
 resource "aws_autoscaling_group" "ecs_ci" {
-  count = var.tf_env != "local" ? 1 : 0
-  name  = "${var.project}-${var.tf_env}"
-
+  name                  = "${var.project}-${var.tf_env}"
   max_size              = 24
   min_size              = var.tf_env == "prd" ? 3 : 1
   protect_from_scale_in = true
-  vpc_zone_identifier   = module.vpc[0].private_subnets
+  vpc_zone_identifier   = module.vpc.private_subnets
 
   launch_template {
-    id      = aws_launch_template.ecs_ci[0].id
+    id      = aws_launch_template.ecs_ci.id
     version = "$Latest"
   }
 
@@ -115,10 +106,9 @@ resource "aws_autoscaling_group" "ecs_ci" {
 }
 
 resource "aws_security_group" "ecs_ci" {
-  count       = var.tf_env != "local" ? 1 : 0
   name        = "${var.project}-${var.tf_env}-ecs-ci"
   description = "Allow access to ECS container instances. Managed by Terraform."
-  vpc_id      = module.vpc[0].vpc_id
+  vpc_id      = module.vpc.vpc_id
 
   egress = [
     {
@@ -137,24 +127,20 @@ resource "aws_security_group" "ecs_ci" {
 
 # External Load Balancer
 resource "aws_lb" "cluster_external_lb" {
-  count = var.tf_env != "local" ? 1 : 0
-  name  = "${var.project}-${var.tf_env}-external"
-
+  name                       = "${var.project}-${var.tf_env}-external"
   internal                   = false
   load_balancer_type         = "application"
-  subnets                    = module.vpc[0].public_subnets
-  security_groups            = [aws_security_group.cluster_external_lb[0].id]
+  subnets                    = module.vpc.public_subnets
+  security_groups            = [aws_security_group.cluster_external_lb.id]
   enable_deletion_protection = true
 }
 
 resource "aws_lb_listener" "cluster_external_lb_https" {
-  count = var.tf_env != "local" ? 1 : 0
-
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  load_balancer_arn = aws_lb.cluster_external_lb[0].arn
-  certificate_arn   = aws_acm_certificate.main[0].arn
+  load_balancer_arn = aws_lb.cluster_external_lb.arn
+  certificate_arn   = aws_acm_certificate.main.arn
 
   default_action {
     type = "fixed-response"
@@ -166,10 +152,9 @@ resource "aws_lb_listener" "cluster_external_lb_https" {
 }
 
 resource "aws_security_group" "cluster_external_lb" {
-  count       = var.tf_env != "local" ? 1 : 0
   name        = "${var.project}-${var.tf_env}-external-lb"
   description = "Allow cluster access. Managed by Terraform."
-  vpc_id      = module.vpc[0].vpc_id
+  vpc_id      = module.vpc.vpc_id
 
   egress = [
     {
@@ -187,7 +172,6 @@ resource "aws_security_group" "cluster_external_lb" {
 }
 
 resource "aws_security_group_rule" "cluster_external_lb_ingress" {
-  count             = var.tf_env != "local" ? 1 : 0
   type              = "ingress"
   to_port           = 443
   from_port         = 443
@@ -195,33 +179,29 @@ resource "aws_security_group_rule" "cluster_external_lb_ingress" {
   cidr_blocks       = ["0.0.0.0/0"]
   ipv6_cidr_blocks  = ["::/0"]
   description       = "Allow cluster access from the internet. Managed by Terraform."
-  security_group_id = aws_security_group.cluster_external_lb[0].id
+  security_group_id = aws_security_group.cluster_external_lb.id
 }
 
 output "cluster_external_lb_dns_name" {
-  value = var.tf_env != "local" ? aws_lb.cluster_external_lb[0].dns_name : ""
+  value = aws_lb.cluster_external_lb.dns_name
 }
 
 # Internal Load Balancer
 resource "aws_lb" "cluster_internal_lb" {
-  count = var.tf_env != "local" ? 1 : 0
-  name  = "${var.project}-${var.tf_env}-internal"
-
+  name                       = "${var.project}-${var.tf_env}-internal"
   internal                   = true
   load_balancer_type         = "application"
-  subnets                    = module.vpc[0].public_subnets
-  security_groups            = [aws_security_group.cluster_internal_lb[0].id]
+  subnets                    = module.vpc.public_subnets
+  security_groups            = [aws_security_group.cluster_internal_lb.id]
   enable_deletion_protection = true
 }
 
 resource "aws_lb_listener" "cluster_internal_lb_https" {
-  count = var.tf_env != "local" ? 1 : 0
-
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  load_balancer_arn = aws_lb.cluster_internal_lb[0].arn
-  certificate_arn   = aws_acm_certificate.main[0].arn
+  load_balancer_arn = aws_lb.cluster_internal_lb.arn
+  certificate_arn   = aws_acm_certificate.main.arn
 
   default_action {
     type = "fixed-response"
@@ -233,10 +213,9 @@ resource "aws_lb_listener" "cluster_internal_lb_https" {
 }
 
 resource "aws_security_group" "cluster_internal_lb" {
-  count       = var.tf_env != "local" ? 1 : 0
   name        = "${var.project}-${var.tf_env}-internal-lb"
   description = "Allow internal cluster access. Managed by Terraform."
-  vpc_id      = module.vpc[0].vpc_id
+  vpc_id      = module.vpc.vpc_id
 
   egress = [
     {
@@ -254,16 +233,15 @@ resource "aws_security_group" "cluster_internal_lb" {
 }
 
 resource "aws_security_group_rule" "cluster_internal_lb_ingress" {
-  count             = var.tf_env != "local" ? 1 : 0
   type              = "ingress"
   to_port           = 443
   from_port         = 443
   protocol          = "tcp"
   cidr_blocks       = [var.vpc_cidr]
   description       = "Allow internal cluster access from VPC. Managed by Terraform."
-  security_group_id = aws_security_group.cluster_internal_lb[0].id
+  security_group_id = aws_security_group.cluster_internal_lb.id
 }
 
 output "cluster_internal_lb_dns_name" {
-  value = var.tf_env != "local" ? aws_lb.cluster_internal_lb[0].dns_name : ""
+  value = aws_lb.cluster_internal_lb.dns_name
 }

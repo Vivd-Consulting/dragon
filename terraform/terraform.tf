@@ -3,14 +3,14 @@ terraform {
     organization = "Vivd"
 
     workspaces {
-      tags = ["dragon"]
+      tags = ["vms"]
     }
   }
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.11.0"
+      version = "5.17.0"
     }
     random = {
       source  = "hashicorp/random"
