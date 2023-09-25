@@ -47,3 +47,8 @@ a {
   height: 48px;
   object-fit: cover;
 }
+
+.p-sidebar.menu-sidebar {
+  background-color: #100f15 !important;
+  border-color: #100f15 !important;
+}
