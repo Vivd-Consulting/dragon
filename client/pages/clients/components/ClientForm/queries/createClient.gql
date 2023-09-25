@@ -1,9 +1,9 @@
 mutation createClient(
   $name: String!
   $logo_id: Int
-  $description: String!
-  $gpt_persona: String!
-  $start_date: timestamp
+  $description: String
+  $gpt_persona: String
+  $start_date: timestamp!
   $end_date: timestamp
   $document: String
 ) {
