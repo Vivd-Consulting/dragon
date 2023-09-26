@@ -1,0 +1,111 @@
+name: Hasura
+
+on:
+  push:
+    branches:
+      - "staging"
+      - "main"
+    paths:
+      - "hasura/**"
+  pull_request:
+    paths:
+      - "hasura/**"
+
+jobs:
+  build-image:
+    name: Build Image
+
+    runs-on: ubuntu-latest
+
+    env:
+      ECR_REGISTRY: 467522471440.dkr.ecr.us-west-2.amazonaws.com
+      ECR_REPOSITORY: vms-hasura
+      IMAGE_TAG: ${{ github.sha }}
+
+    outputs:
+      image: ${{ steps.push-image.outputs.image }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+
+      - name: Build image
+        run: |
+          docker build hasura \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Configure AWS credentials
+        if: contains(fromJSON('["main", "staging"]'), github.ref_name)
+        uses: aws-actions/configure-aws-credentials@v2.2.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+          mask-aws-account-id: "no"
+
+      - name: Login to Amazon ECR
+        if: contains(fromJSON('["main", "staging"]'), github.ref_name)
+        uses: aws-actions/amazon-ecr-login@v1.7.0
+
+      - name: Push image
+        id: push-image
+        if: contains(fromJSON('["main", "staging"]'), github.ref_name)
+        run: |
+          docker push --all-tags $ECR_REGISTRY/$ECR_REPOSITORY
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  deploy-image:
+    name: Deploy Image
+
+    runs-on: ubuntu-latest
+
+    needs:
+      - build-image
+
+    if: contains(fromJSON('["main", "staging"]'), github.ref_name)
+
+    env:
+      ENVIRONMENT: ${{ github.ref_name == 'main' && 'prd' || 'stg' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+
+      - name: Setup additional vars
+        id: setup-vars
+        run: |
+          echo "ecs_cluster=vms-$ENVIRONMENT" >> $GITHUB_OUTPUT
+          echo "ecs_service=vms-$ENVIRONMENT-hasura" >> $GITHUB_OUTPUT
+          echo "ECS_TASK_DEFINITION=vms-$ENVIRONMENT-hasura" >> $GITHUB_ENV
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2.2.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Download current Amazon ECS task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition $ECS_TASK_DEFINITION \
+            --query taskDefinition \
+            > task-definition.json
+
+      - name: Update image ID in Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1.1.3
+        with:
+          task-definition: task-definition.json
+          container-name: hasura
+          image: ${{ needs.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1.4.11
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          cluster: ${{ steps.setup-vars.outputs.ecs_cluster }}
+          service: ${{ steps.setup-vars.outputs.ecs_service }}
+          wait-for-service-stability: true
+          wait-for-minutes: 15
