@@ -1,22 +1,22 @@
 data "aws_kms_key" "rds" {
-  count  = var.tf_env != "local" ? 1 : 0
   key_id = "alias/aws/rds"
 }
 
 module "database" {
-  count   = var.tf_env != "local" ? 1 : 0
   source  = "terraform-aws-modules/rds/aws"
   version = "6.1.1"
 
   identifier     = "${var.project}-${var.tf_env}"
   instance_class = "db.t4g.medium"
   engine         = "postgres"
-  engine_version = "15.3"
+  engine_version = "15.4"
   family         = "postgres15"
 
-  allocated_storage = var.tf_env == "prd" ? 32 : 16
-  storage_encrypted = true
-  kms_key_id        = data.aws_kms_key.rds[0].arn
+  storage_type          = "gp3"
+  allocated_storage     = 20
+  max_allocated_storage = 100
+  storage_encrypted     = true
+  kms_key_id            = data.aws_kms_key.rds.arn
 
   username = "postgres"
   password = var.db_master_password
@@ -31,8 +31,8 @@ module "database" {
   apply_immediately       = true
 
   multi_az               = var.tf_env == "prd" ? true : false
-  db_subnet_group_name   = module.vpc[0].database_subnet_group
-  vpc_security_group_ids = [aws_security_group.database[0].id]
+  db_subnet_group_name   = module.vpc.database_subnet_group
+  vpc_security_group_ids = [aws_security_group.database.id]
 
   # Required for access from Vercel.
   publicly_accessible = true
@@ -48,10 +48,9 @@ module "database" {
 }
 
 resource "aws_security_group" "database" {
-  count       = var.tf_env != "local" ? 1 : 0
   name        = "${var.project}-${var.tf_env}-database"
   description = "Allow database access. Managed by Terraform."
-  vpc_id      = module.vpc[0].vpc_id
+  vpc_id      = module.vpc.vpc_id
 
   egress = [
     {
@@ -68,8 +67,7 @@ resource "aws_security_group" "database" {
   ]
 }
 
-resource "aws_security_group_rule" "public_access" {
-  count             = var.tf_env != "local" ? 1 : 0
+resource "aws_security_group_rule" "database_public_access" {
   type              = "ingress"
   to_port           = 5432
   from_port         = 5432
@@ -77,9 +75,9 @@ resource "aws_security_group_rule" "public_access" {
   description       = "Allow database access from the internet."
   cidr_blocks       = ["0.0.0.0/0"]
   ipv6_cidr_blocks  = ["::/0"]
-  security_group_id = aws_security_group.database[0].id
+  security_group_id = aws_security_group.database.id
 }
 
 output "database_address" {
-  value = var.tf_env != "local" ? module.database[0].db_instance_address : ""
+  value = module.database.db_instance_address
 }

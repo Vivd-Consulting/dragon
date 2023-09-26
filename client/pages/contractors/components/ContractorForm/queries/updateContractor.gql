@@ -4,6 +4,7 @@ mutation updateContractor(
   $location: String!
   $rate_id: Int!
   $rate: float8
+  $markup: float8
   $invoice: float8
   $gpt_persona: String
   $document: String
@@ -15,6 +16,7 @@ mutation updateContractor(
       name: $name
       location: $location
       rate_id: $rate_id
+      markup: $markup
       invoice: $invoice
       gpt_persona: $gpt_persona
       document: $document
