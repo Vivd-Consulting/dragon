@@ -1,24 +1,17 @@
 import _ from 'lodash';
 import { useState } from 'react';
-import { useQuery } from '@apollo/client';
 
 import { Card } from 'primereact/card';
 import { ToggleButton } from 'primereact/togglebutton';
 
 import { Column, Row } from 'components/Group';
 
-import { useAuth } from 'hooks/useAuth';
-
 import TimeTrackerList from './components/TimeTrackerList';
 import Timer from './components/Timer';
-
-import userProjectsQuery from './queries/userProjects.gql';
 
 export default function TimeTrackerPage() {
   const [isListViewChecked, setIsListViewChecked] = useState(false);
   // Get all projects associated to this user
-  const { dragonUser } = useAuth();
-  const { id: userId } = dragonUser;
 
   return (
     <Column gap="4" fullWidth>
