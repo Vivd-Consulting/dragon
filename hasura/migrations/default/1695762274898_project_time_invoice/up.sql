@@ -1,0 +1,1 @@
+ALTER TABLE project_time ADD COLUMN invoice_id INTEGER REFERENCES invoice(id);
