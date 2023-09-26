@@ -23,7 +23,9 @@ export default function Timer({ isListViewChecked }) {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
 
-  const where: any = {};
+  const where: any = {
+    project: { archived_at: { _is_null: true } }
+  };
 
   if (searchText) {
     where._or = [
