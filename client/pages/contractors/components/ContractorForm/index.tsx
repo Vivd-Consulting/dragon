@@ -63,6 +63,7 @@ export default function ContractorForm({
             <InputText label="Location" name="location" isRequired />
             <InputText label="Document" name="document" />
             <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
+            <InputNumber label="Markup" name="markup" isRequired />
             <InputNumber label="Invoice" name="invoice" />
             <InputTextArea label="GPT Persona" name="gpt_persona" />
             <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
