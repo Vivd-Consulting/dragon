@@ -114,7 +114,6 @@ CREATE TABLE project_time (
 
   dragon_user_id text NOT NULL REFERENCES dragon_user(id),
   project_id integer NOT NULL REFERENCES project(id),
-  invoice_id integer REFERENCES invoice(id),
   new_time float,
 
   created_at timestamp NOT NULL DEFAULT now(),
