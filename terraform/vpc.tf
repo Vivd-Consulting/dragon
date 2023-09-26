@@ -1,7 +1,6 @@
 module "vpc" {
-  count   = var.tf_env != "local" ? 1 : 0
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.1.1"
+  version = "5.1.2"
 
   name = "${var.project}-${var.tf_env}"
   cidr = var.vpc_cidr

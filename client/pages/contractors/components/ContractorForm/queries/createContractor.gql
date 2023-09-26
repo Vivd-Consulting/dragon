@@ -3,6 +3,7 @@ mutation createContractor(
   $gpt_persona: String
   $location: String!
   $rate: float8!
+  $markup: float8!
   $invoice: float8
   $document: String
   $start_date: timestamp!
@@ -17,6 +18,7 @@ mutation createContractor(
       document: $document
       start_date: $start_date
       end_date: $end_date
+      markup: $markup
       contractor_rate: { data: { rate: $rate } }
     }
   ) {
