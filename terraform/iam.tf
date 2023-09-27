@@ -10,7 +10,7 @@ resource "aws_iam_role" "api_service" {
   assume_role_policy = data.aws_iam_policy_document.api_service_assume.json
 
   inline_policy {
-    name   = "S3Access"
+    name   = "APIAccess"
     policy = data.aws_iam_policy_document.api_service.json
   }
 }
@@ -62,14 +62,5 @@ data "aws_iam_policy_document" "api_service" {
     resources = [
       var.tf_env == "stg" ? aws_ses_domain_identity.main[0].arn : data.aws_ses_domain_identity.main[0].arn
     ]
-  }
-
-  # TODO - Refine SNS permissions once use case is defined.
-  statement {
-    sid = "SNSAccess"
-    actions = [
-      "sns:*"
-    ]
-    resources = ["*"]
   }
 }
