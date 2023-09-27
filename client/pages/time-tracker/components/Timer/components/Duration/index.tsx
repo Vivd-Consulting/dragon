@@ -31,9 +31,15 @@ export default function Duration({ project, isListViewChecked }) {
 
   const formattedTime = dayjs.utc(timeSinceStart * 1000).format('HH:mm:ss');
 
-  const [startTimer] = useMutation(startTimerMutation);
-  const [stopTimer] = useMutation(stopTimerMutation);
-  const [stopAllTimers] = useMutation(stopAllTimersMutation);
+  const [startTimer] = useMutation(startTimerMutation, {
+    refetchQueries: ['projectTimes']
+  });
+  const [stopTimer] = useMutation(stopTimerMutation, {
+    refetchQueries: ['projectTimes']
+  });
+  const [stopAllTimers] = useMutation(stopAllTimersMutation, {
+    refetchQueries: ['projectTimes']
+  });
 
   useInterval(() => {
     if (project.isActive) {

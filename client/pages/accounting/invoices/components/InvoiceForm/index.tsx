@@ -29,6 +29,7 @@ interface InvoiceFormPageProps {
 export default function InvoiceForm({ initialData, isInitialDataLoading }: InvoiceFormPageProps) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
 
   const { dragonUser } = useAuth();
   const [clients, isClientsLoading] = useClientsQuery();
@@ -72,7 +73,7 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
       <Toast ref={toast} />
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
-        {({ InputText, InputCalendar, InputDropdown }) => (
+        {({ InputCalendar, InputDropdown }) => (
           <>
             <InputDropdown
               placeholder="Select client"
@@ -80,12 +81,13 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
               name="client_id"
               optionLabel="name"
               optionValue="id"
+              onChange={e => setSelectedClient(e.value)}
               options={clients}
               isRequired
             />
 
             <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
-            <ProjectTimersTable />
+            <ProjectTimersTable selectedClient={selectedClient} />
 
             <InvoiceItemTable items={items} onAddItems={setItems} />
 
