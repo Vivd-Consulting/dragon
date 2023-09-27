@@ -28,4 +28,4 @@ CREATE TABLE invoice_item (
   updated_at timestamp NOT NULL DEFAULT now()
 );
 
-ALTER TABLE project_time ADD COLUMN invoice_id integer REFERENCES invoice(id);
+-- ALTER TABLE project_time ADD COLUMN invoice_id integer REFERENCES invoice(id);
