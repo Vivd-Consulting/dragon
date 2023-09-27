@@ -1,3 +1,21 @@
+locals {
+  ordered_placement_strategies = var.tf_env == "prd" ? [
+    {
+      "type"  = "spread"
+      "field" = "attribute:ecs.availability-zone"
+    },
+    {
+      "field" = "cpu"
+      "type"  = "binpack"
+    },
+    ] : [
+    {
+      "field" = "cpu"
+      "type"  = "binpack"
+    },
+  ]
+}
+
 data "aws_kms_key" "ebs" {
   key_id = "alias/aws/ebs"
 }
