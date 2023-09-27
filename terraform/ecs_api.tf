@@ -1,19 +1,4 @@
 locals {
-  ordered_placement_strategies = var.tf_env == "prd" ? [
-    {
-      "type"  = "spread"
-      "field" = "attribute:ecs.availability-zone"
-    },
-    {
-      "field" = "cpu"
-      "type"  = "binpack"
-    },
-    ] : [
-    {
-      "field" = "cpu"
-      "type"  = "binpack"
-    },
-  ]
 }
 
 resource "aws_ecs_service" "api" {
