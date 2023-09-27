@@ -6,14 +6,12 @@ query timers(
 ) {
   project_time(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     id
-    project {
-      name
-      client {
-        name
-      }
-    }
+    description
     start_time
     end_time
+    project {
+      name
+    }
   }
   project_time_aggregate(order_by: $order_by, where: $where) {
     aggregate {
