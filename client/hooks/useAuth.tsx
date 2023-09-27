@@ -28,8 +28,6 @@ interface SessionData {
 export function GqlAuthProvider({ children }) {
   const { data, status } = useSession();
 
-  console.log({ data, status });
-
   useAuth = create(() => ({
     user: null,
     role: 0,
@@ -41,13 +39,10 @@ export function GqlAuthProvider({ children }) {
   if (status === 'loading') {
     return null;
   } else if (status === 'unauthenticated') {
-    return <Unauthenticated />;
+    // return <Unauthenticated />;
+    signIn('auth0');
+    return null;
   }
-
-  // if (!data) {
-  //   signIn('auth0');
-  //   return null;
-  // }
 
   const { user, role, accessToken } = data as Partial<SessionData>;
 
