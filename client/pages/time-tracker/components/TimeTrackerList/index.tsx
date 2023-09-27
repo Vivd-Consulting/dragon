@@ -1,7 +1,9 @@
+import _ from 'lodash';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import utc from 'dayjs/plugin/utc';
 import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -23,6 +25,7 @@ import timersQuery from './queries/timers.gql';
 import deleteTimeMutation from './queries/deleteTime.gql';
 
 dayjs.extend(utc);
+dayjs.extend(duration);
 
 export default function TimeTrackerList() {
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
@@ -125,16 +128,18 @@ export default function TimeTrackerList() {
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
+
         <Column
-          field="project.client.name"
-          header="Client"
+          field="project.name"
+          header="Project"
           sortable
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
         <Column
-          field="project.name"
-          header="Project"
+          field="description"
+          header="Description"
+          body={({ description }) => <span>{_.truncate(description, { length: 200 })}</span>}
           sortable
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
@@ -148,16 +153,8 @@ export default function TimeTrackerList() {
           className="white-space-nowrap"
         />
         <Column
-          field="end_time"
-          header="End Time"
-          body={({ end_time }) => <span>{dateFormat(end_time)}</span>}
-          sortable
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
           field="duration"
-          header="Duration"
+          header="Hours"
           body={({ start_time, end_time }) => (
             <span>{calculateDuration(start_time, end_time)}</span>
           )}
@@ -220,19 +217,13 @@ export default function TimeTrackerList() {
   }
 }
 
-function calculateDuration(startTime, endTime) {
-  if (!endTime) {
-    return '--:--:--';
-  }
+function calculateDuration(start_time, end_time) {
+  const startTime = dayjs(start_time);
+  const endTime = dayjs(end_time);
 
-  const start = dayjs(startTime);
-  const end = dayjs(endTime);
+  const duration = dayjs.duration(endTime.diff(startTime));
 
-  const duration = end.diff(start, 'minute');
-  const roundedDuration = Math.ceil(duration / 30) * 30;
+  const formattedTotalTime = `${duration.hours()}:${duration.minutes()}:${duration.seconds()}`;
 
-  const hours = Math.floor(roundedDuration / 60);
-  const minutes = roundedDuration % 60;
-
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+  return formattedTotalTime;
 }
