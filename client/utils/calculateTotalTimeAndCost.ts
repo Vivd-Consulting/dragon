@@ -7,6 +7,10 @@ function roundUpToHalfHour(minutes) {
 }
 
 function formatAsHoursAndMinutes(minutes) {
+  if (Number.isNaN(minutes)) {
+    return '--:--:--';
+  }
+
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
 

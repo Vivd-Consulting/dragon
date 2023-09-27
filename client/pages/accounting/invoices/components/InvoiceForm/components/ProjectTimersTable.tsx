@@ -10,8 +10,13 @@ import calculateTotalTimeAndCost from 'utils/calculateTotalTimeAndCost';
 
 import projectTimesQuery from './queries/projectTimes.gql';
 
-export default function ProjectTimersTable() {
-  const { data: projectTimesData, loading: isProjectTimesLoading } = useQuery(projectTimesQuery);
+export default function ProjectTimersTable({ selectedClient }) {
+  const { data: projectTimesData } = useQuery(projectTimesQuery, {
+    variables: {
+      clientId: selectedClient
+    },
+    skip: !selectedClient
+  });
 
   const projectTimes = _.get(projectTimesData, 'project', []).map((project, idx) => {
     const timers = project.project_times;
@@ -23,26 +28,18 @@ export default function ProjectTimersTable() {
     const treeNode = {
       key: idx,
       data: {
-        name: project.client.name
+        name: project.name,
+        hours: totalTime,
+        date_range: `${dateFormat(earliestEntry)} - ${dateFormat(latestEntry)}`
       },
-      children: [
-        {
-          key: '0-0',
-          data: {
-            name: project.name,
-            hours: totalTime,
-            date_range: `${dateFormat(earliestEntry)} - ${dateFormat(latestEntry)}`
-          },
-          children: timers.map(timer => ({
-            key: `0-0-${timer.id}`,
-            data: {
-              end_time: dateFormat(timer.end_time),
-              start_time: dateFormat(timer.start_time),
-              description: _.truncate(timer.description, { length: 200 })
-            }
-          }))
+      children: timers.map(timer => ({
+        key: `0-0-${timer.id}`,
+        data: {
+          end_time: dateFormat(timer.end_time),
+          start_time: dateFormat(timer.start_time),
+          description: _.truncate(timer.description, { length: 200 })
         }
-      ]
+      }))
     };
 
     return treeNode;
@@ -55,7 +52,7 @@ export default function ProjectTimersTable() {
       scrollHeight="300px"
       style={{ marginBottom: '1rem' }}
     >
-      <Column field="name" header="Name" expander style={{ width: '300px' }} />
+      <Column field="name" header="Untracked Time" expander style={{ width: '300px' }} />
       <Column field="date_range" header="Date range" style={{ width: '250px' }} />
       <Column field="start_time" header="Start time" style={{ width: '250px' }} />
       <Column field="end_time" header="End time" style={{ width: '250px' }} />

@@ -1,12 +1,17 @@
+import { useState } from 'react';
+
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
 
 import { Row } from 'components/Group';
 
 export default function InvoiceItemTable({ items, onAddItems }) {
+  const [currencies] = useState(['CAD', 'USD', 'TRY']);
+
   const onRowEditComplete = e => {
     let _items = [...items];
     let { newData, index } = e;
@@ -38,10 +43,28 @@ export default function InvoiceItemTable({ items, onAddItems }) {
     );
   };
 
+  const currencyEditor = options => {
+    return (
+      <Dropdown
+        value={options.value}
+        options={currencies}
+        onChange={e => options.editorCallback(e.value)}
+        placeholder="Select a Status"
+        itemTemplate={option => {
+          return <span>{option}</span>;
+        }}
+      />
+    );
+  };
+
   const priceBodyTemplate = rowData => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
       rowData.price
     );
+  };
+
+  const taxBodyTemplate = rowData => {
+    return <span>{`${rowData.tax}%`}</span>;
   };
 
   const header = (
@@ -52,14 +75,14 @@ export default function InvoiceItemTable({ items, onAddItems }) {
           let itemsLength = items.length;
 
           const updatedItems = [
-            ...items,
             {
               id: itemsLength++,
               description: '',
               tax: '',
               currency: 'CAD',
               price: 0
-            }
+            },
+            ...items
           ];
 
           onAddItems(updatedItems);
@@ -89,18 +112,22 @@ export default function InvoiceItemTable({ items, onAddItems }) {
         editor={options => textEditor(options)}
         style={{ width: '20%' }}
       />
+
       <Column
         field="currency"
         header="Currency"
-        editor={options => textEditor(options)}
+        editor={options => currencyEditor(options)}
         style={{ width: '20%' }}
       />
+
       <Column
         field="tax"
         header="Tax"
+        body={taxBodyTemplate}
         editor={options => textEditor(options)}
         style={{ width: '20%' }}
       />
+
       <Column
         field="price"
         header="Price"
@@ -108,11 +135,13 @@ export default function InvoiceItemTable({ items, onAddItems }) {
         editor={options => priceEditor(options)}
         style={{ width: '20%' }}
       />
+
       <Column
         rowEditor
         headerStyle={{ width: '10%', minWidth: '8rem' }}
         bodyStyle={{ textAlign: 'center' }}
       />
+
       <Column
         body={data => {
           return (
