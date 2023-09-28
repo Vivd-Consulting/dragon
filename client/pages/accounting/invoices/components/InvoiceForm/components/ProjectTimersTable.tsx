@@ -15,7 +15,8 @@ export default function ProjectTimersTable({ selectedClient }) {
     variables: {
       clientId: selectedClient
     },
-    skip: !selectedClient
+    skip: !selectedClient,
+    fetchPolicy: 'network-only'
   });
 
   const projectTimes = _.get(projectTimesData, 'project', []).map((project, idx) => {
