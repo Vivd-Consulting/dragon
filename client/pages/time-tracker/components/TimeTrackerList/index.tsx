@@ -223,7 +223,11 @@ function calculateDuration(start_time, end_time) {
 
   const duration = dayjs.duration(endTime.diff(startTime));
 
-  const formattedTotalTime = `${duration.hours()}:${duration.minutes()}:${duration.seconds()}`;
+  const formattedHours = String(duration.hours()).padStart(2, '0');
+  const formattedMinutes = String(duration.minutes()).padStart(2, '0');
+  const formattedSeconds = String(duration.seconds()).padStart(2, '0');
+
+  const formattedTotalTime = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 
   return formattedTotalTime;
 }
