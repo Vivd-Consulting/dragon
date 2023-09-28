@@ -1,6 +1,8 @@
 import { useQuery, useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 
+import { useAuth } from './useAuth';
+
 export function useContractors() {
   const { data, loading, error } = useQuery(CONTRACTORS);
 
@@ -107,3 +109,9 @@ const PROJECT_CONTRACTORS_DELETE = gql`
     }
   }
 `;
+
+export function useCurrentContractor() {
+  const { dragonUser } = useAuth();
+
+  return [dragonUser?.contractor_id];
+}
