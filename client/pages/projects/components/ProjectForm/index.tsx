@@ -61,7 +61,7 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
+      <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="project-form">
         {({ InputText, InputTextArea, InputDropdown }) => (
           <>
             <InputText label="Name" name="name" isRequired autoFocus />

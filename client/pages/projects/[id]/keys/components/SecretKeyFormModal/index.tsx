@@ -64,12 +64,7 @@ export default function SecretKeyFormModal({
         style={{ width: '70vw' }}
         onHide={() => setVisible(false)}
       >
-        <Form
-          defaultValues={defaultValues}
-          onSubmit={onSubmit}
-          resetOnSubmit
-          data-cy="request-form"
-        >
+        <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="secret-key-form">
           {({ InputText }) => (
             <>
               <InputText label="Key" name="path" isRequired autoFocus />

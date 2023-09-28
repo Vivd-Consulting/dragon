@@ -20,11 +20,11 @@ interface ClientFormPageProps {
 export default function ClientForm({ initialData, isInitialDataLoading }: ClientFormPageProps) {
   const { dragonUser } = useAuth();
   const [createClient] = useMutation(createClientMutation, {
-    refetchQueries: ['accountRequests']
+    refetchQueries: ['clients', 'client']
   });
 
   const [updateClient] = useMutation(updateClientMutation, {
-    refetchQueries: ['accountRequests', 'client']
+    refetchQueries: ['clients', 'client']
   });
 
   const [loading, setLoading] = useState(false);
@@ -35,23 +35,13 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
     return null;
   }
 
-  const defaultValues = initialData
-    ? initialData.client[0]
-    : {
-        logo_id: '',
-        name: '',
-        description: '',
-        gpt_persona: '',
-        document: '',
-        start_date: '',
-        end_data: ''
-      };
+  const defaultValues = initialData ? initialData.client[0] : {};
 
   return (
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
+      <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="client-form">
         {({ UploadImageInput, InputText, InputTextArea, InputCalendar }) => (
           <>
             <UploadImageInput label="Brand Logo" name="logo_id" />
@@ -93,7 +83,7 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
       toast?.current?.show({
         severity: 'success',
         summary: 'Success',
-        detail: 'Account Request Submitted!',
+        detail: 'Client created!',
         life: 3000
       });
 
@@ -105,7 +95,7 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
       toast?.current?.show({
         severity: 'error',
         summary: 'Error',
-        detail: 'Failed to submit Account Request',
+        detail: 'Failed to create Client',
         life: 3000
       });
     }
