@@ -10,9 +10,6 @@ import { MobileSidebar } from 'components/Sidebar';
 
 import styles from './styles.module.sass';
 
-const mailto =
-  'mailto:support@agentsofdiscovery.com?Subject=Mission%20Maker%20-%20Request%20for%20support';
-
 export default function TopBanner() {
   const [visible, setVisible] = useState(false);
   const [mobileSidebarVisible, setMobileSidebarVisible] = useState(false);

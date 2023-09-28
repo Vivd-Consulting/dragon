@@ -56,7 +56,7 @@ export default function ContractorForm({
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="request-form">
+      <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="contractor-form">
         {({ InputText, InputTextArea, InputCalendar, InputNumber }) => (
           <>
             <InputText label="Name" name="name" isRequired autoFocus />
