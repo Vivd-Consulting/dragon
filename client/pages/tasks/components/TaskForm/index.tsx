@@ -54,7 +54,7 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={initialData} onSubmit={onSubmit} data-cy="request-form">
+      <Form defaultValues={initialData} onSubmit={onSubmit} data-cy="task-form">
         {({ InputText, InputDropdown, InputTextArea, InputCalendar }) => (
           <>
             <InputText label="Title" name="title" isRequired autoFocus />
