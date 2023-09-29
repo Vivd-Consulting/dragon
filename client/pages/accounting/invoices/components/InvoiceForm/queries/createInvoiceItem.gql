@@ -1,19 +1,5 @@
-mutation createInvoiceItem(
-  $description: String!
-  $price: float8!
-  $tax: float8!
-  $currency: String!
-  $invoiceId: Int!
-) {
-  insert_invoice_item(
-    objects: {
-      description: $description
-      price: $price
-      tax: $tax
-      currency: $currency
-      invoice_id: $invoiceId
-    }
-  ) {
+mutation createInvoiceItem($objects: [invoice_item_insert_input!]!) {
+  insert_invoice_item(objects: $objects) {
     returning {
       id
     }

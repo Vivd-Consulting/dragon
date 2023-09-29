@@ -1,6 +1,9 @@
-mutation updateProjectTimes($invoiceId: Int!) {
+mutation MyMutation($invoiceId: Int!, $projectTimeId: Int!) {
   update_project_time_many(
-    updates: { _set: { invoice_id: $invoiceId }, where: { invoice_id: { _is_null: true } } }
+    updates: {
+      where: { _and: { invoice_id: { _is_null: true }, id: { _eq: $projectTimeId } } }
+      _set: { invoice_id: $invoiceId }
+    }
   ) {
     returning {
       id
