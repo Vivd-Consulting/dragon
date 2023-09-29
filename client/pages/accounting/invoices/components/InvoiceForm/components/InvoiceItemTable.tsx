@@ -9,18 +9,9 @@ import { Dropdown } from 'primereact/dropdown';
 
 import { Row } from 'components/Group';
 
+const CURRENCIES = ['CAD', 'USD', 'TRY'];
+
 export default function InvoiceItemTable({ items, onAddItems }) {
-  const [currencies] = useState(['CAD', 'USD', 'TRY']);
-
-  const onRowEditComplete = e => {
-    let _items = [...items];
-    let { newData, index } = e;
-
-    _items[index] = newData;
-
-    onAddItems(_items);
-  };
-
   const textEditor = options => {
     return (
       <InputText
@@ -47,7 +38,7 @@ export default function InvoiceItemTable({ items, onAddItems }) {
     return (
       <Dropdown
         value={options.value}
-        options={currencies}
+        options={CURRENCIES}
         onChange={e => options.editorCallback(e.value)}
         placeholder="Select a Status"
         itemTemplate={option => {
@@ -76,7 +67,7 @@ export default function InvoiceItemTable({ items, onAddItems }) {
 
           const updatedItems = [
             {
-              id: itemsLength++,
+              key: itemsLength + 1,
               description: '',
               tax: '',
               currency: 'CAD',
@@ -101,7 +92,7 @@ export default function InvoiceItemTable({ items, onAddItems }) {
       header={header}
       value={items}
       editMode="row"
-      dataKey="id"
+      dataKey="key"
       onRowEditComplete={onRowEditComplete}
       tableStyle={{ minWidth: '50rem', marginBottom: '1rem' }}
       scrollHeight="400px"
@@ -163,4 +154,13 @@ export default function InvoiceItemTable({ items, onAddItems }) {
       />
     </DataTable>
   );
+
+  function onRowEditComplete(e) {
+    let _items = [...items];
+    let { newData, index } = e;
+
+    _items[index] = newData;
+
+    onAddItems(_items);
+  }
 }

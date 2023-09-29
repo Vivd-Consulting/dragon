@@ -20,6 +20,11 @@ export default function calculateTotalTimeAndCost(timeArray, rate = 0) {
     totalCost += entryCost;
   });
 
+  // @ts-ignore
+  if (Number.isNaN(totalTime.$ms)) {
+    return { totalTime: '--:--:--', totalCost: 0 };
+  }
+
   const formattedTotalTime = `${totalTime.hours()}:${totalTime.minutes()}:${totalTime.seconds()}`;
 
   return { totalTime: formattedTotalTime, totalCost };

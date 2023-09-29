@@ -26,8 +26,16 @@ interface InvoiceFormPageProps {
   isInitialDataLoading?: boolean;
 }
 
+interface IItem {
+  description: string;
+  tax: number;
+  price: number;
+  currency: string;
+}
+
 export default function InvoiceForm({ initialData, isInitialDataLoading }: InvoiceFormPageProps) {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<IItem[]>([]);
+  const [projectTimeIds, setProjectTimeIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
 
@@ -87,7 +95,10 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
             />
 
             <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
-            <ProjectTimersTable selectedClient={selectedClient} />
+            <ProjectTimersTable
+              selectedClient={selectedClient}
+              onSelectProjectTimeIds={setProjectTimeIds}
+            />
 
             <InvoiceItemTable items={items} onAddItems={setItems} />
 
@@ -116,23 +127,28 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
           }
         });
 
-        const invoiceId = _.get(newInvoice, 'data.insert_invoice_one.id');
+        const invoiceId = _.get(newInvoice, 'data.insert_invoice_one.id') as number;
 
-        await updateProjectTimes({
-          variables: {
-            invoiceId
-          }
-        });
-
-        for (const item of items) {
-          await createInvoiceItem({
+        for (const projectTimeId of projectTimeIds) {
+          await updateProjectTimes({
             variables: {
-              //@ts-ignore
-              ...item,
-              invoiceId
+              invoiceId,
+              projectTimeIds
             }
           });
         }
+
+        const itemsWithInvoiceId = items.map(item => ({
+          ...item,
+          key: undefined,
+          invoice_id: invoiceId
+        }));
+
+        await createInvoiceItem({
+          variables: {
+            objects: itemsWithInvoiceId
+          }
+        });
       }
 
       // Show success toast
