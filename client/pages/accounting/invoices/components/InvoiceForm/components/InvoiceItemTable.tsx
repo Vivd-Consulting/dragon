@@ -12,12 +12,25 @@ import { Row } from 'components/Group';
 const CURRENCIES = ['CAD', 'USD', 'TRY'];
 
 export default function InvoiceItemTable({ items, onAddItems }) {
+  console.log(items);
   const textEditor = options => {
     return (
       <InputText
         type="text"
         value={options.value}
         onChange={e => options.editorCallback(e.target.value)}
+      />
+    );
+  };
+
+  const numberEditor = options => {
+    return (
+      <InputNumber
+        prefix="%"
+        locale="en-US"
+        minFractionDigits={2}
+        value={options.value}
+        onChange={e => options.editorCallback(e.value)}
       />
     );
   };
@@ -55,7 +68,7 @@ export default function InvoiceItemTable({ items, onAddItems }) {
   };
 
   const taxBodyTemplate = rowData => {
-    return <span>{`${rowData.tax}%`}</span>;
+    return <span>{`%${rowData.tax}`}</span>;
   };
 
   const header = (
@@ -69,8 +82,8 @@ export default function InvoiceItemTable({ items, onAddItems }) {
             {
               key: itemsLength + 1,
               description: '',
-              tax: '',
               currency: 'CAD',
+              tax: 0,
               price: 0
             },
             ...items
@@ -115,7 +128,7 @@ export default function InvoiceItemTable({ items, onAddItems }) {
         field="tax"
         header="Tax"
         body={taxBodyTemplate}
-        editor={options => textEditor(options)}
+        editor={options => numberEditor(options)}
         style={{ width: '20%' }}
       />
 
