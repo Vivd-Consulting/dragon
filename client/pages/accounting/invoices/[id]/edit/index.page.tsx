@@ -19,7 +19,7 @@ export default function EditInvoice() {
 
   return (
     <Card>
-      <h1>Edit Invoice</h1>
+      <h1>Edit Invoice - {`REF{${invoiceId}}`}</h1>
       <InvoiceForm initialData={invoice} isInitialDataLoading={isInvoiceLoading} />
     </Card>
   );

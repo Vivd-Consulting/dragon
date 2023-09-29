@@ -92,6 +92,7 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
               onChange={e => setSelectedClient(e.value)}
               options={clients}
               isRequired
+              disabled={initialData}
             />
 
             <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
