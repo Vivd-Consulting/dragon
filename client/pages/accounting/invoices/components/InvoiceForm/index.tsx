@@ -8,6 +8,7 @@ import { Toast } from 'primereact/toast';
 import { Form, FormFooterButtons } from 'components/Form';
 
 import { useClientsQuery } from 'hooks/useClientsQuery';
+import { useCurrentContractor } from 'hooks/useContractors';
 
 import { getNextWeek } from 'utils';
 
@@ -37,6 +38,8 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
   const [projectTimeIds, setProjectTimeIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedClient, setSelectedClient] = useState(initialData?.invoice[0]?.client_id);
+
+  const [contractorId] = useCurrentContractor();
 
   const [clients, isClientsLoading] = useClientsQuery();
 
@@ -123,20 +126,19 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
         // first create invoice
         const newInvoice = await createInvoice({
           variables: {
-            ...data
+            ...data,
+            contractorId
           }
         });
 
         const invoiceId = _.get(newInvoice, 'data.insert_invoice_one.id') as number;
 
-        for (const projectTimeId of projectTimeIds) {
-          await updateProjectTimes({
-            variables: {
-              invoiceId,
-              projectTimeIds
-            }
-          });
-        }
+        await updateProjectTimes({
+          variables: {
+            invoiceId,
+            projectTimeIds
+          }
+        });
 
         const itemsWithInvoiceId = items.map(item => ({
           ...item,
