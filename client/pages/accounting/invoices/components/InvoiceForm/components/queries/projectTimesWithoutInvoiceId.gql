@@ -1,12 +1,9 @@
-query projectTimes($clientId: Int!) {
+query projectTimesWithoutInvoiceId($clientId: Int!, $invoiceId: Int) {
   project(
     where: {
       _and: { client_id: { _eq: $clientId }, project_times: { invoice_id: { _is_null: true } } }
     }
   ) {
-    client {
-      name
-    }
     name
     project_times {
       id

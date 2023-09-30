@@ -17,6 +17,10 @@ export default function EditInvoice() {
     }
   });
 
+  if (!invoice || isInvoiceLoading) {
+    return null;
+  }
+
   return (
     <Card>
       <h1>Edit Invoice - {`REF{${invoiceId}}`}</h1>
