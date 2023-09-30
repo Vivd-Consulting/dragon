@@ -10,13 +10,19 @@ import { dateFormat } from 'utils';
 
 import calculateTotalTimeAndCost from 'utils/calculateTotalTimeAndCost';
 
-import projectTimesQuery from './queries/projectTimes.gql';
+import projectTimesWithInvoiceIdQuery from './queries/projectTimesWithInvoiceId.gql';
+import projectTimesWithoutInvoiceIdQuery from './queries/projectTimesWithoutInvoiceId.gql';
 
-export default function ProjectTimersTable({ selectedClient, onSelectProjectTimeIds }) {
+export default function ProjectTimersTable({ selectedClient, invoiceId, onSelectProjectTimeIds }) {
   const [selectedNodeKeys, setSelectedNodeKeys] = useState(null);
 
-  const { data: projectTimesData } = useQuery(projectTimesQuery, {
+  const currentQuery = invoiceId
+    ? projectTimesWithInvoiceIdQuery
+    : projectTimesWithoutInvoiceIdQuery;
+
+  const { data: projectTimesData } = useQuery(currentQuery, {
     variables: {
+      invoiceId,
       clientId: selectedClient
     },
     skip: !selectedClient,

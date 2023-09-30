@@ -8,7 +8,6 @@ import { Toast } from 'primereact/toast';
 import { Form, FormFooterButtons } from 'components/Form';
 
 import { useClientsQuery } from 'hooks/useClientsQuery';
-import { useAuth } from 'hooks/useAuth';
 
 import { getNextWeek } from 'utils';
 
@@ -37,9 +36,8 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
   const [items, setItems] = useState<IItem[]>([]);
   const [projectTimeIds, setProjectTimeIds] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(initialData?.invoice[0]?.client_id);
 
-  const { dragonUser } = useAuth();
   const [clients, isClientsLoading] = useClientsQuery();
 
   const [createInvoice] = useMutation(createInvoiceMutation, {
@@ -98,6 +96,7 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
             <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
             <ProjectTimersTable
               selectedClient={selectedClient}
+              invoiceId={initialData?.invoice[0]?.id}
               onSelectProjectTimeIds={setProjectTimeIds}
             />
 
