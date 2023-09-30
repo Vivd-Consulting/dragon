@@ -1,5 +1,7 @@
-mutation createInvoice($client_id: Int!, $due_date: timestamp) {
-  insert_invoice_one(object: { client_id: $client_id, due_date: $due_date }) {
+mutation createInvoice($client_id: Int!, $due_date: timestamp, $contractorId: Int) {
+  insert_invoice_one(
+    object: { client_id: $client_id, contractor_id: $contractorId, due_date: $due_date }
+  ) {
     id
   }
 }
