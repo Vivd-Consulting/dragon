@@ -1,6 +1,8 @@
 import { useQuery, useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 
+import { useAuth } from './useAuth';
+
 export function useContractors() {
   const { data, loading, error } = useQuery(CONTRACTORS);
 
@@ -23,6 +25,42 @@ const CONTRACTORS = gql`
     contractor(where: { archived_at: { _is_null: true } }) {
       id
       name
+    }
+  }
+`;
+
+export function useContractorInvoices(contractorId) {
+  const { data, loading, error } = useQuery(CONTRACTOR_INVOICES, {
+    variables: {
+      contractorId
+    },
+    skip: !contractorId
+  });
+
+  if (loading) {
+    return [[]];
+  }
+
+  if (error) {
+    console.error(error);
+    return [[]];
+  }
+
+  const { invoices } = data.contractor[0] || {};
+
+  const hasActiveInvoice = invoices?.some(invoice => !invoice.submitted_at);
+
+  return [invoices, hasActiveInvoice];
+}
+
+const CONTRACTOR_INVOICES = gql`
+  query contractor($contractorId: Int!) {
+    contractor(where: { id: { _eq: $contractorId } }) {
+      invoices {
+        id
+        client_id
+        submitted_at
+      }
     }
   }
 `;
@@ -107,3 +145,9 @@ const PROJECT_CONTRACTORS_DELETE = gql`
     }
   }
 `;
+
+export function useCurrentContractor() {
+  const { dragonUser } = useAuth();
+
+  return [dragonUser?.contractor_id];
+}

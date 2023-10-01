@@ -89,6 +89,8 @@ CREATE TABLE project (
   gpt_persona text,
   github_repo_org text,
   github_repo_name text,
+  tax_rate float NOT NULL DEFAULT 0.5,
+  currency text NOT NULL DEFAULT 'CAD',
 
   client_id integer NOT NULL REFERENCES client(id),
 
@@ -112,6 +114,7 @@ CREATE TABLE project_time (
 
   dragon_user_id text NOT NULL REFERENCES dragon_user(id),
   project_id integer NOT NULL REFERENCES project(id),
+  new_time float,
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now(),

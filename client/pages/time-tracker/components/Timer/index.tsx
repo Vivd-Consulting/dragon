@@ -23,7 +23,9 @@ export default function Timer({ isListViewChecked }) {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
 
-  const where: any = {};
+  const where: any = {
+    project: { archived_at: { _is_null: true } }
+  };
 
   if (searchText) {
     where._or = [
@@ -149,7 +151,9 @@ export default function Timer({ isListViewChecked }) {
             className="white-space-nowrap"
           />
           <Column
-            body={project => <TimeRanges isListViewChecked={isListViewChecked} project={project} />}
+            body={project => (
+              <TimerButton isListViewChecked={isListViewChecked} project={project} />
+            )}
             header="Duration"
             headerClassName="white-space-nowrap"
             className="white-space-nowrap"

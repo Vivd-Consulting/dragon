@@ -1,0 +1,25 @@
+table:
+  name: invoice
+  schema: public
+object_relationships:
+  - name: client
+    using:
+      foreign_key_constraint_on: client_id
+  - name: contractor
+    using:
+      foreign_key_constraint_on: contractor_id
+array_relationships:
+  - name: invoice_items
+    using:
+      foreign_key_constraint_on:
+        column: invoice_id
+        table:
+          name: invoice_item
+          schema: public
+  - name: project_times
+    using:
+      foreign_key_constraint_on:
+        column: invoice_id
+        table:
+          name: project_time
+          schema: public
