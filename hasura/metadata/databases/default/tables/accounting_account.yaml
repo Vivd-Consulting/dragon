@@ -1,0 +1,22 @@
+table:
+  name: account
+  schema: accounting
+object_relationships:
+  - name: bank
+    using:
+      foreign_key_constraint_on: bank_id
+array_relationships:
+  - name: credits
+    using:
+      foreign_key_constraint_on:
+        column: account_id
+        table:
+          name: credit
+          schema: accounting
+  - name: debits
+    using:
+      foreign_key_constraint_on:
+        column: account_id
+        table:
+          name: debit
+          schema: accounting

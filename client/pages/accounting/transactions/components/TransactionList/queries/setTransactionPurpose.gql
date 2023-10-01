@@ -1,0 +1,7 @@
+mutation setCreditPurpose($id: Int!, $purpose: transaction_purpose_enum!) {
+  update_credit(where: { id: { _eq: $id } }, _set: { transaction_purpose: $purpose }) {
+    returning {
+      id
+    }
+  }
+}

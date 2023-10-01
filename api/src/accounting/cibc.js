@@ -1,8 +1,8 @@
 import knex from './db.js';
 
 export async function backfill({ fromDate, toDate }) {
-  const accounts = await knex('account').select('account.id', 'account_id', 'account.name')
-    .join('bank', 'bank.id', 'account.bank_id')
+  const accounts = await knex('accounting.account').select('account.id', 'account_id', 'account.name')
+    .join('accounting.bank', 'bank.id', 'account.bank_id')
     .where('bank.name', 'cibc')
 
   const accountInserts = {};
@@ -32,12 +32,12 @@ export async function backfill({ fromDate, toDate }) {
 
     let insertedDebits = [];
     if (debits.length > 0) {
-      insertedDebits = await knex('debit').insert(debits).onConflict(['tid', 'account_id', 'date']).ignore().returning('*');
+      insertedDebits = await knex('accounting.debit').insert(debits).onConflict(['tid', 'account_id', 'date']).ignore().returning('*');
     }
     
     let insertedCredits = [];
     if (credits.length > 0) {
-      insertedCredits = await knex('credit').insert(credits).onConflict(['tid', 'account_id', 'date']).ignore().returning('*');
+      insertedCredits = await knex('accounting.credit').insert(credits).onConflict(['tid', 'account_id', 'date']).ignore().returning('*');
     }
 
     accountInserts[account.name] = {
@@ -114,7 +114,7 @@ export async function getTransactions({ fromDate, toDate, accountId }) {
 }
 
 async function headers() {
-  const { token } =  await knex('bank').select('token').where({ name: 'cibc' }).first();
+  const { token } =  await knex('accounting.bank').select('token').where({ name: 'cibc' }).first();
   const _auth = JSON.parse(token);
   const cookie = _auth.cookie;
   const xAuthToken = _auth['x-auth-token'];

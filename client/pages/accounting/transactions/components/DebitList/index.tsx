@@ -21,19 +21,20 @@ export default function DebitList() {
     paginationValues,
     onPage
   } = usePaginatedQuery(debitQuery, {
-    fetchPolicy: 'no-cache'
+    fetchPolicy: 'no-cache',
+    variables: {
+      where: {
+        gic_id: { _is_null: true }
+      }
+    }
   });
-
-  // const [archiveContractor] = useMutation(archiveContractorMutation, {
-  //   refetchQueries: ['contractors', 'contractor']
-  // });
 
   const toastRef = useRef<Toast>(null);
 
-  const debits = loading ? previousData?.debit : data?.debit;
+  const debits = loading ? previousData?.accounting_debit : data?.accounting_debit;
   const totalRecords = loading
-    ? previousData?.debit_aggregate.aggregate.count
-    : data?.debit_aggregate.aggregate.count;
+    ? previousData?.accounting_debit_aggregate.aggregate.count
+    : data?.accounting_debit_aggregate.aggregate.count;
 
   return (
     <>

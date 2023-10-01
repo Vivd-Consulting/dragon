@@ -1,17 +1,18 @@
-import { useMutation } from '@apollo/client';
-import { useRouter } from 'next/router';
 import { useRef } from 'react';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 
 import { Row } from 'components/Group';
 import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
+
+// TODO: Move these into a shared folder
+import GicModal from '../GicModal';
+import useSelectedTransactions from '../../hooks/useSelectedTransactions';
 
 import creditQuery from './queries/credits.gql';
 
@@ -21,26 +22,38 @@ export default function CreditList() {
     paginationValues,
     onPage
   } = usePaginatedQuery(creditQuery, {
-    fetchPolicy: 'no-cache'
+    fetchPolicy: 'no-cache',
+    variables: {
+      where: {
+        gic_id: { _is_null: true }
+      }
+    },
+    defaultSort: { date: 'desc' }
   });
 
-  // const [archiveContractor] = useMutation(archiveContractorMutation, {
-  //   refetchQueries: ['contractors', 'contractor']
-  // });
+  const { gicTransactions, setSelectedTransactions } = useSelectedTransactions();
+
+  // const { transactions } = gicTransactions;
 
   const toastRef = useRef<Toast>(null);
 
-  const credits = loading ? previousData?.credit : data?.credit;
+  const credits = loading ? previousData?.accounting_credit : data?.accounting_credit;
   const totalRecords = loading
-    ? previousData?.credit_aggregate.aggregate.count
-    : data?.credit_aggregate.aggregate.count;
+    ? previousData?.accounting_credit_aggregate.aggregate.count
+    : data?.accounting_credit_aggregate.aggregate.count;
 
   return (
     <>
       <Toast ref={toastRef} />
 
+      <GicModal gicType="credit" />
+
       <DataTable
         value={credits}
+        dataKey="id"
+        // selected={transactions}
+        // onSelectionChange={e => setSelectedTransactions({ transactions: e.value, type: 'credit' })}
+        selectionMode="checkbox"
         paginator
         lazy
         onPage={onPage}
@@ -58,6 +71,7 @@ export default function CreditList() {
         emptyMessage="No Contractors found."
         data-cy="contractors-table"
       >
+        <Column field="id" header="ID" sortable />
         <Column field="account.name" header="Account" sortable />
         <Column field="description" header="Description" />
         <Column
@@ -74,7 +88,94 @@ export default function CreditList() {
           header="Date"
           sortable
         />
+        <Column body={useActionButtons} />
       </DataTable>
     </>
   );
+
+  function useActionButtons(data) {
+    // const router = useRouter();
+
+    // const confirmArchiveClient = () => {
+    //   confirmDialog({
+    //     message: `Are you sure you want to archive ${data.name}?`,
+    //     header: 'Archive Contractor',
+    //     icon: 'pi pi-exclamation-triangle',
+    //     accept: () => _archiveContractor(data)
+    //   });
+    // };
+
+    return (
+      <Row>
+        <Button
+          size="small"
+          severity="success"
+          tooltip="Mark Personal"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-sun"
+          onClick={() => markPersonal(data)}
+        />
+        <Button
+          size="small"
+          tooltip="Mark Business"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-briefcase"
+          onClick={() => markBusiness(data)}
+        />
+        <Button
+          size="small"
+          severity="danger"
+          tooltip="Mark Transfer"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-send"
+          onClick={() => markTransfer(data)}
+        />
+        {/* <Button
+          size="small"
+          severity="danger"
+          tooltip="Archive"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-trash"
+          onClick={confirmArchiveClient}
+        /> */}
+      </Row>
+    );
+  }
+
+  function markPersonal(data) {
+    // setTransactionPurpose({
+    //   variables: {
+    //     id,
+    //     purpose: 'personal'
+    //   }
+    // });
+
+    setSelectedTransactions({
+      transactions: [data],
+      type: 'personal'
+    });
+  }
+
+  function markBusiness(data) {
+    // setTransactionPurpose({
+    //   variables: {
+    //     id,
+    //     purpose: 'business'
+    //   }
+    // });
+
+    setSelectedTransactions({
+      transactions: [data],
+      type: 'business'
+    });
+  }
+
+  function markTransfer({ id }) {
+    // setTransactionPurpose({
+    //   variables: {
+    //     id,
+    //     purpose: 'transfer'
+    //   }
+    // });
+  }
 }
