@@ -29,6 +29,40 @@ const CONTRACTORS = gql`
   }
 `;
 
+export function useContractorInvoices(contractorId) {
+  const { data, loading, error } = useQuery(CONTRACTOR_INVOICES, {
+    variables: {
+      contractorId
+    },
+    skip: !contractorId
+  });
+
+  if (loading) {
+    return [[]];
+  }
+
+  if (error) {
+    console.error(error);
+    return [[]];
+  }
+
+  const { invoices } = data.contractor[0] || {};
+
+  return [invoices];
+}
+
+const CONTRACTOR_INVOICES = gql`
+  query contractor($contractorId: Int!) {
+    contractor(where: { id: { _eq: $contractorId } }) {
+      invoices {
+        id
+        client_id
+        submitted_at
+      }
+    }
+  }
+`;
+
 export function useProjectContractors(projectId) {
   const { data, loading, error } = useQuery(PROJECT_CONTRACTORS, {
     variables: {

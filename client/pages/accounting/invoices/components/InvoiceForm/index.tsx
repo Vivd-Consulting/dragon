@@ -8,7 +8,7 @@ import { Toast } from 'primereact/toast';
 import { Form, FormFooterButtons } from 'components/Form';
 
 import { useClientsQuery } from 'hooks/useClientsQuery';
-import { useCurrentContractor } from 'hooks/useContractors';
+import { useContractorInvoices, useCurrentContractor } from 'hooks/useContractors';
 
 import { getNextWeek } from 'utils';
 
@@ -42,6 +42,13 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
   const [contractorId] = useCurrentContractor();
 
   const [clients, isClientsLoading] = useClientsQuery();
+  const [invoices] = useContractorInvoices(contractorId);
+
+  const allowedClientsForInvoice = clients.filter(client => {
+    return !invoices.some(
+      invoice => client.id === invoice.client_id && invoice.submitted_at === null
+    );
+  });
 
   const [createInvoice] = useMutation(createInvoiceMutation, {
     refetchQueries: ['invoices']
@@ -91,7 +98,7 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
               optionLabel="name"
               optionValue="id"
               onChange={e => setSelectedClient(e.value)}
-              options={clients}
+              options={allowedClientsForInvoice}
               isRequired
               disabled={initialData}
             />
