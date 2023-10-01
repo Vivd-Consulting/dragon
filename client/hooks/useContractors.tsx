@@ -48,7 +48,9 @@ export function useContractorInvoices(contractorId) {
 
   const { invoices } = data.contractor[0] || {};
 
-  return [invoices];
+  const hasActiveInvoice = invoices?.some(invoice => !invoice.submitted_at);
+
+  return [invoices, hasActiveInvoice];
 }
 
 const CONTRACTOR_INVOICES = gql`
