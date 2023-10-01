@@ -8,6 +8,8 @@
 - "!include public_contractor.yaml"
 - "!include public_contractor_rate.yaml"
 - "!include public_dragon_user.yaml"
+- "!include public_invoice.yaml"
+- "!include public_invoice_item.yaml"
 - "!include public_media.yaml"
 - "!include public_project.yaml"
 - "!include public_project_contractor.yaml"

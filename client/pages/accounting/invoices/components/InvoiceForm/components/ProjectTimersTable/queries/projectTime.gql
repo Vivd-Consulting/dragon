@@ -1,0 +1,14 @@
+query projectTime($clientId: Int!) {
+  project(
+    where: { client_id: { _eq: $clientId }, project_times: { end_time: { _is_null: false } } }
+  ) {
+    name
+    project_times {
+      id
+      end_time
+      invoice_id
+      start_time
+      description
+    }
+  }
+}

@@ -69,6 +69,8 @@ function GqlProvider({ user, role, accessToken, children }) {
           email
           accepted_tos
           is_enabled
+          contractor_id
+          client_id
         }
       }
     `,

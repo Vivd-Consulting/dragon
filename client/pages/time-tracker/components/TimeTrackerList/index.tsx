@@ -218,6 +218,10 @@ export default function TimeTrackerList() {
 }
 
 function calculateDuration(start_time, end_time) {
+  if (!end_time) {
+    return '--:--:--';
+  }
+
   const startTime = dayjs(start_time);
   const endTime = dayjs(end_time);
 

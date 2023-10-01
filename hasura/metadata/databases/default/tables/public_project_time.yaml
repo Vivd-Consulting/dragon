@@ -5,6 +5,9 @@ object_relationships:
   - name: dragon_user
     using:
       foreign_key_constraint_on: dragon_user_id
+  - name: invoice
+    using:
+      foreign_key_constraint_on: invoice_id
   - name: project
     using:
       foreign_key_constraint_on: project_id

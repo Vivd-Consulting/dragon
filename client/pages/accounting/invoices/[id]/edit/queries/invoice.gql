@@ -1,0 +1,14 @@
+query invoice($id: Int!) {
+  invoice_by_pk(id: $id) {
+    due_date
+    id
+    client_id
+    invoice_items {
+      id
+      description
+      currency
+      tax
+      price
+    }
+  }
+}
