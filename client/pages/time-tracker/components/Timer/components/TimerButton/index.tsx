@@ -19,14 +19,13 @@ import startTimerMutation from './queries/startTimer.gql';
 import startTimerWithInvoiceMutation from './queries/startTimerWithInvoice.gql';
 import stopTimerMutation from './queries/stopTimer.gql';
 import stopAllTimersMutation from './queries/stopAllTimers.gql';
-
 import projectTimesQuery from './queries/projectTimes.gql';
 
 import styles from './styles.module.sass';
 
 dayjs.extend(utc);
 
-export default function Duration({ project, isListViewChecked }) {
+export default function TimerButton({ project, isListViewChecked }) {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
   const [timeSinceStart, setTimeSinceStart] = useState(

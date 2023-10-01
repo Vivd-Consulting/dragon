@@ -15,7 +15,7 @@ import { useAuth } from 'hooks/useAuth';
 
 import userProjectsQuery from './queries/userProjects.gql';
 
-import Duration from './components/Duration';
+import TimerButton from './components/TimerButton';
 
 export default function Timer({ isListViewChecked }) {
   const [searchText, setSearchText] = useState<string | undefined>('');
@@ -151,7 +151,7 @@ export default function Timer({ isListViewChecked }) {
             className="white-space-nowrap"
           />
           <Column
-            body={project => <Duration isListViewChecked={isListViewChecked} project={project} />}
+            body={project => <TimeRanges isListViewChecked={isListViewChecked} project={project} />}
             header="Duration"
             headerClassName="white-space-nowrap"
             className="white-space-nowrap"
@@ -170,10 +170,16 @@ export default function Timer({ isListViewChecked }) {
           />
         </Row>
 
-        <Row wrap>
-          {projects.map(project => (
-            <Duration key={project.id} project={project} isListViewChecked={isListViewChecked} />
-          ))}
+        <Row align="center" justify="center">
+          <Row wrap>
+            {projects.map(project => (
+              <TimerButton
+                key={project.id}
+                project={project}
+                isListViewChecked={isListViewChecked}
+              />
+            ))}
+          </Row>
         </Row>
       </>
     );
