@@ -1,10 +1,10 @@
 query debits(
   $limit: Int
   $offset: Int
-  $order_by: [debit_order_by!]
-  $where: debit_bool_exp
+  $order_by: [accounting_debit_order_by!]
+  $where: accounting_debit_bool_exp
 ) {
-  debit(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+  accounting_debit(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     id
     account {
       name
@@ -16,9 +16,8 @@ query debits(
       name
     }
     notes
-    business_transaction
   }
-  debit_aggregate(order_by: $order_by, where: $where) {
+  accounting_debit_aggregate(order_by: $order_by, where: $where) {
     aggregate {
       count
     }

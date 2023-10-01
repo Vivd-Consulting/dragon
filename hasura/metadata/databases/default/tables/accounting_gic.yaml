@@ -1,0 +1,18 @@
+table:
+  name: gic
+  schema: accounting
+array_relationships:
+  - name: credits
+    using:
+      foreign_key_constraint_on:
+        column: gic_id
+        table:
+          name: credit
+          schema: accounting
+  - name: debits
+    using:
+      foreign_key_constraint_on:
+        column: gic_id
+        table:
+          name: debit
+          schema: accounting

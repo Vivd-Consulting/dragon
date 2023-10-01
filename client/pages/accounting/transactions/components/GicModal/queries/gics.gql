@@ -1,0 +1,6 @@
+query gics($type: String!) {
+  accounting_gic(where: { type: { _eq: $type } }) {
+    id
+    name
+  }
+}

@@ -1,3 +1,8 @@
+- "!include accounting_account.yaml"
+- "!include accounting_bank.yaml"
+- "!include accounting_credit.yaml"
+- "!include accounting_debit.yaml"
+- "!include accounting_gic.yaml"
 - "!include public_budget.yaml"
 - "!include public_client.yaml"
 - "!include public_contact.yaml"
