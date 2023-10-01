@@ -1,0 +1,6 @@
+query gics($type: String!, $is_business: Boolean) {
+  accounting_gic(where: { type: { _eq: $type }, is_business: { _eq: $is_business } }) {
+    id
+    name
+  }
+}

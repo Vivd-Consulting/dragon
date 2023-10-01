@@ -1,0 +1,15 @@
+mutation updateTransaction(
+  $gic: Int!
+  $transactionType: String!
+  $notes: String
+  $transactionIds: [Int!]
+) {
+  update_accounting_transactions_many(
+    updates: {
+      _set: { gic_id: $gic, notes: $notes, transaction_type: $transactionType }
+      where: { id: { _in: $transactionIds } }
+    }
+  ) {
+    affected_rows
+  }
+}
