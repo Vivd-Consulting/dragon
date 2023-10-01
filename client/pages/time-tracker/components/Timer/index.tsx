@@ -151,7 +151,9 @@ export default function Timer({ isListViewChecked }) {
             className="white-space-nowrap"
           />
           <Column
-            body={project => <TimeRanges isListViewChecked={isListViewChecked} project={project} />}
+            body={project => (
+              <TimerButton isListViewChecked={isListViewChecked} project={project} />
+            )}
             header="Duration"
             headerClassName="white-space-nowrap"
             className="white-space-nowrap"
