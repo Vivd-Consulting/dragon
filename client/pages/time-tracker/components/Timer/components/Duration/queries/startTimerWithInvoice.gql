@@ -1,0 +1,17 @@
+mutation startTimerWithIntvoice(
+  $invoiceId: Int!
+  $projectId: Int!
+  $userId: String!
+  $startTime: timestamp!
+) {
+  insert_project_time_one(
+    object: {
+      invoice_id: $invoiceId
+      project_id: $projectId
+      dragon_user_id: $userId
+      start_time: $startTime
+    }
+  ) {
+    id
+  }
+}
