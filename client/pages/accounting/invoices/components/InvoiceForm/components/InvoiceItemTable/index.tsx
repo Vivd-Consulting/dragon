@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -12,65 +10,6 @@ import { Row } from 'components/Group';
 const CURRENCIES = ['CAD', 'USD', 'TRY'];
 
 export default function InvoiceItemTable({ items, onAddItems }) {
-  console.log(items);
-  const textEditor = options => {
-    return (
-      <InputText
-        type="text"
-        value={options.value}
-        onChange={e => options.editorCallback(e.target.value)}
-      />
-    );
-  };
-
-  const numberEditor = options => {
-    return (
-      <InputNumber
-        prefix="%"
-        locale="en-US"
-        minFractionDigits={2}
-        value={options.value}
-        onChange={e => options.editorCallback(e.value)}
-      />
-    );
-  };
-
-  const priceEditor = options => {
-    return (
-      <InputNumber
-        value={options.value}
-        onValueChange={e => options.editorCallback(e.value)}
-        mode="currency"
-        currency="USD"
-        locale="en-US"
-      />
-    );
-  };
-
-  const currencyEditor = options => {
-    return (
-      <Dropdown
-        value={options.value}
-        options={CURRENCIES}
-        onChange={e => options.editorCallback(e.value)}
-        placeholder="Select a Status"
-        itemTemplate={option => {
-          return <span>{option}</span>;
-        }}
-      />
-    );
-  };
-
-  const priceBodyTemplate = rowData => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-      rowData.price
-    );
-  };
-
-  const taxBodyTemplate = rowData => {
-    return <span>{`%${rowData.tax}`}</span>;
-  };
-
   const header = (
     <Row className="w-full" align="center" justify="between">
       <span>Invoice Items</span>
@@ -167,6 +106,64 @@ export default function InvoiceItemTable({ items, onAddItems }) {
       />
     </DataTable>
   );
+
+  function textEditor(options) {
+    return (
+      <InputText
+        type="text"
+        value={options.value}
+        onChange={e => options.editorCallback(e.target.value)}
+      />
+    );
+  }
+
+  function numberEditor(options) {
+    return (
+      <InputNumber
+        suffix="%"
+        locale="en-US"
+        minFractionDigits={2}
+        value={options.value}
+        onChange={e => options.editorCallback(e.value)}
+      />
+    );
+  }
+
+  function priceEditor(options) {
+    return (
+      <InputNumber
+        value={options.value}
+        onValueChange={e => options.editorCallback(e.value)}
+        mode="currency"
+        currency="USD"
+        locale="en-US"
+      />
+    );
+  }
+
+  function currencyEditor(options) {
+    return (
+      <Dropdown
+        value={options.value}
+        options={CURRENCIES}
+        onChange={e => options.editorCallback(e.value)}
+        placeholder="Select a Status"
+        itemTemplate={option => {
+          return <span>{option}</span>;
+        }}
+      />
+    );
+  }
+
+  function priceBodyTemplate(rowData) {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+      rowData.price
+    );
+  }
+
+  function taxBodyTemplate(rowData) {
+    return <span>{`${rowData.tax}%`}</span>;
+  }
 
   function onRowEditComplete(e) {
     let _items = [...items];

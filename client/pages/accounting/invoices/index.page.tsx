@@ -7,16 +7,10 @@ import { Role } from 'types/roles';
 
 import { Row, Column } from 'components/Group';
 
-import { useContractorInvoices, useCurrentContractor } from 'hooks/useContractors';
-
 import InvoiceList from './components/InvoiceList';
 
 export default function Invoices() {
   const router = useRouter();
-  // TODO: Add client
-  const [contractorId] = useCurrentContractor();
-
-  const [, hasActiveInvoice] = useContractorInvoices(contractorId);
 
   return (
     <Column gap="4" fullWidth>
@@ -30,7 +24,6 @@ export default function Invoices() {
               type="button"
               icon="pi pi-plus"
               raised
-              disabled={hasActiveInvoice}
             />
           </Row>
         }
