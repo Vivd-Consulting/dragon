@@ -5,3 +5,6 @@ object_relationships:
   - name: account
     using:
       foreign_key_constraint_on: account_id
+  - name: gic
+    using:
+      foreign_key_constraint_on: gic_id

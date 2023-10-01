@@ -2,3 +2,4 @@
 - "!include public_bank.yaml"
 - "!include public_credit.yaml"
 - "!include public_debit.yaml"
+- "!include public_gic.yaml"

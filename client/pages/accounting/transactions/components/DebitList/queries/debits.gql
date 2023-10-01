@@ -1,0 +1,26 @@
+query debits(
+  $limit: Int
+  $offset: Int
+  $order_by: [debit_order_by!]
+  $where: debit_bool_exp
+) {
+  debit(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    id
+    account {
+      name
+    }
+    amount
+    date
+    description
+    gic {
+      name
+    }
+    notes
+    business_transaction
+  }
+  debit_aggregate(order_by: $order_by, where: $where) {
+    aggregate {
+      count
+    }
+  }
+}

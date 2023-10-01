@@ -1,10 +1,52 @@
 import knex from './db.js';
 
-export async function backfill({ fromDate, toDate, accountId }) {
-  // TODO: Get from DB query
-  // const accounts = await knex('account').select('id', 'name');
+export async function backfill({ fromDate, toDate }) {
+  const accounts = await knex('account').select('account.id', 'account_id', 'account.name')
+    .join('bank', 'bank.id', 'account.bank_id')
+    .where('bank.name', 'cibc')
 
-  return getTransactions({ fromDate, toDate, accountId });
+  const accountInserts = {};
+
+  for (const account of accounts) {
+    const transactions = await collectTransactions({
+      accountId: account.account_id,
+      fromDate,
+      toDate
+    });
+    
+    const debits = transactions.map((t) => ({
+      tid: t.id,
+      account_id: account.id,
+      amount: t.debit,
+      date: t.date,
+      description: t.transactionDescription
+    })).filter((t) => t.amount > 0);
+
+    const credits = transactions.map((t) => ({
+      tid: t.id,
+      account_id: account.id,
+      amount: t.credit,
+      date: t.date,
+      description: t.transactionDescription
+    })).filter((t) => t.amount > 0);
+
+    let insertedDebits = [];
+    if (debits.length > 0) {
+      insertedDebits = await knex('debit').insert(debits).onConflict(['tid', 'account_id', 'date']).ignore().returning('*');
+    }
+    
+    let insertedCredits = [];
+    if (credits.length > 0) {
+      insertedCredits = await knex('credit').insert(credits).onConflict(['tid', 'account_id', 'date']).ignore().returning('*');
+    }
+
+    accountInserts[account.name] = {
+      debits: insertedDebits.length,
+      credits: insertedCredits.length
+    };
+  }
+
+  return accountInserts;
 }
 
 async function fetchTransactions({
@@ -68,15 +110,7 @@ export async function getTransactions({ fromDate, toDate, accountId }) {
     toDate
   });
 
-  const result = {};
-
-  // Using result[accountId] || [] ensures that an array is always present for accountId
-  result[accountId] = result[accountId] || [];
-
-  // Using push directly, no need for an if-else block
-  result[accountId].push(...transactions);
-
-  return result;
+  return transactions;
 }
 
 async function headers() {

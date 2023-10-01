@@ -1,0 +1,27 @@
+query credits(
+  $limit: Int
+  $offset: Int
+  $order_by: [credit_order_by!]
+  $where: credit_bool_exp
+) {
+  credit(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    id
+    account {
+      name
+    }
+    amount
+    date
+    description
+    gic {
+      name
+    }
+    notes
+    business_transaction
+    personal_pay
+  }
+  credit_aggregate(order_by: $order_by, where: $where) {
+    aggregate {
+      count
+    }
+  }
+}
