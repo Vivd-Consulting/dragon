@@ -114,6 +114,11 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
           >
             <SidebarItem label="Invoices" href="/accounting/invoices" onClick={onItemClick} />
             <SidebarItem label="Reports" href="/accounting/reports" onClick={onItemClick} />
+            <SidebarItem
+              label="Transactions"
+              href="/accounting/transactions"
+              onClick={onItemClick}
+            />
           </SidebarGroup>
         </Column>
       </div>

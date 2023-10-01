@@ -1,16 +1,14 @@
 import express from 'express';
 
-// import knex from './db.js';
-
-import { getTransactions } from './accounting/cibc.js';
+import { backfill } from './accounting/cibc.js';
 
 const router = express.Router();
 
 // Import transactions from the CIBC database
 router.post('/accounting/cibc', async (req, res) => {
-  const transactions = await getTransactions(req.body);
-
-  res.status(200).json({ transactions });
+  const insertedTransactions = await backfill(req.body);
+  
+  res.status(200).json(insertedTransactions);
 });
 
 export default router;
