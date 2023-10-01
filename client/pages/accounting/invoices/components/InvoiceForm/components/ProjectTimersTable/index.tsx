@@ -1,5 +1,4 @@
 import _ from 'lodash';
-
 import { useState } from 'react';
 import { useQuery } from '@apollo/client';
 
@@ -10,17 +9,10 @@ import { dateFormat } from 'utils';
 
 import calculateTotalTimeAndCost from 'utils/calculateTotalTimeAndCost';
 
-import projectTimesWithInvoiceIdQuery from './queries/projectTimesWithInvoiceId.gql';
-import projectTimesWithoutInvoiceIdQuery from './queries/projectTimesWithoutInvoiceId.gql';
+import projectTimeQuery from './queries/projectTime.gql';
 
 export default function ProjectTimersTable({ selectedClient, invoiceId, onSelectProjectTimeIds }) {
-  const [selectedNodeKeys, setSelectedNodeKeys] = useState(null);
-
-  const currentQuery = invoiceId
-    ? projectTimesWithInvoiceIdQuery
-    : projectTimesWithoutInvoiceIdQuery;
-
-  const { data: projectTimesData } = useQuery(currentQuery, {
+  const { data: projectTimesData, loading } = useQuery(projectTimeQuery, {
     variables: {
       invoiceId,
       clientId: selectedClient
@@ -29,33 +21,72 @@ export default function ProjectTimersTable({ selectedClient, invoiceId, onSelect
     fetchPolicy: 'network-only'
   });
 
+  if (loading || !projectTimesData) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <ProjectTreeTable
+      projectTimesData={projectTimesData}
+      onSelectProjectTimeIds={onSelectProjectTimeIds}
+    />
+  );
+}
+
+function ProjectTreeTable({ projectTimesData, onSelectProjectTimeIds }) {
   const projectTimes = _.get(projectTimesData, 'project', []).map((project, idx) => {
     const timers = project.project_times;
-    const earliestEntry = timers[0].start_time;
-    const latestEntry = timers[timers.length - 1].start_time;
+    const earliestEntry = _.first(timers)?.start_time;
+    const latestEntry = _.last(timers)?.start_time;
 
     const { totalTime } = calculateTotalTimeAndCost(timers);
 
-    const treeNode = {
+    const anyTimesWithoutInvoiceId = timers.some(timer => !timer.invoice_id);
+
+    return {
       key: idx,
+      checked: !anyTimesWithoutInvoiceId,
+      partialChecked: anyTimesWithoutInvoiceId,
       data: {
         name: project.name,
         hours: totalTime,
         date_range: `${dateFormat(earliestEntry)} - ${dateFormat(latestEntry)}`
       },
       children: timers.map(timer => ({
-        key: `0-0-${timer.id}`,
+        key: `${idx}-${timer.id}`,
+        checked: !!timer.invoice_id,
+        partialChecked: false,
         data: {
           id: timer.id,
+          invoice_id: timer.invoice_id,
           end_time: dateFormat(timer.end_time),
           start_time: dateFormat(timer.start_time),
           description: _.truncate(timer.description, { length: 200 })
         }
       }))
     };
-
-    return treeNode;
   });
+
+  const _selectedNodeKeys = projectTimes.reduce(
+    (accumulator, { key, checked, partialChecked, children }) => {
+      accumulator[key] = {
+        checked,
+        partialChecked
+      };
+
+      children.forEach(child => {
+        accumulator[child.key] = {
+          checked: child.checked,
+          partialChecked: child.partialChecked
+        };
+      });
+
+      return accumulator;
+    },
+    {}
+  );
+
+  const [selectedNodeKeys, setSelectedNodeKeys] = useState(_selectedNodeKeys);
 
   return (
     <TreeTable
@@ -66,14 +97,14 @@ export default function ProjectTimersTable({ selectedClient, invoiceId, onSelect
       selectionMode="checkbox"
       selectionKeys={selectedNodeKeys}
       onSelectionChange={e => {
-        //@ts-ignore
         setSelectedNodeKeys(e.value);
         const ids = grabProjectTimeIds(e.value);
 
         onSelectProjectTimeIds(ids);
       }}
     >
-      <Column field="name" header="Untracked Time" expander style={{ width: '300px' }} />
+      <Column field="name" header="Time" expander style={{ width: '300px' }} />
+      <Column field="invoice_id" header="Invoice ID" style={{ width: '250px' }} />
       <Column field="date_range" header="Date range" style={{ width: '250px' }} />
       <Column field="start_time" header="Start time" style={{ width: '250px' }} />
       <Column field="end_time" header="End time" style={{ width: '250px' }} />
@@ -85,19 +116,17 @@ export default function ProjectTimersTable({ selectedClient, invoiceId, onSelect
   function grabProjectTimeIds(node) {
     const selectedProjectTimeKeys = Object.keys(node);
 
-    const ids = projectTimes
-      .map(({ children }) => {
-        const _ids = children
-          .map(child => {
-            if (selectedProjectTimeKeys.includes(child.key)) {
-              return child.data.id;
-            }
-          })
-          .filter(item => item !== undefined);
+    const ids = projectTimes.flatMap(({ children }) => {
+      const _ids = children
+        .map(child => {
+          if (selectedProjectTimeKeys.includes(child.key)) {
+            return child.data.id;
+          }
+        })
+        .filter(item => item !== undefined);
 
-        return _ids;
-      })
-      .flat();
+      return _ids;
+    });
 
     return ids;
   }

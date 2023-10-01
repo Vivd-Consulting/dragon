@@ -21,10 +21,12 @@ export default function EditInvoice() {
     return null;
   }
 
+  const invoiceData = invoice.invoice_by_pk;
+
   return (
     <Card>
-      <h1>Edit Invoice - {`REF{${invoiceId}}`}</h1>
-      <InvoiceForm initialData={invoice} isInitialDataLoading={isInvoiceLoading} />
+      <h1>Edit Invoice - {`REF-${invoiceId}`}</h1>
+      <InvoiceForm initialData={invoiceData} isInitialDataLoading={isInvoiceLoading} />
     </Card>
   );
 }

@@ -34,21 +34,25 @@ interface IItem {
 }
 
 export default function InvoiceForm({ initialData, isInitialDataLoading }: InvoiceFormPageProps) {
-  const [items, setItems] = useState<IItem[]>([]);
+  const isEditing = !!initialData;
+
+  const [items, setItems] = useState<IItem[]>(initialData.invoice_items || []);
   const [projectTimeIds, setProjectTimeIds] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(initialData?.invoice[0]?.client_id);
+  const [selectedClient, setSelectedClient] = useState(initialData?.client_id);
 
   const [contractorId] = useCurrentContractor();
 
   const [clients, isClientsLoading] = useClientsQuery();
   const [invoices] = useContractorInvoices(contractorId);
 
-  const allowedClientsForInvoice = clients.filter(client => {
-    return !invoices.some(
-      invoice => client.id === invoice.client_id && invoice.submitted_at === null
-    );
-  });
+  const allowedClientsForInvoice = isEditing
+    ? clients
+    : clients.filter(client => {
+        return !invoices.some(
+          invoice => client.id === invoice.client_id && invoice.submitted_at === null
+        );
+      });
 
   const [createInvoice] = useMutation(createInvoiceMutation, {
     refetchQueries: ['invoices']
@@ -76,11 +80,8 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
   const nextWeek = getNextWeek();
 
   const defaultValues = initialData
-    ? initialData.invoice[0]
+    ? initialData
     : {
-        name: '',
-        client_id: '',
-        contractor_id: '',
         due_date: nextWeek
       };
 
@@ -106,7 +107,7 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
             <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
             <ProjectTimersTable
               selectedClient={selectedClient}
-              invoiceId={initialData?.invoice[0]?.id}
+              invoiceId={initialData?.id}
               onSelectProjectTimeIds={setProjectTimeIds}
             />
 
