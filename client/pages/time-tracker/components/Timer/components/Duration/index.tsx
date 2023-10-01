@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
+import _ from 'lodash';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import cx from 'clsx';
@@ -15,8 +16,11 @@ import { S3Image } from 'components/Image';
 import { useAuth } from 'hooks/useAuth';
 
 import startTimerMutation from './queries/startTimer.gql';
+import startTimerWithInvoiceMutation from './queries/startTimerWithInvoice.gql';
 import stopTimerMutation from './queries/stopTimer.gql';
 import stopAllTimersMutation from './queries/stopAllTimers.gql';
+
+import projectTimesQuery from './queries/projectTimes.gql';
 
 import styles from './styles.module.sass';
 
@@ -31,9 +35,26 @@ export default function Duration({ project, isListViewChecked }) {
 
   const formattedTime = dayjs.utc(timeSinceStart * 1000).format('HH:mm:ss');
 
+  const { data: projectTimesData } = useQuery(projectTimesQuery, {
+    variables: {
+      projectId: project.id
+    },
+    skip: !project.id
+  });
+
+  const projectTimesForInvoiceDetails = _.get(
+    projectTimesData,
+    'project[0].project_times[0].invoice'
+  );
+
   const [startTimer] = useMutation(startTimerMutation, {
     refetchQueries: ['projectTimes']
   });
+
+  const [startTimerWithInvoice] = useMutation(startTimerWithInvoiceMutation, {
+    refetchQueries: ['projectTimes']
+  });
+
   const [stopTimer] = useMutation(stopTimerMutation, {
     refetchQueries: ['projectTimes']
   });
@@ -96,14 +117,26 @@ export default function Duration({ project, isListViewChecked }) {
         }
       });
 
-      await startTimer({
-        variables: {
-          userId,
-          projectId: _project.id,
-          startTime: new Date()
-        },
-        refetchQueries: ['userProjects', 'timers']
-      });
+      if (projectTimesForInvoiceDetails) {
+        await startTimerWithInvoice({
+          variables: {
+            userId,
+            invoiceId: projectTimesForInvoiceDetails.id,
+            projectId: _project.id,
+            startTime: new Date()
+          },
+          refetchQueries: ['userProjects', 'timers']
+        });
+      } else {
+        await startTimer({
+          variables: {
+            userId,
+            projectId: _project.id,
+            startTime: new Date()
+          },
+          refetchQueries: ['userProjects', 'timers']
+        });
+      }
     }
   }
 

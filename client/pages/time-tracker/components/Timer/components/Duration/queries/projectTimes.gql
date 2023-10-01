@@ -1,0 +1,9 @@
+query projectTimes($projectId: Int!) {
+  project(where: { id: { _eq: $projectId } }) {
+    project_times(where: { invoice: { submitted_at: { _is_null: true } } }) {
+      invoice {
+        id
+      }
+    }
+  }
+}
