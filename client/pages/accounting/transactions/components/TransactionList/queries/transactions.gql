@@ -1,0 +1,26 @@
+query transactions(
+  $limit: Int
+  $offset: Int
+  $order_by: [accounting_transactions_order_by!]
+  $where: accounting_transactions_bool_exp
+) {
+  accounting_transactions(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    id
+    account {
+      name
+    }
+    debit
+    credit
+    date
+    description
+    gic {
+      name
+    }
+    notes
+  }
+  accounting_transactions_aggregate(order_by: $order_by, where: $where) {
+    aggregate {
+      count
+    }
+  }
+}

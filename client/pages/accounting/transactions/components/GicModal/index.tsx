@@ -11,24 +11,23 @@ import { ModalVisible } from 'components/Modal';
 import useSelectedTransactions from '../../hooks/useSelectedTransactions';
 
 import gicsQuery from './queries/gics.gql';
-import updateCreditMutation from './queries/updateCredit.gql';
-import updateDebitMutation from './queries/updateDebit.gql';
+import updateTransactionMutation from './queries/updateTransaction.gql';
 
 // gicType is either 'credit' or 'debit'
-export default function GicModal({ gicType }) {
-  const refetchQueries = gicType === 'credit' ? ['credits'] : ['debits'];
-
+export default function GicModal() {
   const { gicTransactions, hasSelectedTransactions, resetSelectedTransactions } =
     useSelectedTransactions();
 
   const { transactions, type } = gicTransactions;
 
-  const [updateCredit] = useMutation(updateCreditMutation, {
-    refetchQueries
-  });
+  // We should only ever get one type of transaction at a time in an array, but make sure ALL are the same type
+  const hasMixedDebitAndCredits =
+    _.uniq(transactions.map(transaction => transaction.debit > 0)).length > 1;
 
-  const [updateDebit] = useMutation(updateDebitMutation, {
-    refetchQueries
+  const gicType = transactions?.[0]?.debit > 0 ? 'debit' : 'credit';
+
+  const [updateTransaction] = useMutation(updateTransactionMutation, {
+    refetchQueries: ['transactions']
   });
 
   const [gic, setGic] = useState<any>(null);
@@ -36,7 +35,7 @@ export default function GicModal({ gicType }) {
   return (
     <ModalVisible
       visible={hasSelectedTransactions()}
-      header={`Categorize ${_.upperFirst(type)} Transaction`}
+      header={`Categorize ${_.upperFirst(type)} ${_.upperFirst(gicType)}`}
       onHide={() => resetSelectedTransactions()}
       footer={
         <Row>
@@ -62,21 +61,23 @@ export default function GicModal({ gicType }) {
         </Row>
       }
     >
-      <Column>
-        {transactions.map(transaction => (
-          <div key={transaction.id}>
-            {transaction.id} | {transaction.amount} | {transaction.description}
-          </div>
-        ))}
-        <GicDropdown gic={gic} setGic={setGic} type={gicType} />
-        <InputTextarea placeholder="Notes" />
-      </Column>
+      {hasMixedDebitAndCredits ? (
+        <span>Can only bulk set 1 type of transaction at a time</span>
+      ) : (
+        <Column>
+          {transactions.map(transaction => (
+            <div key={transaction.id}>
+              {transaction.id} | {transaction.amount} | {transaction.description}
+            </div>
+          ))}
+          <GicDropdown gic={gic} setGic={setGic} transactionType={type} gicType={gicType} />
+          <InputTextarea placeholder="Notes" />
+        </Column>
+      )}
     </ModalVisible>
   );
 
   function updateTransactionGic() {
-    const updateTransaction = gicType === 'credit' ? updateCredit : updateDebit;
-
     return updateTransaction({
       variables: {
         gic: gic?.id,
@@ -88,12 +89,13 @@ export default function GicModal({ gicType }) {
   }
 }
 
-function GicDropdown({ gic, setGic, type }) {
+function GicDropdown({ gic, setGic, gicType, transactionType }) {
   const { data } = useQuery(gicsQuery, {
     variables: {
-      type
+      type: gicType,
+      is_business: transactionType === 'business'
     },
-    skip: _.isEmpty(type)
+    skip: _.isEmpty(gicType)
   });
 
   const gics = data?.accounting_gic;

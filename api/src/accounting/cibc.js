@@ -14,35 +14,22 @@ export async function backfill({ fromDate, toDate }) {
       toDate
     });
     
-    const debits = transactions.map((t) => ({
+    const _transactions = transactions.map((t) => ({
       tid: t.id,
       account_id: account.id,
-      amount: t.debit,
+      credit: t.credit,
+      debit: t.debit,
       date: t.date,
       description: t.transactionDescription
-    })).filter((t) => t.amount > 0);
+    }));
 
-    const credits = transactions.map((t) => ({
-      tid: t.id,
-      account_id: account.id,
-      amount: t.credit,
-      date: t.date,
-      description: t.transactionDescription
-    })).filter((t) => t.amount > 0);
-
-    let insertedDebits = [];
-    if (debits.length > 0) {
-      insertedDebits = await knex('accounting.debit').insert(debits).onConflict(['tid', 'account_id', 'date']).ignore().returning('*');
-    }
-    
-    let insertedCredits = [];
-    if (credits.length > 0) {
-      insertedCredits = await knex('accounting.credit').insert(credits).onConflict(['tid', 'account_id', 'date']).ignore().returning('*');
+    let insertedTransactions = [];
+    if (_transactions.length > 0) {
+      insertedTransactions = await knex('accounting.transactions').insert(_transactions).onConflict(['tid', 'account_id', 'date']).ignore().returning('*');
     }
 
     accountInserts[account.name] = {
-      debits: insertedDebits.length,
-      credits: insertedCredits.length
+      transactions: insertedTransactions.length
     };
   }
 
