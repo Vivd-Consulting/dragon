@@ -4,7 +4,7 @@ mutation updateTransaction(
   $notes: String
   $transactionIds: [Int!]
 ) {
-  update_accounting_credit_many(
+  update_accounting_transactions_many(
     updates: {
       _set: { gic_id: $gic, notes: $notes, transaction_type: $transactionType }
       where: { id: { _in: $transactionIds } }

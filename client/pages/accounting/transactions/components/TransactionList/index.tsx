@@ -14,42 +14,42 @@ import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 import GicModal from '../GicModal';
 import useSelectedTransactions from '../../hooks/useSelectedTransactions';
 
-import creditQuery from './queries/credits.gql';
+import transactionsQuery from './queries/transactions.gql';
 
-export default function CreditList() {
+export default function TransactionList() {
   const {
     query: { loading, previousData, data },
     paginationValues,
     onPage
-  } = usePaginatedQuery(creditQuery, {
+  } = usePaginatedQuery(transactionsQuery, {
     fetchPolicy: 'no-cache',
     variables: {
       where: {
         gic_id: { _is_null: true }
       }
     },
-    defaultSort: { date: 'desc' }
+    defaultSort: { tid: 'asc', date: 'desc' }
   });
 
-  const { gicTransactions, setSelectedTransactions } = useSelectedTransactions();
-
-  // const { transactions } = gicTransactions;
+  const { setSelectedTransactions } = useSelectedTransactions();
 
   const toastRef = useRef<Toast>(null);
 
-  const credits = loading ? previousData?.accounting_credit : data?.accounting_credit;
+  const transactions = loading
+    ? previousData?.accounting_transactions
+    : data?.accounting_transactions;
   const totalRecords = loading
-    ? previousData?.accounting_credit_aggregate.aggregate.count
-    : data?.accounting_credit_aggregate.aggregate.count;
+    ? previousData?.accounting_transactions_aggregate.aggregate.count
+    : data?.accounting_transactions_aggregate.aggregate.count;
 
   return (
     <>
       <Toast ref={toastRef} />
 
-      <GicModal gicType="credit" />
+      <GicModal />
 
       <DataTable
-        value={credits}
+        value={transactions}
         dataKey="id"
         // selected={transactions}
         // onSelectionChange={e => setSelectedTransactions({ transactions: e.value, type: 'credit' })}
@@ -77,9 +77,20 @@ export default function CreditList() {
         <Column
           field="amount"
           header="Amount"
-          body={({ amount }) => (
-            <span>{amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</span>
-          )}
+          body={({ debit, credit }) => {
+            const isDebit = debit > 0;
+            const value = isDebit ? -Math.abs(debit) : Math.abs(credit);
+            const color = isDebit ? 'text-red-500' : 'text-green-500';
+
+            return (
+              <span className={color}>
+                {value.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD'
+                })}
+              </span>
+            );
+          }}
           sortable
         />
         <Column

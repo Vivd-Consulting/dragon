@@ -4,8 +4,7 @@ import { Row, Column } from 'components/Group';
 
 import { Role } from 'types/roles';
 
-import DebitList from './components/DebitList';
-import CreditList from './components/CreditList';
+import TransactionList from './components/TransactionList';
 
 export default function Contractors() {
   return (
@@ -13,21 +12,11 @@ export default function Contractors() {
       <Card
         header={
           <Row justify="between" align="center" mx={4} mt={4}>
-            <h2 className="my-0">Debits</h2>
+            <h2 className="my-0">Transactions</h2>
           </Row>
         }
       >
-        <DebitList />
-      </Card>
-
-      <Card
-        header={
-          <Row justify="between" align="center" mx={4} mt={4}>
-            <h2 className="my-0">Credits</h2>
-          </Row>
-        }
-      >
-        <CreditList />
+        <TransactionList />
       </Card>
     </Column>
   );
