@@ -6,8 +6,7 @@ query transaction($id: Int!) {
     date
     credit
     debit
-    
-    recommendations {
+    recommendations(where: { recommendation: { gic_id: { _is_null: true } } }) {
       recommendation {
         id
         tid
