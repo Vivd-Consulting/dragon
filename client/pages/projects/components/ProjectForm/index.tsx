@@ -64,18 +64,19 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="project-form">
         {({ InputText, InputTextArea, InputDropdown }) => (
           <>
-            <InputText label="Name" name="name" isRequired autoFocus />
-            <InputText label="Github Repo Organization" name="github_repo_org" autoFocus />
-            <InputText label="Github Repo Name" name="github_repo_name" autoFocus />
             <InputDropdown
               placeholder="Select client"
-              label="Client ID"
+              label="Client"
               name="client_id"
               optionLabel="name"
               optionValue="id"
               options={data?.client}
+              disabled={initialData}
               isRequired
             />
+            <InputText label="Name" name="name" isRequired autoFocus />
+            <InputText label="Github Repo Organization" name="github_repo_org" autoFocus />
+            <InputText label="Github Repo Name" name="github_repo_name" autoFocus />
             <InputTextArea label="Description" name="description" />
             <InputTextArea label="GPT Persona" name="gpt_persona" />
 
