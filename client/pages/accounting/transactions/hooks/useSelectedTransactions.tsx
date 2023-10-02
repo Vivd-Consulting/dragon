@@ -13,7 +13,8 @@ const selectedTransactionsStore = create(set => ({
   gicTransactions: { transactions: [], type: '' },
   setSelectedTransactions: ({ transactions, type }) =>
     set({ gicTransactions: { transactions, type } }),
-  resetSelectedTransactions: () => set({ bulkSelectTransactions: [], gicTransactions: { transactions: [], type: '' } }),
+  resetSelectedTransactions: () =>
+    set({ bulkSelectTransactions: [], gicTransactions: { transactions: [], type: '' } }),
   hasSelectedTransactions: () => {
     return (selectedTransactionsStore as any).getState().gicTransactions?.transactions.length > 0;
   }
