@@ -2,6 +2,7 @@
 - "!include accounting_bank.yaml"
 - "!include accounting_gic.yaml"
 - "!include accounting_transactions.yaml"
+- "!include accounting_transactions_recommendations.yaml"
 - "!include public_budget.yaml"
 - "!include public_client.yaml"
 - "!include public_contact.yaml"

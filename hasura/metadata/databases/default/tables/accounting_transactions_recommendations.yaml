@@ -1,0 +1,10 @@
+table:
+  name: transactions_recommendations
+  schema: accounting
+object_relationships:
+  - name: recommendation
+    using:
+      foreign_key_constraint_on: transaction_id
+  - name: transaction
+    using:
+      foreign_key_constraint_on: recommended_transaction_id
