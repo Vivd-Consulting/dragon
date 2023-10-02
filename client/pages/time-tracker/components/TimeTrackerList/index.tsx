@@ -11,6 +11,8 @@ import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { Calendar } from 'primereact/calendar';
+import { InputText } from 'primereact/inputtext';
+import { InputNumber } from 'primereact/inputnumber';
 
 import { Nullable } from 'primereact/ts-helpers';
 
@@ -23,6 +25,7 @@ import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 import timersQuery from './queries/timers.gql';
 import deleteTimeMutation from './queries/deleteTime.gql';
+import ManualTimeModal from './components/ManualTimeModal';
 
 dayjs.extend(utc);
 dayjs.extend(duration);
@@ -90,20 +93,26 @@ export default function TimeTrackerList() {
           />
         </Row>
 
-        <Button
-          size="small"
-          tooltip="Clear filters"
-          tooltipOptions={{ position: 'top' }}
-          icon="pi pi-undo"
-          onClick={() => {
-            setSearchText(undefined);
-            setDates(null);
-          }}
-        />
+        <Row>
+          <Button
+            size="small"
+            tooltip="Clear filters"
+            tooltipOptions={{ position: 'top' }}
+            icon="pi pi-undo"
+            onClick={() => {
+              setSearchText(undefined);
+              setDates(null);
+            }}
+          />
+
+          <ManualTimeModal />
+        </Row>
       </Row>
 
       <DataTable
         value={timers}
+        editMode="row"
+        onRowEditComplete={onRowEditComplete}
         paginator
         lazy
         onPage={onPage}
@@ -136,14 +145,14 @@ export default function TimeTrackerList() {
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
+
         <Column
           field="description"
           header="Description"
-          body={({ description }) => <span>{_.truncate(description, { length: 200 })}</span>}
-          sortable
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
+          editor={options => textEditor(options)}
+          style={{ width: '20%' }}
         />
+
         <Column
           field="start_time"
           header="Start Time"
@@ -162,10 +171,43 @@ export default function TimeTrackerList() {
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
+
+        <Column
+          field="new_time"
+          header="New time"
+          body={({ new_time }) => <span>{new_time}</span>}
+          editor={options => numberEditor(options)}
+          style={{ width: '20%' }}
+        />
+
+        <Column
+          rowEditor
+          headerStyle={{ width: '10%', minWidth: '8rem' }}
+          bodyStyle={{ textAlign: 'center' }}
+        />
+
         <Column body={useActionButtons} />
       </DataTable>
     </>
   );
+
+  function textEditor(options) {
+    return (
+      <InputText
+        type="text"
+        value={options.value}
+        onChange={e => options.editorCallback(e.target.value)}
+      />
+    );
+  }
+
+  function numberEditor(options) {
+    return <InputNumber value={options.value} onChange={e => options.editorCallback(e.value)} />;
+  }
+
+  function onRowEditComplete(e) {
+    // console.log(e);
+  }
 
   function useActionButtons(data) {
     const confirmArchiveHistory = () => {
