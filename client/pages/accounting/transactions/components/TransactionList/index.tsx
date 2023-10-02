@@ -1,9 +1,11 @@
-import { useState, useRef } from 'react';
+import _ from 'lodash';
+import { useState, useRef, useEffect } from 'react';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
+import { SelectButton } from 'primereact/selectbutton';
 
 import { Row } from 'components/Group';
 import { InputTextDebounced } from 'components/Form';
@@ -23,9 +25,11 @@ import transactionsQuery from './queries/transactions.gql';
 export default function TransactionList() {
   const [selectedAccount, setSelectedAccount] = useState<string | undefined>(undefined);
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
+  const [transactionType, setTransactionType] = useState<string | undefined>(undefined);
+  const [onlyUncategorizedTransactions, setOnlyUncategorizedTransactions] = useState<boolean>(true);
 
   const where: any = {
-    gic_id: { _is_null: true }
+    gic_id: { _is_null: onlyUncategorizedTransactions }
   };
 
   if (selectedAccount) {
@@ -38,6 +42,14 @@ export default function TransactionList() {
       { debit: { _eq: parseFloat(searchText) || -1 } },
       { credit: { _eq: parseFloat(searchText) || -1 } }
     ];
+  }
+
+  if (transactionType) {
+    if (transactionType === 'debit') {
+      where.debit = { _gt: 0 };
+    } else {
+      where.credit = { _gt: 0 };
+    }
   }
 
   const {
@@ -64,28 +76,77 @@ export default function TransactionList() {
   const { setSelectedTransactions, bulkSelectTransactions, setBulkSelectTransactions } =
     useSelectedTransactions();
 
+  // If any of our search params change, reset the bulk select transactions
+  useEffect(() => {
+    setBulkSelectTransactions([]);
+  }, [
+    selectedAccount,
+    searchText,
+    transactionType,
+    onlyUncategorizedTransactions,
+    setBulkSelectTransactions
+  ]);
+
   return (
     <>
       <Toast ref={toastRef} />
 
       <GicModal />
 
-      <Row align="center" px={2} pb={4}>
-        <AccountsDropdown value={selectedAccount} onChange={setSelectedAccount} />
-        <InputTextDebounced
-          icon="pi-search"
-          placeholder="Search by"
-          value={searchText}
-          onChange={e => setSearchText(e)}
-        />
-        <Button
-          icon="pi pi-refresh"
-          className="p-button-secondary"
-          onClick={() => {
-            setSearchText('');
-            setSelectedAccount(undefined);
-          }}
-        />
+      <Row align="center" justify="between" px={2} pb={4}>
+        <Row>
+          <Button
+            icon="pi pi-refresh"
+            className="p-button-secondary"
+            onClick={() => {
+              setSearchText('');
+              setSelectedAccount(undefined);
+              setTransactionType(undefined);
+              setOnlyUncategorizedTransactions(true);
+            }}
+          />
+          <InputTextDebounced
+            icon="pi-search"
+            placeholder="Search by"
+            value={searchText}
+            onChange={e => setSearchText(e)}
+          />
+          <AccountsDropdown value={selectedAccount} onChange={setSelectedAccount} />
+          <SelectButton
+            value={transactionType}
+            itemTemplate={transactionTypeTemplate}
+            onChange={e => setTransactionType(e.value)}
+            options={['debit', 'credit']}
+          />
+          <SelectButton
+            value={onlyUncategorizedTransactions ? 'Uncategorized' : 'Categorized'}
+            onChange={e => setOnlyUncategorizedTransactions(e.value === 'Uncategorized')}
+            options={['Uncategorized', 'Categorized']}
+            unselectable={false}
+          />
+        </Row>
+        <Row>
+          <span className="text-red-500">
+            Debits:{' '}
+            {bulkSelectTransactions
+              ?.reduce((acc, { debit }) => acc + debit, 0)
+              // Convert to a currency string
+              .toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              })}
+          </span>
+          <span className="text-green-500">
+            Credits:{' '}
+            {bulkSelectTransactions
+              ?.reduce((acc, { credit }) => acc + credit, 0)
+              // Convert to a currency string
+              .toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              })}
+          </span>
+        </Row>
       </Row>
       <DataTable
         value={transactions}
@@ -112,6 +173,7 @@ export default function TransactionList() {
       >
         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
         <Column field="id" header="ID" sortable />
+        <Column field="tid" header="TID" sortable />
         <Column field="account.name" header="Account" sortable />
         <Column field="description" header="Description" />
         <Column
@@ -131,15 +193,27 @@ export default function TransactionList() {
               </span>
             );
           }}
+          sortField={transactionType === 'debit' ? 'debit' : 'credit'}
           sortable
         />
+        {!onlyUncategorizedTransactions && <Column field="gic.name" header="Category" sortable />}
+        {!onlyUncategorizedTransactions && (
+          <Column
+            field="gic.is_business"
+            header="Type"
+            body={({ gic }) => (
+              <i className={`pi pi-${gic?.is_business ? 'briefcase' : 'user'}`}></i>
+            )}
+            sortable
+          />
+        )}
         <Column
           body={({ date }) => <span>{dateFormat(date)}</span>}
           field="date"
           header="Date"
           sortable
         />
-        <Column body={useActionButtons} />
+        {onlyUncategorizedTransactions && <Column body={useActionButtons} />}
       </DataTable>
     </>
   );
@@ -154,7 +228,7 @@ export default function TransactionList() {
           severity="success"
           tooltip="Mark Personal"
           tooltipOptions={{ position: 'top' }}
-          icon="pi pi-sun"
+          icon="pi pi-user"
           onClick={() => markPersonal(_data)}
         />
         <Button
@@ -164,34 +238,11 @@ export default function TransactionList() {
           icon="pi pi-briefcase"
           onClick={() => markBusiness(_data)}
         />
-        <Button
-          size="small"
-          severity="danger"
-          tooltip="Mark Transfer"
-          tooltipOptions={{ position: 'top' }}
-          icon="pi pi-send"
-          onClick={() => markTransfer(data)}
-        />
-        {/* <Button
-          size="small"
-          severity="danger"
-          tooltip="Archive"
-          tooltipOptions={{ position: 'top' }}
-          icon="pi pi-trash"
-          onClick={confirmArchiveClient}
-        /> */}
       </Row>
     );
   }
 
   function markPersonal(data) {
-    // setTransactionPurpose({
-    //   variables: {
-    //     id,
-    //     purpose: 'personal'
-    //   }
-    // });
-
     setSelectedTransactions({
       transactions: data,
       type: 'personal'
@@ -199,25 +250,22 @@ export default function TransactionList() {
   }
 
   function markBusiness(data) {
-    // setTransactionPurpose({
-    //   variables: {
-    //     id,
-    //     purpose: 'business'
-    //   }
-    // });
-
     setSelectedTransactions({
       transactions: data,
       type: 'business'
     });
   }
 
-  function markTransfer({ id }) {
-    // setTransactionPurpose({
-    //   variables: {
-    //     id,
-    //     purpose: 'transfer'
-    //   }
-    // });
+  function transactionTypeTemplate(option) {
+    return (
+      <div className="flex align-items-center gap-2">
+        {option === 'credit' ? (
+          <i className="pi pi-arrow-up" style={{ color: 'green' }}></i>
+        ) : (
+          <i className="pi pi-arrow-down" style={{ color: 'red' }}></i>
+        )}
+        <div>{_.upperFirst(option)}</div>
+      </div>
+    );
   }
 }
