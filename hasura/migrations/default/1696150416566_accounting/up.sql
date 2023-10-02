@@ -13,7 +13,7 @@ CREATE TABLE accounting.account (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   account_id TEXT NOT NULL,
-  bank_id INTEGER NOT NULL REFERENCES accounting.bank(id),
+  bank_id int NOT NULL REFERENCES accounting.bank(id),
   currency TEXT NOT NULL,
   balance FLOAT NOT NULL,
   logo_url TEXT,
@@ -24,11 +24,11 @@ CREATE TABLE accounting.account (
 );
 
 CREATE TABLE accounting.gic (
-	id serial primary key,
-	name text not null,
-	code int not null,
+  id serial primary key,
+  name text not null,
+  code int,
   type text not null,
-  is_business boolean not null default false,
+  is_business boolean not null default false
 );
 
 CREATE TABLE accounting.transactions (
