@@ -1,0 +1,9 @@
+query accounts {
+  accounting_account {
+    id
+    bank {
+      name
+    }
+    name
+  }
+}

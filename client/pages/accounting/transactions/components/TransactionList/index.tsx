@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -6,6 +6,8 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 
 import { Row } from 'components/Group';
+import { InputTextDebounced } from 'components/Form';
+
 import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
@@ -14,9 +16,30 @@ import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 import GicModal from '../GicModal';
 import useSelectedTransactions from '../../hooks/useSelectedTransactions';
 
+import AccountsDropdown from './components/AccountsDropdown';
+
 import transactionsQuery from './queries/transactions.gql';
 
 export default function TransactionList() {
+  const [selectedAccount, setSelectedAccount] = useState<string | undefined>(undefined);
+  const [searchText, setSearchText] = useState<string | undefined>(undefined);
+
+  const where: any = {
+    gic_id: { _is_null: true }
+  };
+
+  if (selectedAccount) {
+    where.account_id = { _eq: selectedAccount };
+  }
+
+  if (searchText) {
+    where._or = [
+      { description: { _ilike: `%${searchText}%` } },
+      { debit: { _eq: parseFloat(searchText) || -1 } },
+      { credit: { _eq: parseFloat(searchText) || -1 } }
+    ];
+  }
+
   const {
     query: { loading, previousData, data },
     paginationValues,
@@ -24,14 +47,10 @@ export default function TransactionList() {
   } = usePaginatedQuery(transactionsQuery, {
     fetchPolicy: 'no-cache',
     variables: {
-      where: {
-        gic_id: { _is_null: true }
-      }
+      where
     },
     defaultSort: { tid: 'asc', date: 'desc' }
   });
-
-  const { setSelectedTransactions } = useSelectedTransactions();
 
   const toastRef = useRef<Toast>(null);
 
@@ -42,17 +61,37 @@ export default function TransactionList() {
     ? previousData?.accounting_transactions_aggregate.aggregate.count
     : data?.accounting_transactions_aggregate.aggregate.count;
 
+  const { setSelectedTransactions, bulkSelectTransactions, setBulkSelectTransactions } =
+    useSelectedTransactions();
+
   return (
     <>
       <Toast ref={toastRef} />
 
       <GicModal />
 
+      <Row align="center" px={2} pb={4}>
+        <AccountsDropdown value={selectedAccount} onChange={setSelectedAccount} />
+        <InputTextDebounced
+          icon="pi-search"
+          placeholder="Search by"
+          value={searchText}
+          onChange={e => setSearchText(e)}
+        />
+        <Button
+          icon="pi pi-refresh"
+          className="p-button-secondary"
+          onClick={() => {
+            setSearchText('');
+            setSelectedAccount(undefined);
+          }}
+        />
+      </Row>
       <DataTable
         value={transactions}
         dataKey="id"
-        // selected={transactions}
-        // onSelectionChange={e => setSelectedTransactions({ transactions: e.value, type: 'credit' })}
+        selection={bulkSelectTransactions}
+        onSelectionChange={e => setBulkSelectTransactions(e.value as any)}
         selectionMode="checkbox"
         paginator
         lazy
@@ -71,6 +110,7 @@ export default function TransactionList() {
         emptyMessage="No Contractors found."
         data-cy="contractors-table"
       >
+        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
         <Column field="id" header="ID" sortable />
         <Column field="account.name" header="Account" sortable />
         <Column field="description" header="Description" />
@@ -105,16 +145,7 @@ export default function TransactionList() {
   );
 
   function useActionButtons(data) {
-    // const router = useRouter();
-
-    // const confirmArchiveClient = () => {
-    //   confirmDialog({
-    //     message: `Are you sure you want to archive ${data.name}?`,
-    //     header: 'Archive Contractor',
-    //     icon: 'pi pi-exclamation-triangle',
-    //     accept: () => _archiveContractor(data)
-    //   });
-    // };
+    const _data = bulkSelectTransactions.length > 0 ? bulkSelectTransactions : [data];
 
     return (
       <Row>
@@ -124,14 +155,14 @@ export default function TransactionList() {
           tooltip="Mark Personal"
           tooltipOptions={{ position: 'top' }}
           icon="pi pi-sun"
-          onClick={() => markPersonal(data)}
+          onClick={() => markPersonal(_data)}
         />
         <Button
           size="small"
           tooltip="Mark Business"
           tooltipOptions={{ position: 'top' }}
           icon="pi pi-briefcase"
-          onClick={() => markBusiness(data)}
+          onClick={() => markBusiness(_data)}
         />
         <Button
           size="small"
@@ -162,7 +193,7 @@ export default function TransactionList() {
     // });
 
     setSelectedTransactions({
-      transactions: [data],
+      transactions: data,
       type: 'personal'
     });
   }
@@ -176,7 +207,7 @@ export default function TransactionList() {
     // });
 
     setSelectedTransactions({
-      transactions: [data],
+      transactions: data,
       type: 'business'
     });
   }

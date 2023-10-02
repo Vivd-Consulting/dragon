@@ -39,15 +39,17 @@ export default function GicModal() {
       onHide={() => resetSelectedTransactions()}
       footer={
         <Row>
-          <Button
-            type="button"
-            label="Save"
-            icon="pi pi-check"
-            onClick={async () => {
-              await updateTransactionGic();
-              resetSelectedTransactions();
-            }}
-          />
+          {!hasMixedDebitAndCredits && (
+            <Button
+              type="button"
+              label="Save"
+              icon="pi pi-check"
+              onClick={async () => {
+                await updateTransactionGic();
+                resetSelectedTransactions();
+              }}
+            />
+          )}
 
           <Button
             type="button"
@@ -104,10 +106,11 @@ function GicDropdown({ gic, setGic, gicType, transactionType }) {
     <Dropdown
       options={gics}
       optionLabel="name"
-      placeholder="Select a GIC"
+      placeholder="Select a Category"
       value={gic}
       onChange={e => setGic(e.value)}
       data-cy="gic-dropdown"
+      filter
     />
   );
 }
