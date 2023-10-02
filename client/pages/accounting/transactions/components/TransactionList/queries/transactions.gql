@@ -18,6 +18,17 @@ query transactions(
       name
       is_business
     }
+    relatedTransaction {
+      id
+      description
+      debit
+      credit
+    }
+    recommendations {
+      recommendation {
+        id
+      }
+    }
     notes
   }
   accounting_transactions_aggregate(order_by: $order_by, where: $where) {

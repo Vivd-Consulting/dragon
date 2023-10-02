@@ -1,0 +1,21 @@
+query transaction($id: Int!) {
+  accounting_transactions_by_pk(id: $id) {
+    id
+    tid
+    description
+    date
+    credit
+    debit
+    
+    recommendations {
+      recommendation {
+        id
+        tid
+        description
+        date
+        credit
+        debit
+      }
+    }
+  }
+}

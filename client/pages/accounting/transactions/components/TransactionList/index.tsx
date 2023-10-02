@@ -17,6 +17,7 @@ import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 // TODO: Move these into a shared folder
 import GicModal from '../GicModal';
+import TransferModal from '../TransferModal';
 import useSelectedTransactions from '../../hooks/useSelectedTransactions';
 
 import AccountsDropdown from './components/AccountsDropdown';
@@ -31,6 +32,8 @@ export default function TransactionList() {
   const [transactionType, setTransactionType] = useState<string | undefined>(undefined);
   const [onlyUncategorizedTransactions, setOnlyUncategorizedTransactions] = useState<boolean>(true);
   const [dateRange, setDateRange] = useState<String | Date | Date[] | any>(thisYear);
+
+  const [transferSource, setTransferSource] = useState<any>(undefined);
 
   const where: any = {
     gic_id: { _is_null: onlyUncategorizedTransactions }
@@ -104,6 +107,7 @@ export default function TransactionList() {
       <Toast ref={toastRef} />
 
       <GicModal />
+      <TransferModal transferSourceId={transferSource?.id} setTransferSource={setTransferSource} />
 
       <Row align="center" justify="between" px={2} pb={4}>
         <Row wrap>
@@ -241,6 +245,8 @@ export default function TransactionList() {
   function useActionButtons(data) {
     const _data = bulkSelectTransactions.length > 0 ? bulkSelectTransactions : [data];
 
+    const hasRecommendations = data.recommendations?.length > 0;
+
     return (
       <Row>
         <Button
@@ -258,6 +264,16 @@ export default function TransactionList() {
           icon="pi pi-briefcase"
           onClick={() => markBusiness(_data)}
         />
+        {hasRecommendations && (
+          <Button
+            size="small"
+            severity="warning"
+            tooltip="Mark Transfer"
+            tooltipOptions={{ position: 'top' }}
+            icon="pi pi-arrow-right-arrow-left"
+            onClick={() => markTransfer(data)}
+          />
+        )}
       </Row>
     );
   }
@@ -274,6 +290,10 @@ export default function TransactionList() {
       transactions: data,
       type: 'business'
     });
+  }
+
+  function markTransfer(data) {
+    setTransferSource(data);
   }
 
   function transactionTypeTemplate(option) {
