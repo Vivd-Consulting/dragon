@@ -1,4 +1,4 @@
-CREATE SCHEMA IF NOT EXISTS accounting;
+CREATE SCHEMA IF NOT EXISTS "accounting";
 
 CREATE TABLE accounting.bank (
   id SERIAL PRIMARY KEY,
