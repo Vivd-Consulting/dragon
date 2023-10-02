@@ -7,7 +7,6 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
-import { Tooltip } from 'primereact/tooltip';
 
 import { Row } from 'components/Group';
 import { dateFormat } from 'utils';

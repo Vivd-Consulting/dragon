@@ -22,6 +22,11 @@ export function InputTextDebounced({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
+  // If the value changes outside of this component, update the internal value
+  useUpdateEffect(() => {
+    setInternalValue(value);
+  }, [value]);
+
   if (icon) {
     return (
       <span className="p-input-icon-left">
