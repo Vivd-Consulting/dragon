@@ -6,6 +6,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { SelectButton } from 'primereact/selectbutton';
+import { Calendar } from 'primereact/calendar';
 
 import { Row } from 'components/Group';
 import { InputTextDebounced } from 'components/Form';
@@ -22,15 +23,25 @@ import AccountsDropdown from './components/AccountsDropdown';
 
 import transactionsQuery from './queries/transactions.gql';
 
+const thisYear = [new Date(new Date().getFullYear(), 0, 1), new Date()];
+
 export default function TransactionList() {
   const [selectedAccount, setSelectedAccount] = useState<string | undefined>(undefined);
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
   const [transactionType, setTransactionType] = useState<string | undefined>(undefined);
   const [onlyUncategorizedTransactions, setOnlyUncategorizedTransactions] = useState<boolean>(true);
+  const [dateRange, setDateRange] = useState<String | Date | Date[] | any>(thisYear);
 
   const where: any = {
     gic_id: { _is_null: onlyUncategorizedTransactions }
   };
+
+  if (dateRange && dateRange.length > 1) {
+    where.date = {
+      _gte: dateRange[0],
+      _lte: dateRange[1]
+    };
+  }
 
   if (selectedAccount) {
     where.account_id = { _eq: selectedAccount };
@@ -84,6 +95,7 @@ export default function TransactionList() {
     searchText,
     transactionType,
     onlyUncategorizedTransactions,
+    dateRange,
     setBulkSelectTransactions
   ]);
 
@@ -103,6 +115,7 @@ export default function TransactionList() {
               setSelectedAccount(undefined);
               setTransactionType(undefined);
               setOnlyUncategorizedTransactions(true);
+              setDateRange(thisYear);
             }}
           />
           <InputTextDebounced
@@ -112,6 +125,13 @@ export default function TransactionList() {
             onChange={e => setSearchText(e)}
           />
           <AccountsDropdown value={selectedAccount} onChange={setSelectedAccount} />
+          <Calendar
+            value={dateRange}
+            onChange={e => setDateRange(e.value)}
+            selectionMode="range"
+            readOnlyInput
+            showButtonBar
+          />
           <SelectButton
             value={transactionType}
             itemTemplate={transactionTypeTemplate}
@@ -168,8 +188,8 @@ export default function TransactionList() {
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
         rowsPerPageOptions={[10, 25, 50, 100]}
-        emptyMessage="No Contractors found."
-        data-cy="contractors-table"
+        emptyMessage="No Transactions found."
+        data-cy="transactions-table"
       >
         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
         <Column field="id" header="ID" sortable />
