@@ -106,7 +106,7 @@ export default function TransactionList() {
       <GicModal />
 
       <Row align="center" justify="between" px={2} pb={4}>
-        <Row>
+        <Row wrap>
           <Button
             icon="pi pi-refresh"
             className="p-button-secondary"
