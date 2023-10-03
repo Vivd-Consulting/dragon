@@ -33,7 +33,7 @@ export function FormFooterButtons({
           loading={loading}
           label="Cancel"
           icon="pi pi-times"
-          className="p-button-outlined p-button-secondary"
+          className="p-button-secondary"
           onClick={() => (onCancel ? onCancel() : goUp())}
           data-cy="form-cancel"
         />

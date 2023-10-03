@@ -64,7 +64,12 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
         onHide={() => setVisible(false)}
       >
         {/* @ts-ignore */}
-        <CustomForm formHook={formHook} onSubmit={onSubmit} resetOnSubmit data-cy="secret-key-form">
+        <CustomForm
+          formHook={formHook}
+          onSubmit={onSubmit}
+          resetOnSubmit
+          data-cy="manual-time-form"
+        >
           {({ InputText, InputTextArea, InputCalendar, InputDropdown }) => (
             <>
               <InputDropdown

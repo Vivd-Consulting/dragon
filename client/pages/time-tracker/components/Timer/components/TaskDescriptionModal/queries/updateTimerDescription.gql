@@ -1,0 +1,7 @@
+mutation updateTimerDescription($timerId: Int!, $description: String!) {
+  update_project_time(where: { id: { _eq: $timerId } }, _set: { description: $description }) {
+    returning {
+      description
+    }
+  }
+}
