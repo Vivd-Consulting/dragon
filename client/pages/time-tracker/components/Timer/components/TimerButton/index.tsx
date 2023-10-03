@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 
 import _ from 'lodash';
@@ -7,13 +7,15 @@ import utc from 'dayjs/plugin/utc';
 import cx from 'clsx';
 
 import { Button } from 'primereact/button';
+import { Toast } from 'primereact/toast';
 
 import { useInterval } from 'ahooks';
 
 import { Row } from 'components/Group';
 import { S3Image } from 'components/Image';
-
 import { useAuth } from 'hooks/useAuth';
+
+import TaskDescriptionModal from '../TaskDescriptionModal';
 
 import startTimerMutation from './queries/startTimer.gql';
 import startTimerWithInvoiceMutation from './queries/startTimerWithInvoice.gql';
@@ -28,6 +30,11 @@ dayjs.extend(utc);
 export default function TimerButton({ project, isListViewChecked }) {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
+
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [timerId, setTimerId] = useState<number | null>(null);
   const [timeSinceStart, setTimeSinceStart] = useState(
     project.isActive ? diffSeconds(project.startTime) : 0
   );
@@ -67,45 +74,60 @@ export default function TimerButton({ project, isListViewChecked }) {
     }
   }, 1000);
 
+  const toast = useRef<any>(null);
+
   if (isListViewChecked) {
     return (
-      <Row gap="5" align="center">
-        <div style={{ width: '80px' }}>{project.isActive ? formattedTime : '0'}</div>
-        <ActionButtons
-          onProjectTimerStart={projectTimerStart}
-          onProjectTimerStop={projectTimerStop}
-          project={project}
-        />
-      </Row>
+      <>
+        <Toast ref={toast} />
+
+        <Row gap="5" align="center">
+          <div style={{ width: '80px' }}>{project.isActive ? formattedTime : '0'}</div>
+          <ActionButtons
+            onProjectTimerStart={projectTimerStart}
+            onProjectTimerStop={projectTimerStop}
+            project={project}
+          />
+        </Row>
+        <TaskDescriptionModal visible={visible} setVisible={setVisible} timerId={timerId} />
+      </>
     );
   } else {
     return (
-      <div
-        key={project.id}
-        className={cx(styles.bigButton, project.isActive && styles.isActive)}
-        onClick={() => projectTimerStart(project)}
-      >
-        <div className="flex flex-column align-items-center">
-          <S3Image s3Key={project?.client?.logo?.key} className="logo-img" />
-          <span className="text-sm">{project.client.name}</span>
-          {project.isActive && <p>{project.name}</p>}
-          {project.isActive ? formattedTime : project.name}
+      <>
+        <div
+          key={project.id}
+          className={cx(styles.bigButton, project.isActive && styles.isActive)}
+          onClick={() => projectTimerStart(project)}
+        >
+          <div className="flex flex-column align-items-center">
+            <S3Image s3Key={project?.client?.logo?.key} className="logo-img" />
+            <span className="text-sm">{project.client.name}</span>
+            {project.isActive && <p>{project.name}</p>}
+            {project.isActive ? formattedTime : project.name}
+          </div>
         </div>
-      </div>
+        <TaskDescriptionModal visible={visible} setVisible={setVisible} timerId={timerId} />
+      </>
     );
   }
 
   async function projectTimerStart(_project) {
     if (_project.isActive) {
+      setVisible(true);
       setTimeSinceStart(0);
 
-      return stopTimer({
+      const newTimer = await stopTimer({
         variables: {
           timerId: _project.timerId,
           endTime: new Date()
         },
         refetchQueries: ['userProjects', 'timers']
       });
+
+      const _timerId = _.get(newTimer, 'data.update_project_time.returning[0].id') as number;
+
+      setTimerId(_timerId);
     } else {
       setTimeSinceStart(0);
 
@@ -141,15 +163,20 @@ export default function TimerButton({ project, isListViewChecked }) {
 
   async function projectTimerStop(_project) {
     if (_project.isActive) {
+      setVisible(true);
       setTimeSinceStart(0);
 
-      return stopTimer({
+      const newTimer = await stopTimer({
         variables: {
           timerId: _project.timerId,
           endTime: new Date()
         },
         refetchQueries: ['userProjects', 'timers']
       });
+
+      const _timerId = _.get(newTimer, 'data.update_project_time.returning[0].id') as number;
+
+      setTimerId(_timerId);
     }
   }
 
