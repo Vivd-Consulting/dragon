@@ -46,6 +46,8 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
     return null;
   }
 
+  const isEditing = !!initialData;
+
   const defaultValues = initialData
     ? initialData.project[0]
     : {
@@ -71,12 +73,12 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
               optionLabel="name"
               optionValue="id"
               options={data?.client}
-              disabled={initialData}
+              disabled={isEditing}
               isRequired
             />
             <InputText label="Name" name="name" isRequired autoFocus />
-            <InputText label="Github Repo Organization" name="github_repo_org" autoFocus />
-            <InputText label="Github Repo Name" name="github_repo_name" autoFocus />
+            <InputText label="Github Repo Organization" name="github_repo_org" />
+            <InputText label="Github Repo Name" name="github_repo_name" />
             <InputTextArea label="Description" name="description" />
             <InputTextArea label="GPT Persona" name="gpt_persona" />
 
