@@ -90,16 +90,6 @@ async function collectTransactions({ accountId, fromDate, toDate }) {
   return allTransactions;
 }
 
-export async function getTransactions({ fromDate, toDate, accountId }) {
-  const transactions = await collectTransactions({
-    accountId,
-    fromDate,
-    toDate
-  });
-
-  return transactions;
-}
-
 async function headers() {
   const { token } =  await knex('accounting.bank').select('token').where({ name: 'cibc' }).first();
   const _auth = JSON.parse(token);
