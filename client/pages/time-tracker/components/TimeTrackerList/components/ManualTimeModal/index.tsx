@@ -64,8 +64,8 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
         onHide={() => setVisible(false)}
       >
         {/* @ts-ignore */}
-        <CustomForm formHook={formHook} onSubmit={onSubmit} data-cy="secret-key-form">
-          {({ InputText, InputCalendar, InputDropdown }) => (
+        <CustomForm formHook={formHook} onSubmit={onSubmit} resetOnSubmit data-cy="secret-key-form">
+          {({ InputText, InputTextArea, InputCalendar, InputDropdown }) => (
             <>
               <InputDropdown
                 placeholder="Select project"
@@ -95,7 +95,7 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
                 hourFormat="12"
               />
 
-              <InputText label="Description" name="description" isRequired />
+              <InputTextArea label="Description" name="description" />
               <InputText label="Total time" value={newEntryDuration} disabled />
 
               <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
@@ -111,13 +111,7 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
 
     try {
       if (initialData) {
-        // await updateSecretKey({
-        //   variables: {
-        //     ...data,
-        //     path: formatedSecretKey,
-        //     projectId: Number(projectId)
-        //   }
-        // });
+        // Handle editing
         toast?.current?.show({
           severity: 'success',
           summary: 'Success',
