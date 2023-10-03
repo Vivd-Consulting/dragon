@@ -27,12 +27,12 @@ export default function TaskDescriptionModal({ timerId, visible, setVisible }) {
         style={{ width: '70vw' }}
         onHide={() => setVisible(false)}
       >
-        <Form onSubmit={onSubmit} data-cy="secret-key-form">
-          {({ InputText }) => (
+        <Form onSubmit={onSubmit} data-cy="time-description-form">
+          {({ InputTextArea }) => (
             <>
-              <InputText label="Description" name="description" />
+              <InputTextArea label="Description" name="description" />
 
-              <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
+              <FormFooterButtons loading={loading} onSubmit={onSubmit} />
             </>
           )}
         </Form>
