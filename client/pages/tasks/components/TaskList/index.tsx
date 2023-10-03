@@ -14,6 +14,8 @@ import { AssignContractorTaskDropdown } from 'components/AssignContractorTaskDro
 
 import { dateFormat } from 'utils';
 
+import { TASK_PRIORITY } from 'consts';
+
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 import { useAuth } from 'hooks/useAuth';
 
@@ -30,13 +32,6 @@ interface ITaskViewedBy {
 
 // TODO: Add an accurate interface
 interface ITask extends ITaskViewedBy {}
-
-export const TASK_PRIORITY = [
-  { name: 'Low', id: 0, severity: 'success' },
-  { name: 'Medium', id: 1, severity: 'info' },
-  { name: 'High', id: 2, severity: 'warning' },
-  { name: 'Urgent', id: 3, severity: 'danger' }
-] as const;
 
 export default function TaskList() {
   const { dragonUser } = useAuth();

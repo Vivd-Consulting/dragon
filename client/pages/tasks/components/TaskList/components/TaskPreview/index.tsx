@@ -9,11 +9,13 @@ import { useAuth } from 'hooks/useAuth';
 
 import { dateFormat } from 'utils';
 
+import { TASK_PRIORITY } from 'consts';
+
 import { Column, Row } from 'components/Group';
 
-import { TASK_PRIORITY } from '../..';
-
 import taskViewedByUserMutation from './queries/taskViewedByUser.gql';
+
+import styles from './styles.module.sass';
 
 export default function TaskPreview({ data, toastRef }) {
   const { dragonUser } = useAuth();
@@ -41,7 +43,7 @@ export default function TaskPreview({ data, toastRef }) {
         position="right"
         onHide={() => setVisible(false)}
       >
-        <Row style={{ width: '100%' }} justify="between" align="center">
+        <Row className="w-full" justify="between" align="center">
           <h2>{data?.title}</h2>
           {/* Leaving them here just in case if we need action buttons */}
           <Row>
@@ -53,9 +55,9 @@ export default function TaskPreview({ data, toastRef }) {
             </button>
           </Row>
         </Row>
-        <Column>
+        <Column gap="3">
           <Row align="center" gap="5">
-            <h4 style={{ minWidth: '100px' }}>Assignee</h4>
+            <span className={styles.header}>Assignee</span>
             <Row>
               {data?.task_assignees?.map(({ contractor }) => (
                 <Badge severity="warning" key={contractor?.name} value={contractor?.name} />
@@ -64,41 +66,41 @@ export default function TaskPreview({ data, toastRef }) {
           </Row>
 
           <Row align="center" gap="5">
-            <h4 style={{ minWidth: '100px' }}>Due date</h4>
+            <span className={styles.header}>Due date</span>
             <Row>{dateFormat(data?.due_date)}</Row>
           </Row>
 
           {data?.started_at && (
             <Row align="center" gap="5">
-              <h4 style={{ minWidth: '100px' }}>Started</h4>
+              <span className={styles.header}>Started</span>
               <Row>{dateFormat(data?.started_at)}</Row>
             </Row>
           )}
 
           {data?.completed_at && (
             <Row align="center" gap="5">
-              <h4 style={{ minWidth: '100px' }}>Completed</h4>
+              <span className={styles.header}>Completed</span>
               <Row>{dateFormat(data?.completed_at)}</Row>
             </Row>
           )}
 
           <Row align="center" gap="5">
-            <h4 style={{ minWidth: '100px' }}>Project</h4>
+            <span className={styles.header}>Project</span>
             <Row>{data?.project?.name}</Row>
           </Row>
 
           <Row align="center" gap="5">
-            <h4 style={{ minWidth: '100px' }}>Priority</h4>
+            <span className={styles.header}>Priority</span>
             <Badge value={taskPriority?.name} severity={taskPriority?.severity} />
           </Row>
 
           <Row align="center" gap="5">
-            <h4 style={{ minWidth: '100px' }}>Status</h4>
+            <span className={styles.header}>Status</span>
             <Badge value={data?.status} />
           </Row>
 
           <Row align="center" gap="5">
-            <h4 style={{ minWidth: '100px' }}>Approved</h4>
+            <span className={styles.header}>Approved</span>
             {data?.is_approved ? (
               <i className="pi pi-check text-green-500" />
             ) : (
@@ -107,7 +109,7 @@ export default function TaskPreview({ data, toastRef }) {
           </Row>
 
           <Column gap="0">
-            <h4>Description</h4>
+            <span className={styles.header}>Description</span>
             <p>{data?.description}</p>
           </Column>
         </Column>
