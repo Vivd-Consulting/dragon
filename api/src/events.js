@@ -8,7 +8,8 @@ const router = express.Router();
 
 // Import transactions from the CIBC database
 router.post('/accounting/cibc', async (req, res) => {
-  const insertedTransactions = await backfill(req.body);
+  const { fromDate, toDate } = req.body;
+  const insertedTransactions = await backfill({ fromDate, toDate });
 
   await recommendRelatedTransactions();
 
