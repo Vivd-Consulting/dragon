@@ -5,8 +5,18 @@ query tasks($limit: Int, $offset: Int, $order_by: [task_order_by!], $where: task
     priority
     description
     due_date
+    started_at
+    completed_at
+    is_approved
+    status
+    estimate_minutes
     project {
       name
+    }
+    task_assignees {
+      contractor {
+        name
+      }
     }
     task_viewed_by {
       dragon_user {
