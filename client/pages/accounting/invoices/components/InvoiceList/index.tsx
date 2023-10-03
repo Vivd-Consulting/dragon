@@ -123,7 +123,11 @@ export default function InvoiceList() {
             // TODO: Add dynamic rates here
             const { totalCost } = calculateTotalTimeAndCost(projectTimes, 20);
 
-            return <span>{totalCost}</span>;
+            return (
+              <span>
+                {totalCost.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+              </span>
+            );
           }}
           header="Cost"
           headerClassName="white-space-nowrap"
