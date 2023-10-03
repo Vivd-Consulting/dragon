@@ -58,7 +58,8 @@ export default function TimeTrackerList() {
     fetchPolicy: 'no-cache',
     variables: {
       where
-    }
+    },
+    defaultSort: { id: 'desc' }
   });
 
   const [deleteTimer] = useMutation(deleteTimeMutation, {
