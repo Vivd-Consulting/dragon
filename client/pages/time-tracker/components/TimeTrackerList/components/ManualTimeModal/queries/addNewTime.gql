@@ -1,0 +1,19 @@
+mutation addNewTime(
+  $project_id: Int!
+  $userId: String!
+  $description: String!
+  $start_time: timestamp!
+  $end_time: timestamp!
+) {
+  insert_project_time_one(
+    object: {
+      project_id: $project_id
+      dragon_user_id: $userId
+      end_time: $end_time
+      start_time: $start_time
+      description: $description
+    }
+  ) {
+    id
+  }
+}
