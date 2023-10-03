@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
-import { useMutation } from '@apollo/client';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -9,6 +8,7 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
 
+import { InputTextDebounced } from 'components/Form';
 import { Row } from 'components/Group';
 import { AssignContractorTaskDropdown } from 'components/AssignContractorTaskDropdown';
 
@@ -18,7 +18,7 @@ import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 import { useAuth } from 'hooks/useAuth';
 
 import tasksQuery from './queries/tasks.gql';
-import taskViewedByUserMutation from './queries/taskViewedByUser.gql';
+import TaskPreview from './components/TaskPreview';
 
 interface ITaskViewedBy {
   task_viewed_by: {
@@ -41,10 +41,6 @@ export const TASK_PRIORITY = [
 export default function TaskList() {
   const { dragonUser } = useAuth();
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
-
-  const [taskViewedByUser] = useMutation(taskViewedByUserMutation, {
-    refetchQueries: ['tasks']
-  });
 
   const where: any = {
     deleted_at: { _is_null: true }
@@ -75,6 +71,14 @@ export default function TaskList() {
   return (
     <>
       <Toast ref={toastRef} />
+
+      <Row align="center" px={2} pb={4}>
+        <InputTextDebounced
+          placeholder="Search by"
+          value={searchText}
+          onChange={e => setSearchText(e)}
+        />
+      </Row>
 
       <DataTable
         rowClassName={(data: ITask) =>
@@ -135,7 +139,7 @@ export default function TaskList() {
         />
         <Column
           field="description"
-          body={({ description }) => <span>{_.truncate(description, { length: 250 })}</span>}
+          body={({ description }) => <span>{_.truncate(description, { length: 100 })}</span>}
           header="Description"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
@@ -165,41 +169,8 @@ export default function TaskList() {
           tooltipOptions={{ position: 'top' }}
           onClick={() => router.push(`/tasks/edit/${data?.id}`)}
         />
-        <Button
-          size="small"
-          icon="pi pi-eye"
-          tooltip="View"
-          tooltipOptions={{ position: 'top' }}
-          onClick={() => _taskViewedByUser(data)}
-        />
+        <TaskPreview data={data} toastRef={toastRef} />
       </Row>
     );
-  }
-
-  async function _taskViewedByUser(data) {
-    try {
-      await taskViewedByUser({
-        variables: {
-          taskId: data?.id,
-          userId: dragonUser?.id
-        }
-      });
-
-      // Show success toast
-      toastRef?.current?.show({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Task Viewed!!',
-        life: 3000
-      });
-    } catch {
-      // Show error toast
-      toastRef?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to view task!',
-        life: 3000
-      });
-    }
   }
 }
