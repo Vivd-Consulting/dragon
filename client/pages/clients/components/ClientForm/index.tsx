@@ -44,8 +44,8 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="client-form">
         {({ UploadImageInput, InputText, InputTextArea, InputCalendar }) => (
           <>
-            <UploadImageInput label="Brand Logo" name="logo_id" />
             <InputText label="Name" name="name" isRequired autoFocus />
+            <UploadImageInput label="Brand Logo" name="logo_id" isRequired />
             <InputTextArea label="Description" name="description" />
             <InputTextArea label="GPT Persona" name="gpt_persona" />
             <InputText label="Document" name="document" />
