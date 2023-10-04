@@ -9,6 +9,8 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 
 import { Row } from 'components/Group';
+import { FileNameTemplate } from 'components/FileNameTemplate';
+
 import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
@@ -84,7 +86,7 @@ export default function ContractorList() {
           className="white-space-nowrap"
         />
         <Column
-          // body={({ contract_id }) => <S3Image s3Key={contract_id} className="logo-img" />}
+          body={({ contract_id }) => <FileNameTemplate fileId={contract_id} />}
           field="contract_id"
           header="Contract"
           headerClassName="white-space-nowrap"
