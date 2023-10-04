@@ -18,7 +18,10 @@ interface ClientFormPageProps {
 }
 
 export default function ClientForm({ initialData, isInitialDataLoading }: ClientFormPageProps) {
+  const isEditing = !!initialData;
+
   const { dragonUser } = useAuth();
+
   const [createClient] = useMutation(createClientMutation, {
     refetchQueries: ['clients', 'client']
   });
@@ -44,13 +47,13 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="client-form">
         {({ UploadImageInput, InputText, InputTextArea, InputCalendar, UploadFileInput }) => (
           <>
-            <InputText label="Name" name="name" isRequired autoFocus />
-            <UploadImageInput label="Brand Logo" name="logo_id" isRequired />
+            <InputText label="Name" name="name" isRequired={!isEditing} autoFocus />
+            <UploadImageInput label="Brand Logo" name="logo_id" isRequired={!isEditing} />
             <InputTextArea label="Description" name="description" />
             <InputTextArea label="GPT Persona" name="gpt_persona" />
-            <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
+            <InputCalendar label="Start Date" name="start_date" isRequired={!isEditing} showIcon />
             <InputCalendar label="End Date" name="end_date" showIcon />
-            <UploadFileInput label="Contract" name="contract_id" isRequired />
+            <UploadFileInput label="Contract" name="contract_id" isRequired={!isEditing} />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>
