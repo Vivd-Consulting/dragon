@@ -13,3 +13,17 @@ array_relationships:
         table:
           name: client
           schema: public
+  - name: clientsByContractId
+    using:
+      foreign_key_constraint_on:
+        column: contract_id
+        table:
+          name: client
+          schema: public
+  - name: contractors
+    using:
+      foreign_key_constraint_on:
+        column: contract_id
+        table:
+          name: contractor
+          schema: public

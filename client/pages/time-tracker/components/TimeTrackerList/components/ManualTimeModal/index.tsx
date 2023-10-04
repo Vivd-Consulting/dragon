@@ -63,8 +63,8 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
         style={{ width: '70vw' }}
         onHide={() => setVisible(false)}
       >
-        {/* @ts-ignore */}
         <CustomForm
+          // @ts-ignore
           formHook={formHook}
           onSubmit={onSubmit}
           resetOnSubmit

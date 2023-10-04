@@ -84,6 +84,13 @@ export default function ContractorList() {
           className="white-space-nowrap"
         />
         <Column
+          // body={({ contract_id }) => <S3Image s3Key={contract_id} className="logo-img" />}
+          field="contract_id"
+          header="Contract"
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+        <Column
           body={({ contractor_rate }) => {
             const rate = `${contractor_rate.rate.toLocaleString('en-US', {
               style: 'currency',

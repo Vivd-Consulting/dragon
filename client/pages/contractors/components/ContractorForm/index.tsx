@@ -45,9 +45,8 @@ export default function ContractorForm({
         gpt_persona: '',
         location: '',
         rate: undefined,
+        contractor_id: undefined,
         rate_id: undefined,
-        invoice: undefined,
-        document: '',
         start_date: '',
         end_data: ''
       };
@@ -57,17 +56,16 @@ export default function ContractorForm({
       <Toast ref={toast} />
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="contractor-form">
-        {({ InputText, InputTextArea, InputCalendar, InputNumber }) => (
+        {({ InputText, InputTextArea, InputCalendar, InputNumber, UploadFileInput }) => (
           <>
             <InputText label="Name" name="name" isRequired autoFocus />
             <InputText label="Location" name="location" isRequired />
-            <InputText label="Document" name="document" />
             <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
             <InputNumber label="Markup" name="markup" isRequired />
-            <InputNumber label="Invoice" name="invoice" />
             <InputTextArea label="GPT Persona" name="gpt_persona" />
             <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
             <InputCalendar label="End Date" name="end_date" showIcon />
+            <UploadFileInput label="Contract" name="contract_id" isRequired />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>

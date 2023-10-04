@@ -14,7 +14,6 @@ CREATE TABLE client (
   description text,
   gpt_persona text,
   contact_id integer REFERENCES contact(id),
-  document text,
 
   start_date timestamp,
   end_date timestamp,
@@ -39,10 +38,8 @@ CREATE TABLE contractor (
   name text NOT NULL,
   location text NOT NULL,
   gpt_persona text,
-  document text,
   contact_id integer REFERENCES contact(id),
   rate_id integer NOT NULL REFERENCES contractor_rate(id),
-  invoice float NOT NULL,
 
   start_date timestamp,
   end_date timestamp,

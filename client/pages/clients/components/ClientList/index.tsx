@@ -8,6 +8,7 @@ import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 
+import { S3Image } from 'components/Image';
 import { Row } from 'components/Group';
 import { dateFormat } from 'utils';
 
@@ -78,19 +79,9 @@ export default function ClientList() {
           className="white-space-nowrap"
         />
         <Column
-          body={({ document }) => (
-            <a
-              href={document ?? ''}
-              rel="noopener noreferrer"
-              target="_blank"
-              className="flex items-center gap-2 hover:text-blue-500"
-            >
-              <div className="pi pi-link" />
-              View
-            </a>
-          )}
-          field="document"
-          header="Document"
+          // body={({ contract_id }) => <S3Image s3Key={contract_id} className="logo-img" />}
+          field="contract_id"
+          header="Contract"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
