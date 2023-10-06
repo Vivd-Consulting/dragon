@@ -111,8 +111,8 @@ const CONTRACTOR = gql`
   }
 `;
 
-export function useMostTimeConsumingClient() {
-  const { data, loading, error } = useQuery(TC_CLIENTS);
+export function useTotalTimeConsumption() {
+  const { data, loading, error } = useQuery(PROJECT_TIMES);
 
   if (loading) {
     return [[]];
@@ -123,26 +123,23 @@ export function useMostTimeConsumingClient() {
     return [[]];
   }
 
-  const { client } = data || {};
+  const { project_time } = data || {};
 
-  const mostTimeConsumedClient = _.maxBy(client, client => calculateTotalTime(client));
+  const { mostTimeConsumingClient, mostTimeConsumingProject } = findMostTimeConsuming(project_time);
 
-  const formattedTotalTime = dayjs
-    .duration(mostTimeConsumedClient ? calculateTotalTime(mostTimeConsumedClient) : 0)
-    .format('HH:mm:ss');
-
-  return [formattedTotalTime, mostTimeConsumedClient.name];
+  return [mostTimeConsumingClient, mostTimeConsumingProject];
 }
 
-const TC_CLIENTS = gql`
-  query timeConsumingClients {
-    client(where: { archived_at: { _is_null: true } }) {
-      name
-      projects {
-        project_times {
-          new_time
-          start_time
-          end_time
+const PROJECT_TIMES = gql`
+  query projectTimes {
+    project_time {
+      start_time
+      end_time
+      new_time
+      project {
+        name
+        client {
+          name
         }
       }
     }
@@ -178,16 +175,6 @@ function calculateBillingsAndExpenses(data, startOfMonth, endOfMonth) {
   return { billings, expenses };
 }
 
-function formatDuration(milliseconds) {
-  const seconds = Math.floor(milliseconds / 1000) % 60;
-  const minutes = Math.floor(milliseconds / (1000 * 60)) % 60;
-  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
-
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
-    .toString()
-    .padStart(2, '0')}`;
-}
-
 function calculateTotalTimeSpentForContractor(data) {
   const projectTimes = _.flatMap(data.projects, project =>
     _.map(project.project.project_times, projectTime => ({
@@ -201,24 +188,62 @@ function calculateTotalTimeSpentForContractor(data) {
     projectTime => projectTime.endTime - projectTime.startTime
   );
 
-  const formattedTotalTime = formatDuration(totalDuration);
+  const totalSeconds = Math.floor(totalDuration / 1000);
+
+  const formattedTotalTime = formatDuration(totalSeconds);
 
   return formattedTotalTime;
 }
 
-function calculateTotalTime(client) {
-  const totalTime = _.sumBy(client.projects, project =>
-    _.sumBy(project.project_times, projectTime => {
-      if (projectTime.new_time !== null) {
-        return projectTime.new_time;
-      } else {
-        const startTime = dayjs(projectTime.start_time);
-        const endTime = dayjs(projectTime.end_time);
+const calculateTotalDurations = (data, key) => {
+  return _(data)
+    .groupBy(key)
+    .mapValues(projects =>
+      _.sumBy(projects, project =>
+        dayjs(project.end_time).diff(dayjs(project.start_time), 'second')
+      )
+    )
+    .value();
+};
 
-        return endTime.diff(startTime);
-      }
-    })
+const findMostTimeConsuming = data => {
+  const clientDurations = calculateTotalDurations(data, 'project.client.name');
+  const projectDurations = calculateTotalDurations(data, 'project.name');
+
+  const mostTimeConsumingClient = _.maxBy(
+    _.keys(clientDurations),
+    client => clientDurations[client]
   );
 
-  return totalTime;
-}
+  const mostTimeConsumingProject = _.maxBy(
+    _.keys(projectDurations),
+    project => projectDurations[project]
+  );
+
+  return {
+    mostTimeConsumingClient: {
+      clientName: mostTimeConsumingClient,
+      duration: formatDuration(clientDurations[mostTimeConsumingClient])
+    },
+    mostTimeConsumingProject: {
+      projectName: mostTimeConsumingProject,
+      duration: formatDuration(projectDurations[mostTimeConsumingProject])
+    }
+  };
+};
+
+const formatDuration = seconds => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  const formatNumber = num => String(num).padStart(2, '0');
+
+  if (hours > 0) {
+    return `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(remainingSeconds)}`;
+  } else if (minutes > 0) {
+    return `${formatNumber(minutes)}:${formatNumber(remainingSeconds)}`;
+  } else {
+    return `${formatNumber(remainingSeconds)}`;
+  }
+};
