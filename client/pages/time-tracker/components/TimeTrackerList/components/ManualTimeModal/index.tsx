@@ -44,10 +44,9 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
   };
 
   const formHook = useForm({ defaultValues });
-  const { watch } = formHook;
 
-  const startTime = watch('start_time');
-  const endTime = watch('end_time');
+  const [startTime, setStartTime] = useState(defaultValues.start_time);
+  const [endTime, setEndTime] = useState(defaultValues.end_time);
 
   const newEntryDuration = calculateFormattedTimeDifference(startTime, endTime);
 
@@ -63,8 +62,8 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
         style={{ width: '70vw' }}
         onHide={() => setVisible(false)}
       >
-        {/* @ts-ignore */}
         <CustomForm
+          // @ts-ignore
           formHook={formHook}
           onSubmit={onSubmit}
           resetOnSubmit
@@ -89,6 +88,7 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
                 showIcon
                 showTime
                 hourFormat="12"
+                onChange={setStartTime}
               />
 
               <InputCalendar
@@ -98,6 +98,7 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
                 showIcon
                 showTime
                 hourFormat="12"
+                onChange={setEndTime}
               />
 
               <InputTextArea label="Description" name="description" />

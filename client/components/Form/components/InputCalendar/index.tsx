@@ -48,13 +48,13 @@ export function InputCalendar({
           <Calendar
             id={field.name}
             className={cx({ 'p-invalid': fieldState.error })}
+            {...field}
+            value={value}
+            {...props}
             onChange={e => {
               onChange && onChange(e.value);
               return field.onChange(e);
             }}
-            {...field}
-            value={value}
-            {...props}
           />
         );
       }}
