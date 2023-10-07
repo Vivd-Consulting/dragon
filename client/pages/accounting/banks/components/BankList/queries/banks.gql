@@ -1,0 +1,12 @@
+query banks($limit: Int, $offset: Int, $order_by: [accounting_bank_order_by!], $where: accounting_bank_bool_exp) {
+  accounting_bank(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    id
+    name
+    created_at
+  }
+  accounting_bank_aggregate(order_by: $order_by, where: $where) {
+    aggregate {
+      count
+    }
+  }
+}

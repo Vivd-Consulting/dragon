@@ -114,6 +114,7 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
           >
             <SidebarItem label="Invoices" href="/accounting/invoices" onClick={onItemClick} />
             <SidebarItem label="Reports" href="/accounting/reports" onClick={onItemClick} />
+            <SidebarItem label="Banks" href="/accounting/banks" onClick={onItemClick} />
             <SidebarItem
               label="Transactions"
               href="/accounting/transactions"
