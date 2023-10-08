@@ -1,4 +1,5 @@
 DROP SCHEMA IF EXISTS accounting CASCADE;
+CREATE SCHEMA accounting;
 
 CREATE TABLE accounting.bank (
   id TEXT PRIMARY KEY,
@@ -59,8 +60,16 @@ CREATE TABLE accounting.transactions (
   transaction_type TEXT,
   website TEXT,
   counterparties JSONB[],
+  gic_category_id INT REFERENCES accounting.category(id),
   category_id INT REFERENCES accounting.personal_finance_category(id),
   category TEXT[],
+
+  invoice_id INT REFERENCES public.invoice(id),
+  invoice_item_id INT REFERENCES public.invoice_item(id),
+
+  tax_charged FLOAT,
+  tax_rate FLOAT,
+  notes TEXT,
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now()
