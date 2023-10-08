@@ -41,8 +41,6 @@ export async function backfillTransactions() {
     const transaction = await fetchTransactions({ token, cursor });
     const { added, removed, modified } = transaction;
 
-    transactions = transactions.concat();
-
     // Insert the transactions into the database
     const insertedTransactions = await knex('accounting.transactions')
       .insert(
@@ -53,12 +51,12 @@ export async function backfillTransactions() {
           debit: transaction.amount > 0 ? transaction.amount : null,
           date: transaction.datetime || transaction.date,
           currency: transaction.iso_currency_code,
-          location: transaction.location, // TODO: JSONB
+          location: transaction.location,
           logo_url: transaction.logo_url,
           merchant_name: transaction.merchant_name,
           name: transaction.name,
           payment_channel: transaction.payment_channel,
-          payment_meta: transaction.payment_meta, // TODO: JSONB
+          payment_meta: transaction.payment_meta,
           personal_finance_category: transaction.detailed,
           personal_finance_category_confidence: transaction.confidence_level,
           personal_finance_category_icon_url:
@@ -66,14 +64,18 @@ export async function backfillTransactions() {
           id: transaction.transaction_id,
           transaction_type: transaction.transaction_type,
           website: transaction.website,
-          counterparties: transaction.counterparties, // TODO: JSONB
+          counterparties: transaction.counterparties,
           category_id: transaction.category_id,
-          category: transaction.category // TODO: Array
+          category: transaction.category
         }))
       )
       .onConflict(['id'])
-      .ignore()
+      .merge()
       .returning('*');
+
+    transactions = transactions.concat(insertedTransactions);
+
+    await knex('accounting.bank').update({ cursor }).where({ token });
 
     // // Update the cursor for the account
     // await knex('accounting.account')
@@ -85,17 +87,17 @@ export async function backfillTransactions() {
 }
 
 export async function getCategories() {
-  const categories = await client.categoriesGet();
+  const categories = await client.categoriesGet({});
 
-  const insertedCategories = await knex('accounting.personal_finance_category')
-    .insert(
-      categories.data.categories.map(({ category_id, group, hierarchy }) => ({
-        id: category_id,
-        category_group: group,
-        hierarchy
-      }))
-    )
-    .returning('*');
+  const insertedCategories = await knex('accounting.personal_finance_category').insert(
+    categories.data.categories.map(({ category_id, group, hierarchy }) => ({
+      id: category_id,
+      category_group: group,
+      hierarchy
+    }))
+  ).returning('*')
+  .onConflict(['id'])
+  .ignore();
 
   return insertedCategories;
 }
@@ -126,8 +128,6 @@ async function fetchTransactions({ token, cursor }) {
     // Update cursor to the next cursor
     cursor = data.next_cursor;
   }
-
-  // await knex('accounting.bank').update({ cursor }).where({ token });
 
   return {
     added,
