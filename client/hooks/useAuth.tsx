@@ -6,6 +6,8 @@ import { create } from 'zustand';
 import { Button } from 'primereact/button';
 import { signOut } from 'next-auth/react';
 
+import usePlaidLinkToken from 'hooks/usePlaidLinkToken';
+
 import { Role } from 'types/roles';
 
 import createApolloClient from '../services/apollo';
@@ -33,7 +35,8 @@ export function GqlAuthProvider({ children }) {
     role: 0,
     token: '',
     dragonUser: {},
-    expiry: 0
+    expiry: 0,
+    plaidLinkToken: null
   }));
 
   if (status === 'loading') {
@@ -82,7 +85,9 @@ function GqlProvider({ user, role, accessToken, children }) {
     }
   );
 
-  if (data) {
+  const plaidToken = usePlaidLinkToken(accessToken);
+
+  if (data && plaidToken) {
     const _role: Role = {
       admin: Role.Admin,
       contractor: Role.Contractor,
@@ -98,7 +103,8 @@ function GqlProvider({ user, role, accessToken, children }) {
       role: _role,
       token: accessToken,
       dragonUser: userData,
-      isAdmin: _role === Role.Admin
+      isAdmin: _role === Role.Admin,
+      plaidLinkToken: plaidToken
     });
 
     return <ApolloProvider client={client}>{children}</ApolloProvider>;
