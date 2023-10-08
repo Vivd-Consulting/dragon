@@ -5,6 +5,10 @@ import knex from '../db';
 import { client } from './plaid';
 import { verifyJwt } from './verfiyJwt';
 
+// 1. Exchange public Plaid token for private access token
+// 2. Get the bank's institution information
+// 3. Get the bank's accounts information
+
 export default async function handler(request, response) {
   try {
     await verifyJwt(request);
@@ -46,6 +50,9 @@ export default async function handler(request, response) {
         primary_color,
         logo: logo || null
       })
+      // On conflict, overwrite the existing record
+      .onConflict('id')
+      .merge()
       .transacting(dbTransaction);
 
     const accountsRequest = await client.accountsGet({
@@ -64,6 +71,9 @@ export default async function handler(request, response) {
           description: `${account.official_name || ''} ${account.type}`
         }))
       )
+      // On conflict, overwrite the existing record
+      .onConflict('id')
+      .merge()
       .transacting(dbTransaction);
 
     await dbTransaction.commit();

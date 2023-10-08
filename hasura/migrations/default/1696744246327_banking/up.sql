@@ -19,6 +19,8 @@ CREATE TABLE accounting.account (
   balance FLOAT NOT NULL,
   description TEXT,
 
+  excluded boolean not null default false,
+
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now()
 );
@@ -32,24 +34,60 @@ CREATE TABLE accounting.category (
   is_business boolean not null default false
 );
 
-CREATE TABLE accounting.transactions (
-  id SERIAL PRIMARY KEY,
-  tid INT NOT NULL, -- ID of transaction in bank
-  account_id INT NOT NULL REFERENCES accounting.account(id),
-  date timestamp NOT NULL,
+-- Consider this JSON mapping in JS:
+-- {
+--         account_id: transaction.account_id,
+--         account_owner: transaction.account_owner,
+--         credit: transaction.amount < 0 ? transaction.amount : null,
+--         debit: transaction.amount > 0 ? transaction.amount : null,
+--         date: transaction.datetime || transaction.date,
+--         currency: transaction.iso_currency_code,
+--         location: transaction.location, // TODO: JSONB
+--         logo_url: transaction.logo_url,
+--         merchant_name: transaction.merchant_name,
+--         name: transaction.name,
+--         payment_channel: transaction.payment_channel,
+--         payment_meta: transaction.payment_meta, // TODO: JSONB
+--         personal_finance_category: transaction.detailed,
+--         personal_finance_category_confidence: transaction.confidence_level,
+--         personal_finance_category_icon_url: transaction.personal_finance_category_icon_url,
+--         id: transaction.transaction_id,
+--         transaction_type: transaction.transaction_type,
+--         website: transaction.website,
+--         counterparties: transaction.counterparties, // TODO: JSONB
+--         category_id: transaction.category_id,
+--         category: transaction.category // TODO: Array
+--       }
+
+CREATE TABLE accounting.personal_finance_category (
+  id int primary key,
+  category_group text not null,
+  hirearchy text[] not null
+);
+
+DROP TABLE accounting.transaction;
+CREATE TABLE accounting.transaction (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES accounting.account(id),
+  account_owner TEXT,
   credit FLOAT,
   debit FLOAT,
-  description TEXT NOT NULL,
-  tax_charged FLOAT,
-  tax_rate FLOAT,
-  notes TEXT,
-  gic_id INT REFERENCES accounting.gic(id),
-  invoice_id INT REFERENCES public.invoice(id),
-  invoice_item_id INT REFERENCES public.invoice_item(id),
-
-  transaction_type text,
-
-  CONSTRAINT transaction_unique UNIQUE (tid, account_id, date),
+  date timestamp NOT NULL,
+  currency TEXT NOT NULL,
+  location JSONB,
+  logo_url TEXT,
+  merchant_name TEXT,
+  name TEXT NOT NULL,
+  payment_channel TEXT,
+  payment_meta JSONB,
+  personal_finance_category TEXT,
+  personal_finance_category_confidence TEXT,
+  personal_finance_category_icon_url TEXT,
+  transaction_type TEXT,
+  website TEXT,
+  counterparties TEXT,
+  category_id INT REFERENCES accounting.personal_finance_category(id),
+  category TEXT[],
 
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now()

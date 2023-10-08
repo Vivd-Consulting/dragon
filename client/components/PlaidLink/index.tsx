@@ -1,15 +1,37 @@
 import React, { useEffect } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
-import Button from 'plaid-threads/Button';
+import { Button } from 'primereact/button';
 
 import { useAuth } from 'hooks/useAuth';
+import usePlaidLinkToken from 'hooks/usePlaidLinkToken';
 
-export default function PlaidLink() {
-  const { plaidLinkToken, token: authToken } = useAuth();
+export default function PlaidLink({ onSuccess, onFail }) {
+  const { token: authToken } = useAuth();
+  const [plaidLinkToken, loading] = usePlaidLinkToken(authToken);
 
+  if (loading) {
+    return <Button type="button" icon="pi pi-spin pi-spinner" label="Link Account" disabled />;
+  }
+
+  return (
+    <PlaidLinkButton
+      plaidLinkToken={plaidLinkToken}
+      authToken={authToken}
+      onSuccessCallback={onSuccess}
+      onFailCallback={onFail}
+    />
+  );
+}
+
+function PlaidLinkButton({ plaidLinkToken, authToken, onSuccessCallback, onFailCallback }) {
   const config: Parameters<typeof usePlaidLink>[0] = {
     token: plaidLinkToken,
-    onSuccess: publicToken => onSuccess(publicToken, authToken)
+    onSuccess: publicToken => onSuccess(publicToken, authToken),
+    onEvent: eventName => {
+      if (eventName === 'HANDOFF') {
+        isOauth = true;
+      }
+    }
   };
 
   let isOauth = false;
@@ -23,9 +45,13 @@ export default function PlaidLink() {
   }, [ready, open, isOauth]);
 
   return (
-    <Button type="button" large onClick={() => open()} disabled={!ready}>
-      Launch Link
-    </Button>
+    <Button
+      type="button"
+      onClick={() => open()}
+      icon="pi pi-plus"
+      label="Link Account"
+      disabled={!ready}
+    />
   );
 
   async function onSuccess(public_token: string, authToken: string) {
@@ -40,24 +66,12 @@ export default function PlaidLink() {
     });
 
     if (!response.ok) {
-      // Handle the error
-      // {
-      //   itemId: `no item_id retrieved`,
-      //   accessToken: `no access_token retrieved`,
-      //   isItemAccess: false,
-      // }
+      onFailCallback();
       return;
     }
 
     const data = await response.json();
 
-    // {
-    //   itemId: data.item_id,
-    //   accessToken: data.access_token,
-    //   isItemAccess: true
-    // }
-    console.log(data);
+    onSuccessCallback(data);
   }
 }
-
-PlaidLink.displayName = 'Link';

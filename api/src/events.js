@@ -1,17 +1,26 @@
 import express from 'express';
 
-import { backfill } from './accounting/cibc.js';
+import { backfillTransactions, getCategories } from './accounting/plaid.js';
 
 import knex from './accounting/db.js';
 
 const router = express.Router();
 
-// Import transactions from the CIBC database
-router.post('/accounting/cibc', async (req, res) => {
-  const { fromDate, toDate } = req.body;
-  const insertedTransactions = await backfill({ fromDate, toDate });
+router.post('/accounting/categories', async (req, res) => {
+  const categories = await getCategories();
 
-  await recommendRelatedTransactions();
+  res.status(200).json(categories);
+});
+
+// Import transactions from the CIBC database
+router.post('/accounting/transactions', async (req, res) => {
+  // const { fromDate, toDate } = req.body;
+  // const insertedTransactions = await backfill({ fromDate, toDate });
+  const insertedTransactions = await backfillTransactions();
+
+
+
+  // await recommendRelatedTransactions();
 
   res.status(200).json(insertedTransactions);
 });
