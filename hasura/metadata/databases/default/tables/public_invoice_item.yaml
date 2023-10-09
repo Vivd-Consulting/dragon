@@ -5,3 +5,11 @@ object_relationships:
   - name: invoice
     using:
       foreign_key_constraint_on: invoice_id
+array_relationships:
+  - name: transactions
+    using:
+      foreign_key_constraint_on:
+        column: invoice_item_id
+        table:
+          name: transactions
+          schema: accounting

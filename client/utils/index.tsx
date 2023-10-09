@@ -113,3 +113,19 @@ export function getNextWeek() {
 
   return iso8601Date;
 }
+
+export function getCurrentMonth() {
+  const currentDate = dayjs();
+
+  const monthName = currentDate.format('MMMM');
+
+  return monthName;
+}
+
+export function getCurrentMonthRange() {
+  const now = dayjs();
+  const startOfMonth = now.startOf('month').toISOString();
+  const endOfMonth = now.endOf('month').toISOString();
+
+  return { startOfMonth, endOfMonth };
+}

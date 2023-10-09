@@ -23,3 +23,10 @@ array_relationships:
         table:
           name: project_time
           schema: public
+  - name: transactions
+    using:
+      foreign_key_constraint_on:
+        column: invoice_id
+        table:
+          name: transactions
+          schema: accounting
