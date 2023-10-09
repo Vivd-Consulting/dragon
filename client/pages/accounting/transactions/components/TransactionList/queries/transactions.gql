@@ -1,28 +1,35 @@
-query transactions(
-  $limit: Int
-  $offset: Int
-  $order_by: [accounting_transactions_order_by!]
-  $where: accounting_transactions_bool_exp
-) {
+query transactions($limit: Int, $offset: Int, $order_by: [accounting_transactions_order_by!], $where: accounting_transactions_bool_exp) {
   accounting_transactions(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     id
-    tid
     account {
       name
     }
     debit
     credit
+    name
+    merchant_name
     date
-    description
-    gic {
+    gic_category_id
+    gicCategory {
       name
       is_business
     }
+    personal_finance_category
+    personal_finance_category_confidence
+    personalCategory {
+      hierarchy
+    }
     relatedTransaction {
       id
-      description
+      name
+      merchant_name
       debit
       credit
+      gic_category_id
+      gicCategory {
+        is_business
+        name
+      }
     }
     recommendations {
       recommendation {

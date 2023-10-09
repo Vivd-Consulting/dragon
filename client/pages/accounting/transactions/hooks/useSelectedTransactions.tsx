@@ -10,13 +10,15 @@ const selectedTransactionsStore = create(set => ({
   bulkSelectTransactions: [],
   setBulkSelectTransactions: (transactions: any[]) => set({ bulkSelectTransactions: transactions }),
 
-  gicTransactions: { transactions: [], type: '' },
+  categoryTransactions: { transactions: [], type: '' },
   setSelectedTransactions: ({ transactions, type }) =>
-    set({ gicTransactions: { transactions, type } }),
+    set({ categoryTransactions: { transactions, type } }),
   resetSelectedTransactions: () =>
-    set({ bulkSelectTransactions: [], gicTransactions: { transactions: [], type: '' } }),
+    set({ bulkSelectTransactions: [], categoryTransactions: { transactions: [], type: '' } }),
   hasSelectedTransactions: () => {
-    return (selectedTransactionsStore as any).getState().gicTransactions?.transactions.length > 0;
+    return (
+      (selectedTransactionsStore as any).getState().categoryTransactions?.transactions.length > 0
+    );
   }
 }));
 
@@ -25,7 +27,7 @@ export default function useSelectedTransactions() {
     bulkSelectTransactions,
     setBulkSelectTransactions,
 
-    gicTransactions,
+    categoryTransactions,
     setSelectedTransactions,
     resetSelectedTransactions,
     hasSelectedTransactions
@@ -33,8 +35,8 @@ export default function useSelectedTransactions() {
     bulkSelectTransactions: any[];
     setBulkSelectTransactions: (transactions: any[]) => void;
 
-    gicTransactions: any;
-    setSelectedTransactions: (gicTransactions: any) => void;
+    categoryTransactions: any;
+    setSelectedTransactions: (categoryTransactions: any) => void;
     resetSelectedTransactions: () => void;
     hasSelectedTransactions: () => boolean;
   };
@@ -43,7 +45,7 @@ export default function useSelectedTransactions() {
     bulkSelectTransactions,
     setBulkSelectTransactions,
 
-    gicTransactions,
+    categoryTransactions,
     setSelectedTransactions,
     resetSelectedTransactions,
     hasSelectedTransactions

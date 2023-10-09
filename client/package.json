@@ -32,7 +32,6 @@
     "next-plugin-graphql": "0.0.2",
     "pg": "^8.11.2",
     "plaid": "^16.0.0",
-    "plaid-threads": "^14.5.0",
     "primeflex": "3.3.0",
     "primeicons": "6.0.1",
     "primereact": "9.5.0",

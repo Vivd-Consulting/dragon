@@ -1,0 +1,6 @@
+query categories($type: String!, $is_business: Boolean) {
+  accounting_category(where: { transaction_type: { _eq: $type }, is_business: { _eq: $is_business } }) {
+    id
+    name
+  }
+}

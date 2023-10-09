@@ -1,20 +1,15 @@
+import Image from 'next/image';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
 import { dateFormat } from 'utils';
 
-import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
-
-import banksQuery from './queries/banks.gql';
-
-export default function BankList() {
+export default function BankList({ paginatedQuery }) {
   const {
     query: { loading, previousData, data },
     paginationValues,
     onPage
-  } = usePaginatedQuery(banksQuery, {
-    fetchPolicy: 'no-cache'
-  });
+  } = paginatedQuery;
 
   const banks = loading ? previousData?.accounting_bank : data?.accounting_bank;
   const totalRecords = loading
@@ -42,6 +37,25 @@ export default function BankList() {
       data-cy="banks-table"
     >
       <Column field="id" header="ID" sortable />
+      <Column
+        field="logo"
+        body={({ name, logo, primary_color }) => {
+          // logo is base64 encoded
+          return logo ? (
+            <Image
+              src={`data:image/png;base64,${logo}`}
+              alt={name}
+              height={30}
+              width={30}
+              style={{ borderRadius: 15 }}
+            />
+          ) : (
+            <div
+              style={{ backgroundColor: primary_color, height: 30, width: 30, borderRadius: 15 }}
+            />
+          );
+        }}
+      />
       <Column field="name" header="Name" />
       <Column
         body={({ created_at }) => <span>{dateFormat(created_at)}</span>}

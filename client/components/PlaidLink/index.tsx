@@ -1,79 +1,42 @@
-import React, { useCallback, useEffect } from 'react';
-import { v4 } from 'uuid';
+import React, { useEffect } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
-import Button from 'plaid-threads/Button';
+import { Button } from 'primereact/button';
 
 import { useAuth } from 'hooks/useAuth';
+import usePlaidLinkToken from 'hooks/usePlaidLinkToken';
 
-// const config: Parameters<typeof usePlaidLink>[0] = {
-//   token: v4()!,
-//   onSuccess: () => {}
-// };
+export default function PlaidLink({ onSuccess, onFail }) {
+  const { token: authToken } = useAuth();
+  const [plaidLinkToken, loading] = usePlaidLinkToken(authToken);
 
-export default function PlaidLink() {
-  const { plaidLinkToken } = useAuth();
+  if (loading) {
+    return <Button type="button" icon="pi pi-spin pi-spinner" label="Link Account" disabled />;
+  }
 
+  return (
+    <PlaidLinkButton
+      plaidLinkToken={plaidLinkToken}
+      authToken={authToken}
+      onSuccessCallback={onSuccess}
+      onFailCallback={onFail}
+    />
+  );
+}
+
+function PlaidLinkButton({ plaidLinkToken, authToken, onSuccessCallback, onFailCallback }) {
   const config: Parameters<typeof usePlaidLink>[0] = {
     token: plaidLinkToken,
-    onSuccess
+    onSuccess: publicToken => onSuccess(publicToken, authToken),
+    onEvent: eventName => {
+      if (eventName === 'HANDOFF') {
+        isOauth = true;
+      }
+    }
   };
 
-  console.log(plaidLinkToken);
-  // Generate a random token
-  // const linkToken = v4();
-
-  // const onSuccess = useCallback(
-  //   async (public_token: string) => {
-  //     // If the access_token is needed, send public_token to server
-  //     const response = await fetch('/api/exchangePlaidToken', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify({ public_token })
-  //     });
-
-  //     if (!response.ok) {
-  //       // Handle the error
-  //       // {
-  //       //   itemId: `no item_id retrieved`,
-  //       //   accessToken: `no access_token retrieved`,
-  //       //   isItemAccess: false,
-  //       // }
-  //       return;
-  //     }
-
-  //     const data = await response.json();
-
-  //     // {
-  //     //   itemId: data.item_id,
-  //     //   accessToken: data.access_token,
-  //     //   isItemAccess: true
-  //     // }
-  //     onSuccessCallback(data);
-  //   },
-  //   [onSuccessCallback]
-  // );
-
   let isOauth = false;
-  // const config: Parameters<typeof usePlaidLink>[0] = {
-  //   token: linkToken!,
-  //   onSuccess: () => {}
-  // };
-
-  // if (window.location.href.includes('?oauth_state_id=')) {
-  //   // TODO: figure out how to delete this ts-ignore
-  //   // @ts-ignore
-  //   config.receivedRedirectUri = window.location.href;
-  //   isOauth = true;
-  // }
 
   const { open, ready } = usePlaidLink(config);
-
-  console.log({
-    config,
-    ready
-  });
 
   useEffect(() => {
     if (isOauth && ready) {
@@ -82,40 +45,33 @@ export default function PlaidLink() {
   }, [ready, open, isOauth]);
 
   return (
-    <Button type="button" large onClick={() => open()} disabled={!ready}>
-      Launch Link
-    </Button>
+    <Button
+      type="button"
+      onClick={() => open()}
+      icon="pi pi-plus"
+      label="Link Account"
+      disabled={!ready}
+    />
   );
-}
 
-async function onSuccess(public_token: string) {
-  // If the access_token is needed, send public_token to server
-  const response = await fetch('/api/plaid/exchangeToken', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ public_token })
-  });
+  async function onSuccess(public_token: string, authToken: string) {
+    // If the access_token is needed, send public_token to server
+    const response = await fetch('/api/plaid/exchangeToken', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`
+      },
+      body: JSON.stringify({ public_token })
+    });
 
-  if (!response.ok) {
-    // Handle the error
-    // {
-    //   itemId: `no item_id retrieved`,
-    //   accessToken: `no access_token retrieved`,
-    //   isItemAccess: false,
-    // }
-    return;
+    if (!response.ok) {
+      onFailCallback();
+      return;
+    }
+
+    const data = await response.json();
+
+    onSuccessCallback(data);
   }
-
-  const data = await response.json();
-
-  // {
-  //   itemId: data.item_id,
-  //   accessToken: data.access_token,
-  //   isItemAccess: true
-  // }
-  console.log(data);
 }
-
-PlaidLink.displayName = 'Link';
