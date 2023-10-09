@@ -19,6 +19,10 @@ export default function AdminDash() {
 
   const currentMonthName = getCurrentMonth();
 
+  const contractorTotalTimeSpent = totalTimeSpentByCurrentContractor?.length
+    ? totalTimeSpentByCurrentContractor
+    : 0;
+
   return (
     <Column gap="4" fullWidth>
       <Card className="bg-transparent shadow-none">
@@ -42,7 +46,7 @@ export default function AdminDash() {
 
           <Row align="center" gap="5" wrap>
             <DashboardCard title="Total Time Spent">
-              <p>{totalTimeSpentByCurrentContractor}</p>
+              <p>{contractorTotalTimeSpent}</p>
               <i className="pi pi-clock" style={{ fontSize: '1.5rem' }} />
             </DashboardCard>
 
