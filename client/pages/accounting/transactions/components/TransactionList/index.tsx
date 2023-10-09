@@ -16,7 +16,7 @@ import { dateFormat } from 'utils';
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 // TODO: Move these into a shared folder
-import GicModal from '../GicModal';
+import CategoryModal from '../CategoryModal';
 import TransferModal from '../TransferModal';
 import useSelectedTransactions from '../../hooks/useSelectedTransactions';
 
@@ -36,7 +36,7 @@ export default function TransactionList() {
   const [transferSource, setTransferSource] = useState<any>(undefined);
 
   const where: any = {
-    gic_id: { _is_null: onlyUncategorizedTransactions }
+    gic_category_id: { _is_null: onlyUncategorizedTransactions }
   };
 
   if (dateRange && dateRange.length > 1) {
@@ -75,7 +75,7 @@ export default function TransactionList() {
     variables: {
       where
     },
-    defaultSort: { tid: 'asc', date: 'desc' }
+    defaultSort: { id: 'asc', date: 'desc' }
   });
 
   const toastRef = useRef<Toast>(null);
@@ -106,7 +106,7 @@ export default function TransactionList() {
     <>
       <Toast ref={toastRef} />
 
-      <GicModal />
+      <CategoryModal />
       <TransferModal transferSourceId={transferSource?.id} setTransferSource={setTransferSource} />
 
       <Row align="center" justify="between" px={2} pb={4}>
@@ -196,10 +196,23 @@ export default function TransactionList() {
         data-cy="transactions-table"
       >
         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-        <Column field="id" header="ID" sortable />
-        <Column field="tid" header="TID" sortable />
+        {/* <Column field="id" header="ID" sortable /> */}
         <Column field="account.name" header="Account" sortable />
-        <Column field="description" header="Description" />
+        <Column field="name" header="Description" />
+        {/* <Column
+          field="personal_finance_category"
+          header="Personal Category"
+          body={({ personal_finance_category, personal_finance_category_confidence }) => (
+            <span>
+              {personal_finance_category} ({personal_finance_category_confidence})
+            </span>
+          )}
+        /> */}
+        <Column
+          field="personalCategory.hirearchy"
+          header="Hierarchy"
+          body={({ personalCategory }) => <span>{personalCategory?.hierarchy.join(', ')}</span>}
+        />
         <Column
           field="amount"
           header="Amount"
@@ -220,13 +233,15 @@ export default function TransactionList() {
           sortField={transactionType === 'debit' ? 'debit' : 'credit'}
           sortable
         />
-        {!onlyUncategorizedTransactions && <Column field="gic.name" header="Category" sortable />}
+        {!onlyUncategorizedTransactions && (
+          <Column field="gicCategory.name" header="Category" sortable />
+        )}
         {!onlyUncategorizedTransactions && (
           <Column
-            field="gic.is_business"
+            field="gicCategory.is_business"
             header="Type"
-            body={({ gic }) => (
-              <i className={`pi pi-${gic?.is_business ? 'briefcase' : 'user'}`}></i>
+            body={({ gicCategory }) => (
+              <i className={`pi pi-${gicCategory?.is_business ? 'briefcase' : 'user'}`}></i>
             )}
             sortable
           />

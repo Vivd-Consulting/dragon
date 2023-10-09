@@ -5,7 +5,7 @@ object_relationships:
   - name: account
     using:
       foreign_key_constraint_on: account_id
-  - name: categoryByGicCategoryId
+  - name: gicCategory
     using:
       foreign_key_constraint_on: gic_category_id
   - name: invoice
@@ -14,7 +14,7 @@ object_relationships:
   - name: invoice_item
     using:
       foreign_key_constraint_on: invoice_item_id
-  - name: personalFinanceCategoryByCategoryId
+  - name: personalCategory
     using:
       foreign_key_constraint_on: category_id
   - name: relatedTransaction

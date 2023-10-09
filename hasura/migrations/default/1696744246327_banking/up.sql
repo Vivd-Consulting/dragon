@@ -8,6 +8,8 @@ CREATE TABLE accounting.bank (
   primary_color TEXT,
   logo TEXT,
 
+  cursor TEXT,
+
   created_at timestamp NOT NULL DEFAULT now(),
   updated_at timestamp NOT NULL DEFAULT now()
 );

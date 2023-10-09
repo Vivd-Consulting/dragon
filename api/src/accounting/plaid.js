@@ -32,8 +32,6 @@ export async function backfillTransactions() {
     .where({ excluded: false })
     .join('accounting.bank', 'account.bank_id', 'bank.id');
 
-  let transactions = [];
-
   for (const account of accounts) {
     const { token, cursor } = account;
 
@@ -41,63 +39,105 @@ export async function backfillTransactions() {
     const transaction = await fetchTransactions({ token, cursor });
     const { added, removed, modified } = transaction;
 
-    // Insert the transactions into the database
-    const insertedTransactions = await knex('accounting.transactions')
-      .insert(
-        added.map((transaction) => ({
-          account_id: transaction.account_id,
-          account_owner: transaction.account_owner,
-          credit: transaction.amount < 0 ? transaction.amount : null,
-          debit: transaction.amount > 0 ? transaction.amount : null,
-          date: transaction.datetime || transaction.date,
-          currency: transaction.iso_currency_code,
-          location: transaction.location,
-          logo_url: transaction.logo_url,
-          merchant_name: transaction.merchant_name,
-          name: transaction.name,
-          payment_channel: transaction.payment_channel,
-          payment_meta: transaction.payment_meta,
-          personal_finance_category: transaction.detailed,
-          personal_finance_category_confidence: transaction.confidence_level,
-          personal_finance_category_icon_url:
-            transaction.personal_finance_category_icon_url,
-          id: transaction.transaction_id,
-          transaction_type: transaction.transaction_type,
-          website: transaction.website,
-          counterparties: transaction.counterparties,
-          category_id: transaction.category_id,
-          category: transaction.category
-        }))
-      )
-      .onConflict(['id'])
-      .merge()
-      .returning('*');
+    if (added.length > 0) {
+      // Insert the transactions into the database
+      await knex('accounting.transactions')
+        .insert(
+          added.map((transaction) => ({
+            account_id: transaction.account_id,
+            account_owner: transaction.account_owner,
+            credit: transaction.amount < 0 ? transaction.amount : null,
+            debit: transaction.amount > 0 ? transaction.amount : null,
+            date: transaction.datetime || transaction.date,
+            currency: transaction.iso_currency_code,
+            location: transaction.location,
+            logo_url: transaction.logo_url,
+            merchant_name: transaction.merchant_name,
+            name: transaction.name,
+            payment_channel: transaction.payment_channel,
+            payment_meta: transaction.payment_meta,
+            personal_finance_category: transaction.detailed,
+            personal_finance_category_confidence: transaction.confidence_level,
+            personal_finance_category_icon_url:
+              transaction.personal_finance_category_icon_url,
+            id: transaction.transaction_id,
+            transaction_type: transaction.transaction_type,
+            website: transaction.website,
+            counterparties: transaction.counterparties,
+            category_id: transaction.category_id,
+            category: transaction.category
+          }))
+        )
+        .onConflict(['id'])
+        .merge()
+        .returning('*');
+    }
 
-    transactions = transactions.concat(insertedTransactions);
+    if (modified.length > 0) {
+      // Update the transactions in the database
+      await knex('accounting.transactions')
+        .update(
+          modified.map((transaction) => ({
+            account_id: transaction.account_id,
+            account_owner: transaction.account_owner,
+            credit: transaction.amount < 0 ? transaction.amount : null,
+            debit: transaction.amount > 0 ? transaction.amount : null,
+            date: transaction.datetime || transaction.date,
+            currency: transaction.iso_currency_code,
+            location: transaction.location,
+            logo_url: transaction.logo_url,
+            merchant_name: transaction.merchant_name,
+            name: transaction.name,
+            payment_channel: transaction.payment_channel,
+            payment_meta: transaction.payment_meta,
+            personal_finance_category: transaction.detailed,
+            personal_finance_category_confidence: transaction.confidence_level,
+            personal_finance_category_icon_url:
+              transaction.personal_finance_category_icon_url,
+            id: transaction.transaction_id,
+            transaction_type: transaction.transaction_type,
+            website: transaction.website,
+            counterparties: transaction.counterparties,
+            category_id: transaction.category_id,
+            category: transaction.category
+          }))
+        )
+        .whereIn(
+          'id',
+          modified.map((transaction) => transaction.transaction_id)
+        )
+        .returning('*');
+    }
 
+    if (removed.length > 0) {
+      // Remove the transactions from the database
+      await knex('accounting.transactions')
+        .delete()
+        .whereIn(
+          'id',
+          removed.map((transaction) => transaction.transaction_id)
+        );
+    }
+
+    // Update the cursor
     await knex('accounting.bank').update({ cursor }).where({ token });
-
-    // // Update the cursor for the account
-    // await knex('accounting.account')
-    //   .update({ cursor: insertedTransactions[0].id })
-    //   .where({ id: account.id });
   }
-
-  return transactions;
 }
 
 export async function getCategories() {
   const categories = await client.categoriesGet({});
 
-  const insertedCategories = await knex('accounting.personal_finance_category').insert(
-    categories.data.categories.map(({ category_id, group, hierarchy }) => ({
-      id: category_id,
-      category_group: group,
-      hierarchy
-    }))
-  ).returning('*')
-  .onConflict(['id'])
-  .ignore();
+  const insertedCategories = await knex('accounting.personal_finance_category')
+    .insert(
+      categories.data.categories.map(({ category_id, group, hierarchy }) => ({
+        id: category_id,
+        category_group: group,
+        hierarchy
+      }))
+    )
+    .returning('*')
+    .onConflict(['id'])
+    .ignore();
 
   return insertedCategories;
 }
