@@ -1,1 +1,9 @@
-[]
+- name: Transaction Sync
+  webhook: '{{ACTION_API}}/events/accounting/transactions'
+  schedule: '*/30 * * * *'
+  include_in_metadata: true
+  payload: {}
+  headers:
+    - name: action-secret
+      value_from_env: ACTION_SECRET
+  comment: Runs sync on any connected accounts

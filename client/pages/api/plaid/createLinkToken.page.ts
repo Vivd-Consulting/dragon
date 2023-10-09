@@ -20,7 +20,11 @@ export default async function handler(request, response) {
       client_name: 'Dragon',
       products: PLAID_PRODUCTS,
       country_codes: PLAID_COUNTRY_CODES,
-      language: 'en'
+      language: 'en',
+      account_filters: {
+        depository: { account_subtypes: ['checking', 'savings'] },
+        credit: { account_subtypes: ['credit card'] }
+      }
     };
 
     if (PLAID_REDIRECT_URI !== '') {
@@ -28,8 +32,9 @@ export default async function handler(request, response) {
     }
 
     const createTokenResponse = await client.linkTokenCreate(configs);
+    const tokenData = createTokenResponse.data;
 
-    response.json(createTokenResponse.data);
+    response.json(tokenData);
   } catch (error: any) {
     console.error({ error });
 

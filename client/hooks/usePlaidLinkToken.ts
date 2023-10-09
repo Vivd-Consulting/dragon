@@ -6,7 +6,7 @@ export default function usePlaidLinkToken(accessToken) {
       headers: { Authorization: `Bearer ${accessToken}` }
     }).then(res => res.json());
 
-  const { data } = useSWR('/api/plaid/createLinkToken', fetcher);
+  const { data, isLoading } = useSWR('/api/plaid/createLinkToken', fetcher);
 
-  return data?.link_token;
+  return [data?.link_token, isLoading];
 }
