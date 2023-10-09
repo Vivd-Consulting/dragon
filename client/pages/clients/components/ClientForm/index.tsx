@@ -47,13 +47,13 @@ export default function ClientForm({ initialData, isInitialDataLoading }: Client
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="client-form">
         {({ UploadImageInput, InputText, InputTextArea, InputCalendar, UploadFileInput }) => (
           <>
-            <InputText label="Name" name="name" isRequired={!isEditing} autoFocus />
-            <UploadImageInput label="Brand Logo" name="logo_id" isRequired={!isEditing} />
+            <InputText label="Name" name="name" isRequired autoFocus />
+            <UploadImageInput label="Brand Logo" name="logo_id" isRequired />
             <InputTextArea label="Description" name="description" />
             <InputTextArea label="GPT Persona" name="gpt_persona" />
-            <InputCalendar label="Start Date" name="start_date" isRequired={!isEditing} showIcon />
+            <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
             <InputCalendar label="End Date" name="end_date" showIcon />
-            <UploadFileInput label="Contract" name="contract_id" isRequired={!isEditing} />
+            <UploadFileInput label="Contract" name="contract_id" isRequired />
 
             <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
           </>
