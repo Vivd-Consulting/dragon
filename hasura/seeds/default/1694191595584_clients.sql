@@ -1,7 +1,0 @@
-SET check_function_bodies = false;
-INSERT INTO public.client (id, name, description, gpt_persona, contact_id, document, start_date, end_date, archived_at, deleted_at, created_at, updated_at) VALUES (1, 'Agents of Discovery', 'Their website: https://agentsofdiscovery.com/
-Agents of Discovery (AoD), is a “secret agent” themed, mobile educational platform targeted at kids. AoD will partner with state parks and museums to provide a GPS based mobile game experience to their visitors.
-So when kids arrive to the park for example, they install the AoD app on their phone, and when they open it there will be an interactive experience available at the park. As they move around the site new “Challenges” (interactive activities) will appear and be available to play.', 'Can struggle to write good tickets', NULL, '', '2023-09-01 07:00:00', '2023-09-30 07:00:00', NULL, NULL, '2023-09-08 16:44:49.92705', '2023-09-08 16:44:49.92705');
-INSERT INTO public.client (id, name, description, gpt_persona, contact_id, document, start_date, end_date, archived_at, deleted_at, created_at, updated_at) VALUES (2, 'thebotoxcourse', 'https://thebotoxcourse.com/
-Dr. Andrew Dargie is an MD specializing in injectable botox and fillers, their primary business is selling online and in-person courses.', 'Struggle to write good tickets', NULL, '', '2023-09-01 07:00:00', '2023-09-30 07:00:00', NULL, NULL, '2023-09-08 16:45:13.842204', '2023-09-08 16:45:13.842204');
-SELECT pg_catalog.setval('public.client_id_seq', 2, true);
