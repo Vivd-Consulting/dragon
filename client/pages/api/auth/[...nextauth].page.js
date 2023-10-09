@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import Auth0Provider from 'next-auth/providers/auth0';
 
-import knex from './db';
+import knex from '../db';
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -56,5 +56,5 @@ export default NextAuth({
       }
     }
   },
-  secret: process.env.SECRET
+  secret: process.env.NEXTAUTH_SECRET
 });
