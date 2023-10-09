@@ -63,7 +63,9 @@ CREATE TABLE accounting.transactions (
   website TEXT,
   counterparties JSONB[],
   gic_category_id INT REFERENCES accounting.category(id),
-  category_id INT REFERENCES accounting.personal_finance_category(id),
+  -- DROP CONSTRAINT
+  -- category_id INT REFERENCES accounting.personal_finance_category(id),
+  category_id INT,
   category TEXT[],
 
   invoice_id INT REFERENCES public.invoice(id),
