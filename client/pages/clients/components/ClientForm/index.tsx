@@ -1,108 +1,104 @@
-import { useState, useRef } from 'react';
+import React from 'react';
+import { useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 
-import { Form, FormFooterButtons } from 'components/Form';
+import {
+  Form,
+  FormFooterButtons,
+  InputText,
+  InputTextArea,
+  InputCalendar,
+  UploadFileInput,
+  UploadImageInput
+} from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
 
 import createClientMutation from './queries/createClient.gql';
 import updateClientMutation from './queries/updateClient.gql';
 
-// TODO: Add client Type
 interface ClientFormPageProps {
-  initialData?: any;
-  isInitialDataLoading?: boolean;
+  defaultValues?: any;
 }
 
-export default function ClientForm({ initialData, isInitialDataLoading }: ClientFormPageProps) {
-  const isEditing = !!initialData;
+export default function ClientForm({ defaultValues }: ClientFormPageProps) {
+  const isEditing = !!defaultValues;
 
   const { dragonUser } = useAuth();
 
   const [createClient] = useMutation(createClientMutation, {
-    refetchQueries: ['clients', 'client']
+    refetchQueries: ['clients']
   });
 
   const [updateClient] = useMutation(updateClientMutation, {
-    refetchQueries: ['clients', 'client']
+    refetchQueries: ['clients']
   });
 
-  const [loading, setLoading] = useState(false);
   const toast = useRef<any>(null);
   const router = useRouter();
-
-  if (isInitialDataLoading) {
-    return null;
-  }
-
-  const defaultValues = initialData ? initialData.client[0] : {};
 
   return (
     <>
       <Toast ref={toast} />
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="client-form">
-        {({ UploadImageInput, InputText, InputTextArea, InputCalendar, UploadFileInput }) => (
-          <>
-            <InputText label="Name" name="name" isRequired autoFocus />
-            <UploadImageInput label="Brand Logo" name="logo_id" isRequired />
-            <InputTextArea label="Description" name="description" />
-            <InputTextArea label="GPT Persona" name="gpt_persona" />
-            <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
-            <InputCalendar label="End Date" name="end_date" showIcon />
-            <UploadFileInput label="Contract" name="contract_id" isRequired />
+        <InputText label="Name" name="name" fullWidth isRequired autoFocus />
+        <UploadImageInput label="Brand Logo" name="logo_id" isRequired />
+        <InputTextArea label="Description" name="description" />
+        <InputTextArea label="GPT Persona" name="gpt_persona" />
+        <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
+        <InputCalendar label="End Date" name="end_date" showIcon />
+        <UploadFileInput label="Contract" name="contract_id" isRequired />
 
-            <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
-          </>
-        )}
+        <FormFooterButtons hideCancel onSubmit={onSubmit} />
       </Form>
     </>
   );
 
   async function onSubmit(data) {
-    setLoading(true);
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (isEditing) {
+          await updateClient({
+            variables: {
+              ...data,
+              userId: dragonUser?.id
+            }
+          });
+        } else {
+          await createClient({
+            variables: {
+              ...data,
+              userId: dragonUser?.id
+            }
+          });
+        }
 
-    try {
-      if (initialData) {
-        await updateClient({
-          variables: {
-            ...data,
-            userId: dragonUser?.id
-          }
+        // Show success toast
+        toast?.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Client ${isEditing ? 'updated' : 'created'}!`,
+          life: 3000
         });
-      } else {
-        await createClient({
-          variables: {
-            ...data,
-            userId: dragonUser?.id
-          }
+
+        router.push('/clients');
+
+        resolve(true);
+      } catch (e) {
+        // Show error toast
+        toast?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Failed to ${isEditing ? 'update' : 'create'} Client`,
+          life: 3000
         });
+
+        reject(e);
       }
-
-      // Show success toast
-      toast?.current?.show({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Client created!',
-        life: 3000
-      });
-
-      router.push('/clients');
-    } catch {
-      setLoading(false);
-
-      // Show error toast
-      toast?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to create Client',
-        life: 3000
-      });
-    }
-
-    setLoading(false);
+    });
   }
 }

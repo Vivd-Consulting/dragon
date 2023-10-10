@@ -11,7 +11,15 @@ import { Toast } from 'primereact/toast';
 
 import { useAuth } from 'hooks/useAuth';
 
-import { FormFooterButtons, CustomForm } from 'components/Form';
+import {
+  Form,
+  InputText,
+  InputTextArea,
+  InputCalendar,
+  InputDropdown,
+  FormFooterButtons
+} from 'components/Form';
+
 import { useProjectsQuery } from 'hooks/useProjectsQuery';
 
 import addNewtimeMutation from './queries/addNewTime.gql';
@@ -62,52 +70,47 @@ export default function ManualTimeModal({ initialData }: ManualTimeModalPageProp
         style={{ width: '70vw' }}
         onHide={() => setVisible(false)}
       >
-        <CustomForm
-          // @ts-ignore
-          formHook={formHook}
+        <Form
+          defaultValues={defaultValues}
           onSubmit={onSubmit}
           resetOnSubmit
           data-cy="manual-time-form"
         >
-          {({ InputText, InputTextArea, InputCalendar, InputDropdown }) => (
-            <>
-              <InputDropdown
-                placeholder="Select project"
-                label="Projects"
-                name="project_id"
-                optionLabel="name"
-                optionValue="id"
-                options={projects}
-                isRequired
-              />
+          <InputDropdown
+            placeholder="Select project"
+            label="Projects"
+            name="project_id"
+            optionLabel="name"
+            optionValue="id"
+            options={projects}
+            isRequired
+          />
 
-              <InputCalendar
-                label="Start time"
-                name="start_time"
-                isRequired
-                showIcon
-                showTime
-                hourFormat="12"
-                onChange={setStartTime}
-              />
+          <InputCalendar
+            label="Start time"
+            name="start_time"
+            isRequired
+            showIcon
+            showTime
+            hourFormat="12"
+            onChange={setStartTime}
+          />
 
-              <InputCalendar
-                label="End time"
-                name="end_time"
-                isRequired
-                showIcon
-                showTime
-                hourFormat="12"
-                onChange={setEndTime}
-              />
+          <InputCalendar
+            label="End time"
+            name="end_time"
+            isRequired
+            showIcon
+            showTime
+            hourFormat="12"
+            onChange={setEndTime}
+          />
 
-              <InputTextArea label="Description" name="description" />
-              <InputText label="Total time" value={newEntryDuration} disabled />
+          <InputTextArea label="Description" name="description" />
+          <InputText label="Total time" value={newEntryDuration} disabled />
 
-              <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
-            </>
-          )}
-        </CustomForm>
+          <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
+        </Form>
       </Dialog>
     </div>
   );

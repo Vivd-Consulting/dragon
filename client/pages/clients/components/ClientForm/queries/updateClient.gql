@@ -15,7 +15,6 @@ mutation updateClient(
       contract_id: $contract_id
       description: $description
       gpt_persona: $gpt_persona
-      document: $document
       start_date: $start_date
       end_date: $end_date
     }

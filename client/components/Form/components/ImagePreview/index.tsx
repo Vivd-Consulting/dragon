@@ -6,19 +6,13 @@ import { FormField } from 'components/Form';
 type ImagePreviewProps = {
   name: string;
   label: string;
-  controlProps: UseFormReturn<{}, any>;
+  formHook?: any;
   tutorial?: string;
   className?: string;
 };
 
-export function ImagePreview({
-  name,
-  label,
-  controlProps,
-  tutorial,
-  className
-}: ImagePreviewProps) {
-  const { control } = controlProps;
+export function ImagePreview({ name, label, formHook, tutorial, className }: ImagePreviewProps) {
+  const { control } = formHook;
 
   return (
     <FormField label={label} name={name} control={control} tutorial={tutorial}>

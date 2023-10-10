@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 
-import { Form, FormFooterButtons } from 'components/Form';
+import { Form, FormFooterButtons, InputCalendar, InputDropdown } from 'components/Form';
 
 import { useClientsQuery } from 'hooks/useClientsQuery';
 import { useContractorInvoices, useCurrentContractor } from 'hooks/useContractors';
@@ -89,33 +89,29 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="request-form">
-        {({ InputCalendar, InputDropdown }) => (
-          <>
-            <InputDropdown
-              placeholder="Select client"
-              label="Client"
-              name="client_id"
-              optionLabel="name"
-              optionValue="id"
-              onChange={e => setSelectedClient(e.value)}
-              options={allowedClientsForInvoice}
-              isRequired
-              disabled={initialData}
-            />
+      <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="invoice-form">
+        <InputDropdown
+          placeholder="Select client"
+          label="Client"
+          name="client_id"
+          optionLabel="name"
+          optionValue="id"
+          onChange={e => setSelectedClient(e.value)}
+          options={allowedClientsForInvoice}
+          isRequired
+          disabled={initialData}
+        />
 
-            <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
-            <ProjectTimersTable
-              selectedClient={selectedClient}
-              invoiceId={initialData?.id}
-              onSelectProjectTimeIds={setProjectTimeIds}
-            />
+        <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
+        <ProjectTimersTable
+          selectedClient={selectedClient}
+          invoiceId={initialData?.id}
+          onSelectProjectTimeIds={setProjectTimeIds}
+        />
 
-            <InvoiceItemTable items={items} onAddItems={setItems} />
+        <InvoiceItemTable items={items} onAddItems={setItems} />
 
-            <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
-          </>
-        )}
+        <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
       </Form>
     </>
   );
