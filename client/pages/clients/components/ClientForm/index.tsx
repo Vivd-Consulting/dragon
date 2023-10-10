@@ -1,5 +1,4 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
 import { useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation } from '@apollo/client';
@@ -7,7 +6,7 @@ import { useMutation } from '@apollo/client';
 import { Toast } from 'primereact/toast';
 
 import {
-  HookForm,
+  Form,
   FormFooterButtons,
   InputText,
   InputTextArea,
@@ -28,8 +27,6 @@ interface ClientFormPageProps {
 export default function ClientForm({ defaultValues }: ClientFormPageProps) {
   const isEditing = !!defaultValues;
 
-  const formHook = useForm({ defaultValues });
-
   const { dragonUser } = useAuth();
 
   const [createClient] = useMutation(createClientMutation, {
@@ -47,7 +44,7 @@ export default function ClientForm({ defaultValues }: ClientFormPageProps) {
     <>
       <Toast ref={toast} />
 
-      <HookForm formHook={formHook} onSubmit={onSubmit} data-cy="client-form">
+      <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="client-form">
         <InputText label="Name" name="name" fullWidth isRequired autoFocus />
         <UploadImageInput label="Brand Logo" name="logo_id" isRequired />
         <InputTextArea label="Description" name="description" />
@@ -57,7 +54,7 @@ export default function ClientForm({ defaultValues }: ClientFormPageProps) {
         <UploadFileInput label="Contract" name="contract_id" isRequired />
 
         <FormFooterButtons hideCancel onSubmit={onSubmit} />
-      </HookForm>
+      </Form>
     </>
   );
 
@@ -88,9 +85,9 @@ export default function ClientForm({ defaultValues }: ClientFormPageProps) {
           life: 3000
         });
 
-        resolve(true);
-
         router.push('/clients');
+
+        resolve(true);
       } catch (e) {
         // Show error toast
         toast?.current?.show({
