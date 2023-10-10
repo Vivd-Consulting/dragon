@@ -5,7 +5,7 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 
-import { Form, FormFooterButtons } from 'components/Form';
+import { Form, FormFooterButtons, InputText } from 'components/Form';
 
 import createSecretKeyMutation from './queries/createSecret.gql';
 import updateSecretKeyMutation from './queries/updateSecret.gql';
@@ -65,14 +65,10 @@ export default function SecretKeyFormModal({
         onHide={() => setVisible(false)}
       >
         <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="secret-key-form">
-          {({ InputText }) => (
-            <>
-              <InputText label="Key" name="path" isRequired autoFocus />
-              <InputText label="Value" name="value" isRequired />
+          <InputText label="Key" name="path" isRequired autoFocus />
+          <InputText label="Value" name="value" isRequired />
 
-              <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
-            </>
-          )}
+          <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
         </Form>
       </Dialog>
     </div>

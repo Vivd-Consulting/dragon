@@ -1,0 +1,1 @@
+ALTER TABLE contractor add COLUMN contract_id int REFERENCES media(id);

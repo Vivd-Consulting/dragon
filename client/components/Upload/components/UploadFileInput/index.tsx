@@ -37,29 +37,31 @@ function S3Asset({ fileId, isImage, className }: S3AssetProps) {
   return isImage ? <S3Image s3Key={key} className={className} /> : <span>{filename}</span>;
 }
 
-export interface UploadInputInterface {
+export type UploadInputProps = {
   name: string;
   label?: string;
   auto?: boolean;
   isRequired?: boolean;
   acceptType?: string;
+  disabled?: boolean;
   compression?: object;
-  fullWidth?: boolean;
   formHook?: any;
+  fullWidth?: boolean;
   showDelete?: boolean;
   value?: any;
   tutorial?: any;
   className?: string;
   maxUploadSize?: number; //in bytes
   allowCommonsUpload?: boolean;
-}
+};
 
-export const UploadInput = ({
+export function UploadFileInput({
   name,
   label = '',
   auto = true,
   isRequired = false,
   acceptType = '',
+  disabled,
   compression,
   fullWidth,
   showDelete,
@@ -69,7 +71,7 @@ export const UploadInput = ({
   className,
   maxUploadSize,
   allowCommonsUpload
-}: UploadInputInterface) => {
+}: UploadInputProps) {
   const {
     formState: { errors },
     setError,
@@ -186,6 +188,7 @@ export const UploadInput = ({
         showDelete={showDelete}
         maxUploadSize={maxUploadSize}
         allowCommonsUpload={allowCommonsUpload}
+        disabled={disabled}
       />
       <input type="hidden" {...register(name, { required: isRequired })} />
       {fileError}
@@ -206,4 +209,4 @@ export const UploadInput = ({
       setFileId(id);
     }
   }
-};
+}

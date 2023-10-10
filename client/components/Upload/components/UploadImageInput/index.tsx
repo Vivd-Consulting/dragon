@@ -1,5 +1,5 @@
 import { defaultCompression } from 'components/Upload/utils';
-import { UploadInput, UploadInputInterface } from 'components/Upload';
+import { UploadFileInput, UploadInputProps } from 'components/Upload';
 
 export function UploadImageInput({
   name,
@@ -7,6 +7,7 @@ export function UploadImageInput({
   auto = true,
   isRequired = false,
   acceptType = 'image/*',
+  disabled,
   compression = defaultCompression,
   fullWidth,
   showDelete,
@@ -16,13 +17,14 @@ export function UploadImageInput({
   className,
   maxUploadSize,
   allowCommonsUpload
-}: UploadInputInterface) {
-  return UploadInput({
+}: UploadInputProps) {
+  return UploadFileInput({
     name,
     label,
     auto,
     isRequired,
     acceptType,
+    disabled,
     fullWidth,
     showDelete,
     compression,

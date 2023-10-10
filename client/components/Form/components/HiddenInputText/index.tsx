@@ -6,7 +6,7 @@ type HiddenInputTextProps = {
   label: string;
   name: string;
   isRequired?: boolean;
-  controlProps: UseFormReturn<{}, any>;
+  formHook: UseFormReturn<{}, any>;
   fullWidth?: boolean;
   className?: string;
   tutorial?: string;
@@ -17,7 +17,7 @@ export function HiddenInputText({
   label,
   name,
   isRequired,
-  controlProps,
+  formHook,
   fullWidth,
   className,
   tutorial,
@@ -26,7 +26,7 @@ export function HiddenInputText({
   const {
     control,
     formState: { errors }
-  } = controlProps;
+  } = formHook;
 
   return (
     <FormField

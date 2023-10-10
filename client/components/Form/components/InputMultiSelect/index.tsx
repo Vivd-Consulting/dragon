@@ -1,5 +1,4 @@
 import { MultiSelect as PrimeMultiSelect } from 'primereact/multiselect';
-import { Control, FieldErrors } from 'react-hook-form';
 import cx from 'clsx';
 
 import { FormField } from 'components/Form';
@@ -13,7 +12,6 @@ type InputMultiSelectProps = {
   label: string;
   name: string;
   options: Option[];
-  controlProps: { errors: FieldErrors; control: Control };
   isRequired?: boolean;
   fullWidth?: boolean;
   tutorial?: string | (() => void);
@@ -25,14 +23,17 @@ export function InputMultiSelect({
   label,
   name,
   options,
-  controlProps,
+  formHook,
   isRequired,
   fullWidth,
   tutorial,
   onChange,
   ...props
 }: InputMultiSelectProps) {
-  const { control, errors } = controlProps;
+  const {
+    control,
+    formState: { errors }
+  } = formHook;
 
   return (
     <FormField

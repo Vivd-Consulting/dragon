@@ -1,19 +1,13 @@
 import { Dropdown } from 'primereact/dropdown';
-import { Control, FieldErrors } from 'react-hook-form';
 import cx from 'clsx';
 
 import { FormField } from 'components/Form';
-
-type Option = {
-  label: string;
-  value: string;
-};
 
 export type InputDropdownProps = {
   label: string;
   name: string;
   isRequired?: boolean;
-  options: Option[];
+  options: any[];
   onChange?: (e: any) => void;
   fullWidth?: boolean;
   className?: string;
@@ -21,23 +15,22 @@ export type InputDropdownProps = {
   [key: string]: any;
 };
 
-export type InputDropdownControlProps = InputDropdownProps & {
-  controlProps: { errors: FieldErrors; control: Control };
-};
-
 export function InputDropdown({
   label,
   name,
   isRequired,
   options,
-  controlProps,
+  formHook,
   onChange,
   fullWidth,
   className,
   tutorial,
   ...props
-}: InputDropdownControlProps) {
-  const { control, errors } = controlProps;
+}: InputDropdownProps) {
+  const {
+    control,
+    formState: { errors }
+  } = formHook;
 
   return (
     <FormField

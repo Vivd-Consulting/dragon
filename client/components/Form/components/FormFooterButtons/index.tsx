@@ -14,7 +14,7 @@ type FormFooterButtonsProps = {
 export function FormFooterButtons({
   justify = 'end',
   items = [],
-  loading = false,
+  disabled = false,
   hideCancel = false,
   submitText = 'Submit',
   onClick = null,
@@ -30,7 +30,7 @@ export function FormFooterButtons({
       {!hideCancel && (
         <FormButton
           type="button"
-          loading={loading}
+          loading={disabled}
           label="Cancel"
           icon="pi pi-times"
           className="p-button-secondary"
@@ -41,7 +41,7 @@ export function FormFooterButtons({
       {!hasItems ? (
         <FormButton
           type={onClick ? 'button' : 'submit'}
-          loading={loading}
+          loading={disabled}
           onClick={e => onClick && onClick(e)}
           label={submitText}
           icon="pi pi-check"
@@ -50,7 +50,7 @@ export function FormFooterButtons({
       ) : (
         <FormSplitButton
           type={onClick ? 'button' : 'submit'}
-          loading={loading}
+          loading={disabled}
           onClick={e => onClick && onClick(e)}
           label={submitText}
           icon="pi pi-check"

@@ -1,4 +1,3 @@
-import { Control, FieldErrors } from 'react-hook-form';
 import { InputNumber as PrimeInputNumber } from 'primereact/inputnumber';
 import cx from 'clsx';
 
@@ -9,7 +8,7 @@ type InputNumberProps = {
   name: string;
   isRequired?: boolean;
   isDecimal?: boolean;
-  controlProps: { errors: FieldErrors; control: Control };
+  formHook?: any;
   fullWidth?: boolean;
   tutorial?: string | (() => void);
   [key: string]: any;
@@ -19,13 +18,16 @@ export function InputNumber({
   label,
   name,
   isRequired,
-  controlProps,
+  formHook,
   isDecimal,
   fullWidth,
   tutorial,
   ...props
 }: InputNumberProps) {
-  const { control, errors } = controlProps;
+  const {
+    control,
+    formState: { errors }
+  } = formHook;
 
   return (
     <FormField

@@ -7,10 +7,8 @@ query contractor($id: Int!) {
       id
       rate
     }
-    invoice
     gpt_persona
     start_date
     end_date
-    document
   }
 }

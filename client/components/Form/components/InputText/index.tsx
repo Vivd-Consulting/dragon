@@ -1,4 +1,4 @@
-import { Control, FieldErrors } from 'react-hook-form';
+import { UseFormReturn } from 'react-hook-form';
 import { InputText as PrimeInputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import cx from 'clsx';
@@ -16,7 +16,6 @@ type InputTextProps = {
   isPassword?: boolean;
   clearErrors?: (name: string) => void;
   autoFocus?: boolean;
-  controlProps: { errors: FieldErrors; control: Control };
   fullWidth?: boolean;
   visible?: boolean;
   tutorial?: string | (() => void);
@@ -34,14 +33,17 @@ export function InputText({
   isPassword,
   clearErrors,
   autoFocus,
-  controlProps,
+  formHook,
   fullWidth,
   visible,
   tutorial,
   onFailsValidation,
   ...props
 }: InputTextProps) {
-  const { control, errors } = controlProps;
+  const {
+    control,
+    formState: { errors }
+  } = formHook;
 
   return (
     <FormField

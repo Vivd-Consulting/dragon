@@ -1,5 +1,5 @@
+import { UseFormReturn } from 'react-hook-form';
 import { InputSwitch as PrimeInputSwitch } from 'primereact/inputswitch';
-import { Control, FieldErrors } from 'react-hook-form';
 import cx from 'clsx';
 
 import { FormField } from 'components/Form';
@@ -11,7 +11,7 @@ type InputSwitchProps = {
   labelAlign?: 'x' | 'y';
   name: string;
   checked?: boolean;
-  controlProps: { errors: FieldErrors; control: Control };
+  formHook: UseFormReturn;
   fullWidth?: boolean;
   isRequired?: boolean;
   onChange?: (e: any) => void;
@@ -25,7 +25,7 @@ export function InputSwitch({
   labelAlign,
   name,
   checked,
-  controlProps,
+  formHook,
   fullWidth,
   isRequired,
   onChange,
@@ -33,7 +33,10 @@ export function InputSwitch({
   className,
   ...props
 }: InputSwitchProps) {
-  const { control, errors } = controlProps;
+  const {
+    control,
+    formState: { errors }
+  } = formHook;
 
   return (
     <FormField

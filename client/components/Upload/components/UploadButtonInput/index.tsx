@@ -30,6 +30,7 @@ type UploadButtonInputProps = {
   };
   maxUploadSize?: number;
   allowCommonsUpload?: boolean;
+  disabled?: boolean;
 };
 
 export const UploadButtonInput = ({
@@ -43,7 +44,8 @@ export const UploadButtonInput = ({
   auto = false,
   mediaId,
   compression,
-  maxUploadSize
+  maxUploadSize,
+  disabled
 }: UploadButtonInputProps) => {
   const fileUploadRef = useRef(null);
   const { token } = useAuth();
@@ -82,7 +84,7 @@ export const UploadButtonInput = ({
         uploadHandler={customUpload}
         className={styles.uploadButton}
         customUpload
-        disabled={uploading}
+        disabled={uploading || disabled}
       />
       {hasMedia && (
         <>
@@ -92,7 +94,7 @@ export const UploadButtonInput = ({
             icon="pi pi-ellipsis-v"
             type="button"
             onClick={e => cmRef?.current?.show(e)}
-            disabled={uploading}
+            disabled={uploading || disabled}
           />
         </>
       )}
