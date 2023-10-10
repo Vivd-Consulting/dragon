@@ -126,3 +126,18 @@ variable "api_auth0_contractor_role_id" {
   description = "Auth0 role ID for the contractor role."
   type        = string
 }
+
+variable "api_plaid_client_id" {
+  description = "Plaid client ID."
+  type        = string
+}
+
+variable "api_plaid_secret" {
+  description = "Plaid secret."
+  type        = string
+}
+
+variable "api_plaid_env" {
+  description = "Plaid env."
+  type        = string
+}

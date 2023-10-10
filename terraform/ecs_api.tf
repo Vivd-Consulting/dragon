@@ -166,6 +166,18 @@ resource "aws_ecs_task_definition" "api" {
             value = var.api_action_secret
           },
           {
+            name  = "PLAID_CLIENT_ID"
+            value = var.api_plaid_client_id
+          },
+          {
+            name  = "PLAID_SECRET"
+            value = var.api_plaid_secret
+          },
+          {
+            name  = "PLAID_ENV"
+            value = var.api_plaid_env
+          },
+          {
             name  = "PORT"
             value = "8080"
           },
