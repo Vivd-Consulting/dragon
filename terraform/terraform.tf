@@ -3,7 +3,7 @@ terraform {
     organization = "Vivd"
 
     workspaces {
-      tags = ["vms"]
+      tags = ["dragon"]
     }
   }
 
