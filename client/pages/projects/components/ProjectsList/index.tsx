@@ -13,8 +13,6 @@ import { AssignContractorProjectDropdown } from 'components/AssignContractorProj
 import { Row } from 'components/Group';
 import { InputTextDebounced } from 'components/Form';
 
-import { dateFormat } from 'utils';
-
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 import clientsQuery from '../queries/clients.gql';
@@ -168,30 +166,32 @@ export default function ProjectList() {
     };
 
     return (
-      <Row>
+      <Row align="center" justify="between" gap="5">
         <AssignContractorProjectDropdown projectId={data?.id} />
-        <Button
-          size="small"
-          icon="pi pi-user-edit"
-          tooltip="Edit"
-          tooltipOptions={{ position: 'top' }}
-          onClick={() => router.push(`/projects/edit/${data?.id}`)}
-        />
-        <Button
-          size="small"
-          tooltip="Secret Keys"
-          tooltipOptions={{ position: 'top' }}
-          icon="pi pi-key"
-          onClick={() => router.push(`/projects/${data?.id}/keys`)}
-        />
-        <Button
-          size="small"
-          tooltip="Archive"
-          tooltipOptions={{ position: 'top' }}
-          severity="danger"
-          icon="pi pi-trash"
-          onClick={confirmArchiveProject}
-        />
+        <Row align="center">
+          <Button
+            size="small"
+            icon="pi pi-user-edit"
+            tooltip="Edit"
+            tooltipOptions={{ position: 'top' }}
+            onClick={() => router.push(`/projects/edit/${data?.id}`)}
+          />
+          <Button
+            size="small"
+            tooltip="Secret Keys"
+            tooltipOptions={{ position: 'top' }}
+            icon="pi pi-key"
+            onClick={() => router.push(`/projects/${data?.id}/keys`)}
+          />
+          <Button
+            size="small"
+            tooltip="Archive"
+            tooltipOptions={{ position: 'top' }}
+            severity="danger"
+            icon="pi pi-trash"
+            onClick={confirmArchiveProject}
+          />
+        </Row>
       </Row>
     );
   }

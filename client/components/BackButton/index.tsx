@@ -7,9 +7,10 @@ export default function BackButton() {
   return (
     <Button
       icon="pi pi-arrow-left"
-      className="p-button-rounded p-button-secondary p-button-text"
-      // eslint-disable-next-line react/forbid-component-props
-      style={{ fontSize: '2em' }}
+      size="small"
+      className="p-button-rounded"
+      text
+      raised
       aria-label="Back"
       onClick={() => router.back()}
     />

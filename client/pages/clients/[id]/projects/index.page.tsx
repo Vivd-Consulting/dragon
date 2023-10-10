@@ -6,6 +6,7 @@ import { Button } from 'primereact/button';
 import { Role } from 'types/roles';
 
 import { Row, Column } from 'components/Group';
+import BackButton from 'components/BackButton';
 
 import ProjectList from './components/ProjectList';
 
@@ -19,7 +20,10 @@ export default function ClientProjects() {
         header={
           <Column>
             <Row justify="between" align="center" mx={4} mt={4}>
-              <h2 className="my-0">Projects</h2>
+              <Row align="center" gap="2">
+                <BackButton />
+                <h2 className="my-0">Projects</h2>
+              </Row>
               <Button
                 onClick={() => router.push('/projects/create')}
                 label="Add Project"
