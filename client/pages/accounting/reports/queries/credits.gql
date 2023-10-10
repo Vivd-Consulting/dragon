@@ -1,0 +1,16 @@
+query credits($isBusiness: Boolean!) {
+  accounting_transactions(
+    where: {
+      credit: { _is_null: false }
+      gic_category_id: { _is_null: false }
+      account: { excluded: { _eq: false } }
+      gicCategory: { is_business: { _eq: $isBusiness } }
+    }
+  ) {
+    credit
+    tax_charged
+    account {
+      currency
+    }
+  }
+}

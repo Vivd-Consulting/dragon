@@ -114,6 +114,16 @@ export function getNextWeek() {
   return iso8601Date;
 }
 
+export function getToday(format) {
+  const currentDate = dayjs();
+
+  if (format) {
+    currentDate.format(format);
+  }
+
+  return currentDate;
+}
+
 export function getCurrentMonth() {
   const currentDate = dayjs();
 

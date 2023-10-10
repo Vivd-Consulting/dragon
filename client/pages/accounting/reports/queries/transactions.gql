@@ -1,0 +1,10 @@
+query transactions($where: accounting_transactions_bool_exp!) {
+  accounting_transactions(where: $where) {
+    credit
+    debit
+    tax_charged
+    account {
+      currency
+    }
+  }
+}

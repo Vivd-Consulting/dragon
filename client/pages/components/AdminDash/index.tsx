@@ -1,5 +1,6 @@
 import { Card } from 'primereact/card';
 
+import DashboardCard from 'components/DashboardCard';
 import { Column, Row } from 'components/Group';
 
 import { useClientsQuery } from 'hooks/useClientsQuery';
@@ -75,15 +76,5 @@ export default function AdminDash() {
         </Column>
       </Card>
     </Column>
-  );
-}
-
-function DashboardCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <Card title={title} className="flex-1" style={{ whiteSpace: 'nowrap' }}>
-      <Row align="center" justify="between">
-        {children}
-      </Row>
-    </Card>
   );
 }
