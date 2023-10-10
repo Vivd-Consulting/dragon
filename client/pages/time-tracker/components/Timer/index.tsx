@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { useState } from 'react';
+import { useQuery } from '@apollo/client';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -47,11 +48,21 @@ export default function Timer({ isListViewChecked }) {
     }
   });
 
-  const totalRecords = loading
-    ? _.get(previousData, 'dragon_user[0].contractor.projects_aggregate.aggregate.count', 0)
-    : _.get(data, 'dragon_user[0].contractor.projects_aggregate.aggregate.count', 0);
+  const { data: cardViewData } = useQuery(userProjectsQuery, {
+    variables: {
+      userId,
+      where
+    }
+  });
 
-  const _data = loading ? previousData : data;
+  const _previousData = isListViewChecked ? previousData : cardViewData;
+  const _currentData = isListViewChecked ? data : cardViewData;
+
+  const totalRecords = loading
+    ? _.get(_previousData, 'dragon_user[0].contractor.projects_aggregate.aggregate.count', 0)
+    : _.get(_currentData, 'dragon_user[0].contractor.projects_aggregate.aggregate.count', 0);
+
+  const _data = loading ? _previousData : _currentData;
   const projects = _.get(_data, 'dragon_user[0].contractor.projects', []).map(({ project }) => {
     const timers = project.project_times;
 
