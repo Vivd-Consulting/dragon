@@ -1,0 +1,11 @@
+mutation updateTimer($id: Int!, $newTime: float8, $description: String) {
+  update_project_time(
+    where: { id: { _eq: $id } }
+    _set: { description: $description, new_time: $newTime }
+  ) {
+    returning {
+      description
+      new_time
+    }
+  }
+}

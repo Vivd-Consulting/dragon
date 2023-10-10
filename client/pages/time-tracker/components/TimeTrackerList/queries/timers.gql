@@ -9,6 +9,7 @@ query timers(
     description
     start_time
     end_time
+    new_time
     project {
       name
     }

@@ -25,6 +25,8 @@ import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 import timersQuery from './queries/timers.gql';
 import deleteTimeMutation from './queries/deleteTime.gql';
+import updateTimerMutation from './queries/updateTimer.gql';
+
 import ManualTimeModal from './components/ManualTimeModal';
 
 dayjs.extend(utc);
@@ -63,6 +65,10 @@ export default function TimeTrackerList() {
   });
 
   const [deleteTimer] = useMutation(deleteTimeMutation, {
+    refetchQueries: ['timers']
+  });
+
+  const [updateTimer] = useMutation(updateTimerMutation, {
     refetchQueries: ['timers']
   });
 
@@ -203,11 +209,42 @@ export default function TimeTrackerList() {
   }
 
   function numberEditor(options) {
-    return <InputNumber value={options.value} onChange={e => options.editorCallback(e.value)} />;
+    return (
+      <InputNumber
+        minFractionDigits={1}
+        value={options.value}
+        onChange={e => options.editorCallback(e.value)}
+      />
+    );
   }
 
-  function onRowEditComplete(e) {
-    // console.log(e);
+  async function onRowEditComplete(e) {
+    const { id, new_time = 0, description = '' } = e?.newData;
+
+    try {
+      await updateTimer({
+        variables: {
+          id,
+          description,
+          newTime: new_time
+        }
+      });
+
+      toastRef?.current?.show({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Time Entry updated',
+        life: 3000
+      });
+    } catch (e) {
+      toastRef?.current?.show({
+        life: 3000,
+        severity: 'error',
+        summary: 'Failed to update Time Entry.',
+        detail: 'Unable to update the Time Entry at this time.'
+      });
+      console.error(e);
+    }
   }
 
   function useActionButtons(data) {
