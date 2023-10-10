@@ -36,21 +36,19 @@ export default function ProjectTimersTable({ selectedClient, invoiceId, onSelect
 function ProjectTreeTable({ projectTimesData, onSelectProjectTimeIds }) {
   const projectTimes = _.get(projectTimesData, 'project', []).map((project, idx) => {
     const timers = project.project_times;
-    const earliestEntry = _.first(timers)?.start_time;
-    const latestEntry = _.last(timers)?.start_time;
 
     const { totalTime } = calculateTotalTimeAndCost(timers);
 
-    const anyTimesWithoutInvoiceId = timers.some(timer => !timer.invoice_id);
+    const allTimesWithInvoiceId = timers.every(timer => !!timer.invoice_id);
+    const anyTimesWithInvoiceId = timers.some(timer => !!timer.invoice_id);
 
     return {
       key: idx,
-      checked: !anyTimesWithoutInvoiceId,
-      partialChecked: anyTimesWithoutInvoiceId,
+      checked: allTimesWithInvoiceId,
+      partialChecked: anyTimesWithInvoiceId,
       data: {
         name: project.name,
-        hours: totalTime,
-        date_range: `${dateFormat(earliestEntry)} - ${dateFormat(latestEntry)}`
+        hours: totalTime
       },
       children: timers.map(timer => ({
         key: `${idx}-${timer.id}`,
@@ -58,7 +56,6 @@ function ProjectTreeTable({ projectTimesData, onSelectProjectTimeIds }) {
         partialChecked: false,
         data: {
           id: timer.id,
-          invoice_id: timer.invoice_id,
           end_time: dateFormat(timer.end_time),
           start_time: dateFormat(timer.start_time),
           description: _.truncate(timer.description, { length: 200 })
@@ -104,8 +101,6 @@ function ProjectTreeTable({ projectTimesData, onSelectProjectTimeIds }) {
       }}
     >
       <Column field="name" header="Time" expander style={{ width: '300px' }} />
-      <Column field="invoice_id" header="Invoice ID" style={{ width: '250px' }} />
-      <Column field="date_range" header="Date range" style={{ width: '250px' }} />
       <Column field="start_time" header="Start time" style={{ width: '250px' }} />
       <Column field="end_time" header="End time" style={{ width: '250px' }} />
       <Column field="hours" header="Hours" style={{ width: '250px' }} />
