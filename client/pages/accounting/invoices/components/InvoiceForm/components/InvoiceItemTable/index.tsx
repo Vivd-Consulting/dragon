@@ -9,17 +9,21 @@ import { Row } from 'components/Group';
 
 const CURRENCIES = ['CAD', 'USD', 'TRY'];
 
-export default function InvoiceItemTable({ items, onAddItems }) {
+export default function InvoiceItemTable({ formHook }) {
+  const { getValues, setValue, watch } = formHook;
+
+  const invoiceItems = watch('invoice_items');
+
   const header = (
     <Row className="w-full" align="center" justify="between">
       <span>Invoice Items</span>
       <Button
         onClick={() => {
-          let itemsLength = items.length;
+          const items = getInvoiceItems();
 
           const updatedItems = [
             {
-              key: itemsLength + 1,
+              key: items.length + 1,
               description: '',
               currency: 'CAD',
               tax: 0,
@@ -42,7 +46,7 @@ export default function InvoiceItemTable({ items, onAddItems }) {
   return (
     <DataTable
       header={header}
-      value={items}
+      value={invoiceItems}
       editMode="row"
       dataKey="key"
       onRowEditComplete={onRowEditComplete}
@@ -90,7 +94,7 @@ export default function InvoiceItemTable({ items, onAddItems }) {
           return (
             <Button
               onClick={() => {
-                const filteredItems = items.filter(item => item.id !== data.id);
+                const filteredItems = getInvoiceItems().filter(item => item.key !== data.key);
 
                 onAddItems(filteredItems);
               }}
@@ -106,6 +110,14 @@ export default function InvoiceItemTable({ items, onAddItems }) {
       />
     </DataTable>
   );
+
+  function getInvoiceItems() {
+    return getValues('invoice_items') || [];
+  }
+
+  function onAddItems(items) {
+    setValue('invoice_items', items);
+  }
 
   function textEditor(options) {
     return (
@@ -166,7 +178,7 @@ export default function InvoiceItemTable({ items, onAddItems }) {
   }
 
   function onRowEditComplete(e) {
-    let _items = [...items];
+    let _items = [...getInvoiceItems()];
     let { newData, index } = e;
 
     _items[index] = newData;

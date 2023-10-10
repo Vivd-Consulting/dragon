@@ -1,7 +1,7 @@
-mutation updateInvoice($id: Int!, $client_id: Int!, $due_date: timestamp!) {
+mutation updateInvoice($id: Int!, $due_date: timestamp) {
   update_invoice(
     where: { id: { _eq: $id } }
-    _set: { client_id: $client_id, due_date: $due_date }
+    _set: { due_date: $due_date }
   ) {
     returning {
       id

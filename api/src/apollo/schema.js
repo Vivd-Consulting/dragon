@@ -92,8 +92,8 @@ export const typeDefs = gql`
     inviteUser(name: String!, email: String!, role: String!): Auth0User
     resetUserPassword(user_id: String!): Boolean
     deleteUser(user_id: String!): Boolean
-    createSecret(path: String!, value: String!, project_id: Int!, description: String): Boolean
-    updateSecret(path: String!, value: String!, project_id: Int, description: String): Boolean
+    createSecret(path: String!, value: String!, env: String!, project_id: Int!, description: String): Boolean
+    updateSecret(path: String!, value: String!, env: String!, project_id: Int, description: String): Boolean
     deleteSecret(path: String!): Boolean
   }
 `;
@@ -203,7 +203,7 @@ export const resolvers = {
       //   return null;
       // }
 
-      const { path, value, project_id, description } = args;
+      const { path, env, value, project_id, description } = args;
 
       // Create the secret in SSM
       await createSecret({ path, value });
@@ -211,6 +211,7 @@ export const resolvers = {
       // Create the secret in the DB, don't store the value, just path and metadata
       await knex('secret').insert({
         path,
+        env,
         project_id,
         description,
       });
@@ -220,7 +221,7 @@ export const resolvers = {
       //   return null;
       // }
 
-      const { path, value, project_id, description } = args;
+      const { path, env, value, project_id, description } = args;
 
       await updateSecret({ path, value });
 
@@ -228,6 +229,7 @@ export const resolvers = {
         .where({ path })
         .update({
           project_id,
+          env,
           description,
           path,
           updated_at: new Date(),

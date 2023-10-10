@@ -66,13 +66,6 @@ export default function ContractorList() {
         data-cy="contractors-table"
       >
         <Column
-          field="id"
-          header="ID"
-          sortable
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
           field="name"
           header="Name"
           headerClassName="white-space-nowrap"

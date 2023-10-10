@@ -1,0 +1,12 @@
+mutation removeProjectTimes($projectTimeIds: [Int!]) {
+  update_project_time_many(
+    updates: {
+      where: { id: { _in: $projectTimeIds } }
+      _set: { invoice_id: null }
+    }
+  ) {
+    returning {
+      id
+    }
+  }
+}
