@@ -161,30 +161,26 @@ export default function TimeTrackerList() {
         />
 
         <Column
-          field="start_time"
-          header="Start Time"
-          body={({ start_time }) => <span>{dateFormat(start_time)}</span>}
-          sortable
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          field="duration"
-          header="Hours"
-          body={({ start_time, end_time }) => (
-            <span>{calculateDuration(start_time, end_time)}</span>
-          )}
+          field="end_time"
+          header="end Time"
+          body={({ end_time }) => <span>{dateFormat(end_time)}</span>}
           sortable
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
 
         <Column
-          field="new_time"
-          header="New time"
-          body={({ new_time }) => <span>{new_time}</span>}
+          field="duration"
+          header="Duration"
+          body={({ start_time, end_time, new_time }) => (
+            <span>
+              {(new_time && `${new_time} hr`) ?? calculateDurationFormatted(start_time, end_time)}
+            </span>
+          )}
           editor={options => numberEditor(options)}
-          style={{ width: '20%' }}
+          sortable
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
         />
 
         <Column
@@ -209,24 +205,31 @@ export default function TimeTrackerList() {
   }
 
   function numberEditor(options) {
+    const { rowData } = options;
+    const { new_time, start_time, end_time } = rowData;
+
+    const value = new_time ?? calculateDuration(start_time, end_time).hours();
+
+    console.log(value);
+
     return (
       <InputNumber
-        minFractionDigits={1}
-        value={options.value}
+        minFractionDigits={2}
+        value={value}
         onChange={e => options.editorCallback(e.value)}
       />
     );
   }
 
   async function onRowEditComplete(e) {
-    const { id, new_time = 0, description = '' } = e?.newData;
+    const { id, duration, description = '' } = e?.newData;
 
     try {
       await updateTimer({
         variables: {
           id,
           description,
-          newTime: new_time
+          newTime: duration
         }
       });
 
@@ -298,20 +301,23 @@ export default function TimeTrackerList() {
 }
 
 function calculateDuration(start_time, end_time) {
-  if (!end_time) {
-    return '--:--:--';
-  }
-
   const startTime = dayjs(start_time);
   const endTime = dayjs(end_time);
 
-  const duration = dayjs.duration(endTime.diff(startTime));
+  return dayjs.duration(endTime.diff(startTime));
+}
 
-  const formattedHours = String(duration.hours()).padStart(2, '0');
-  const formattedMinutes = String(duration.minutes()).padStart(2, '0');
-  const formattedSeconds = String(duration.seconds()).padStart(2, '0');
+function calculateDurationFormatted(start_time, end_time) {
+  if (!end_time) {
+    return 0;
+  }
 
-  const formattedTotalTime = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  const duration = calculateDuration(start_time, end_time);
+
+  const formattedTotalTime =
+    (duration.hours() && `${duration.hours()} hr`) ||
+    (duration.minutes() && `${duration.minutes()} min`) ||
+    (duration.seconds() && `${duration.seconds()} sec`);
 
   return formattedTotalTime;
 }
