@@ -1,41 +1,43 @@
 import _ from 'lodash';
+import { useForm } from 'react-hook-form';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 
-import { Form, FormFooterButtons, InputCalendar, InputDropdown } from 'components/Form';
+import { HookForm, FormFooterButtons, InputCalendar, InputDropdown } from 'components/Form';
 
 import { useClientsQuery } from 'hooks/useClientsQuery';
 import { useContractorInvoices, useCurrentContractor } from 'hooks/useContractors';
 
-import { getNextWeek } from 'utils';
+import { getNextWeek, whatsChanged } from 'utils';
 
 import InvoiceItemTable from './components/InvoiceItemTable';
 import ProjectTimersTable from './components/ProjectTimersTable';
 
 import createInvoiceMutation from './queries/createInvoice.gql';
-import createInvoiceItemMutation from './queries/createInvoiceItem.gql';
+import createInvoiceItemsMutation from './queries/createInvoiceItems.gql';
+import deleteInvoiceItemsMutation from './queries/deleteInvoiceItems.gql';
 import updateInvoiceMutation from './queries/updateInvoice.gql';
-import updateProjectTimesMutation from './queries/updateProjectTimes.gql';
+import addProjectTimesMutation from './queries/addProjectTimes.gql';
+import removeProjectTimesMutation from './queries/removeProjectTimes.gql';
 
 interface InvoiceFormPageProps {
   defaultValues?: any;
 }
 
-interface IItem {
-  description: string;
-  tax: number;
-  price: number;
-  currency: string;
-}
-
 export default function InvoiceForm({ defaultValues }: InvoiceFormPageProps) {
   const isEditing = !!defaultValues;
 
-  const [items, setItems] = useState<IItem[]>(defaultValues?.invoice_items || []);
-  const [projectTimeIds, setProjectTimeIds] = useState([]);
+  const _defaultValues = defaultValues
+    ? defaultValues
+    : {
+        due_date: getNextWeek()
+      };
+
+  const formHook = useForm({ defaultValues: _defaultValues });
+
   const [selectedClient, setSelectedClient] = useState(defaultValues?.client_id);
 
   const [contractorId] = useCurrentContractor();
@@ -51,21 +53,12 @@ export default function InvoiceForm({ defaultValues }: InvoiceFormPageProps) {
         );
       });
 
-  const [createInvoice] = useMutation(createInvoiceMutation, {
-    refetchQueries: ['invoices']
-  });
-
-  const [createInvoiceItem] = useMutation(createInvoiceItemMutation, {
-    refetchQueries: ['invoices']
-  });
-
-  const [updateProjectTimes] = useMutation(updateProjectTimesMutation, {
-    refetchQueries: ['invoices']
-  });
-
-  const [updateInvoice] = useMutation(updateInvoiceMutation, {
-    refetchQueries: ['invoices', 'invoice']
-  });
+  const [createInvoice] = useMutation(createInvoiceMutation);
+  const [createInvoiceItems] = useMutation(createInvoiceItemsMutation);
+  const [deleteInvoiceItems] = useMutation(deleteInvoiceItemsMutation);
+  const [addProjectTimes] = useMutation(addProjectTimesMutation);
+  const [removeProjectTimes] = useMutation(removeProjectTimesMutation);
+  const [updateInvoice] = useMutation(updateInvoiceMutation);
 
   const toast = useRef<any>(null);
   const router = useRouter();
@@ -74,19 +67,11 @@ export default function InvoiceForm({ defaultValues }: InvoiceFormPageProps) {
     return null;
   }
 
-  const nextWeek = getNextWeek();
-
-  const _defaultValues = defaultValues
-    ? defaultValues
-    : {
-        due_date: nextWeek
-      };
-
   return (
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={_defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="invoice-form">
+      <HookForm formHook={formHook} onSubmit={onSubmit} data-cy="invoice-form">
         <InputDropdown
           placeholder="Select client"
           label="Client"
@@ -100,16 +85,12 @@ export default function InvoiceForm({ defaultValues }: InvoiceFormPageProps) {
         />
 
         <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
-        <ProjectTimersTable
-          selectedClient={selectedClient}
-          invoiceId={defaultValues?.id}
-          onSelectProjectTimeIds={setProjectTimeIds}
-        />
+        <ProjectTimersTable formHook={formHook} selectedClient={selectedClient} />
 
-        <InvoiceItemTable items={items} onAddItems={setItems} />
+        <InvoiceItemTable formHook={formHook} />
 
         <FormFooterButtons hideCancel onSubmit={onSubmit} />
-      </Form>
+      </HookForm>
     </>
   );
 
@@ -117,9 +98,67 @@ export default function InvoiceForm({ defaultValues }: InvoiceFormPageProps) {
     return new Promise(async resolve => {
       try {
         if (isEditing) {
+          const [addedTimes, removedTimes] = whatsChanged(
+            defaultValues.project_times,
+            data.project_times,
+            d => d.map(d => d.id)
+          );
+
+          if (addedTimes.length > 0) {
+            // Update the added times
+            await addProjectTimes({
+              variables: {
+                invoiceId: data.id,
+                projectTimeIds: addedTimes
+              }
+            });
+          }
+
+          if (removedTimes.length > 0) {
+            // Update the removed times
+            await removeProjectTimes({
+              variables: {
+                projectTimeIds: removedTimes
+              }
+            });
+          }
+
+          // Update the invoice items
+          const [addedItems, removedItems] = whatsChanged(
+            defaultValues.invoice_items,
+            data.invoice_items,
+            d => d.map(d => d.key)
+          );
+
+          if (addedItems.length > 0) {
+            const newItems = data.invoice_items.filter(item => addedItems.includes(item.key));
+
+            await createInvoiceItems({
+              variables: {
+                objects: newItems.map(({ description, currency, tax, price }) => ({
+                  description,
+                  currency,
+                  tax,
+                  price,
+                  invoice_id: data.id
+                }))
+              }
+            });
+          }
+
+          if (removedItems.length > 0) {
+            await deleteInvoiceItems({
+              variables: {
+                items: removedItems,
+                deletedAt: new Date()
+              }
+            });
+          }
+
           await updateInvoice({
             variables: {
-              ...data
+              id: data.id,
+              due_date: data.due_date
             }
           });
         } else {
@@ -133,20 +172,24 @@ export default function InvoiceForm({ defaultValues }: InvoiceFormPageProps) {
 
           const invoiceId = _.get(newInvoice, 'data.insert_invoice_one.id') as number;
 
-          await updateProjectTimes({
+          await addProjectTimes({
             variables: {
               invoiceId,
-              projectTimeIds
+              projectTimeIds: data.project_time_ids
             }
           });
 
-          const itemsWithInvoiceId = items.map(item => ({
-            ...item,
-            key: undefined,
-            invoice_id: invoiceId
-          }));
+          const itemsWithInvoiceId = data.invoice_items.map(
+            ({ description, currency, tax, price }) => ({
+              description,
+              currency,
+              tax,
+              price,
+              invoice_id: invoiceId
+            })
+          );
 
-          await createInvoiceItem({
+          await createInvoiceItems({
             variables: {
               objects: itemsWithInvoiceId
             }

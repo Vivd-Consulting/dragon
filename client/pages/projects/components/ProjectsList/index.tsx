@@ -111,13 +111,6 @@ export default function ProjectList() {
         data-cy="projects-table"
       >
         <Column
-          field="id"
-          header="ID"
-          sortable
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
           field="client.name"
           header="Client Name"
           headerClassName="white-space-nowrap"

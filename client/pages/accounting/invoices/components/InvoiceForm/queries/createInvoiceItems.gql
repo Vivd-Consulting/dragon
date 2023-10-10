@@ -1,4 +1,4 @@
-mutation createInvoiceItem($objects: [invoice_item_insert_input!]!) {
+mutation createInvoiceItems($objects: [invoice_item_insert_input!]!) {
   insert_invoice_item(objects: $objects) {
     returning {
       id

@@ -34,7 +34,8 @@ export function useContractorInvoices(contractorId) {
     variables: {
       contractorId
     },
-    skip: !contractorId
+    skip: !contractorId,
+    fetchPolicy: 'network-only'
   });
 
   if (loading) {
@@ -56,7 +57,7 @@ export function useContractorInvoices(contractorId) {
 const CONTRACTOR_INVOICES = gql`
   query contractor($contractorId: Int!) {
     contractor(where: { id: { _eq: $contractorId } }) {
-      invoices {
+      invoices(where: { archived_at: { _is_null: true } }) {
         id
         client_id
         submitted_at

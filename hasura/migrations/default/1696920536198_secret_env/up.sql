@@ -1,0 +1,1 @@
+ALTER TABLE secret ADD COLUMN env text DEFAULT 'dev' NOT NULL;

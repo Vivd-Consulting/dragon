@@ -1,4 +1,4 @@
-mutation updateProjectTimes($invoiceId: Int!, $projectTimeIds: [Int!]) {
+mutation addProjectTimes($invoiceId: Int!, $projectTimeIds: [Int!]) {
   update_project_time_many(
     updates: {
       where: { _and: { invoice_id: { _is_null: true }, id: { _in: $projectTimeIds } } }

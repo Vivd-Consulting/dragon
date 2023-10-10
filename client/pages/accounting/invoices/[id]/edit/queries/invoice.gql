@@ -3,8 +3,13 @@ query invoice($id: Int!) {
     due_date
     id
     client_id
-    invoice_items {
+    project_times(where: { deleted_at: { _is_null: true } }) {
       id
+      invoice_id
+    }
+    invoice_items(where: { deleted_at: { _is_null: true } }) {
+      id
+      key: id
       description
       currency
       tax
