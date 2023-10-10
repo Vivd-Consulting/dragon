@@ -29,20 +29,24 @@ export default function Reports() {
 
   const transactions = transactionData?.accounting_transactions || [];
 
-  // const { data: thisMonthTransactionData } = useQuery(transactionsQuery, {
-  //   variables: {
-  //     where: {
-  //       ...where,
-  //       date: {
-  //         _gte: beginningOfMonth(),
-  //         _lte: endOfMonth()
-  //       }
-  //     }
-  //   }
-  // });
-
   return (
     <Column>
+      {/* <Row>
+        <DashboardCard title={`${currentYearName} Debits`}>
+          <p>{add up all debits for this yaer}</p>
+          <i className="pi pi-wallet" style={{ fontSize: '1.5rem' }} />
+        </DashboardCard>
+
+        <DashboardCard title={`${currentYearName} Credits`}>
+          <p>{add up all credits for this month}</p>
+          <i className="pi pi-wallet" style={{ fontSize: '1.5rem' }} />
+        </DashboardCard>
+
+        <DashboardCard title={`${currentYearName} Income`}>
+          <p>{credit - income}</p>
+          <i className="pi pi-wallet" style={{ fontSize: '1.5rem' }} />
+        </DashboardCard>
+      </Row> */}
       <Row>
         <DashboardCard title={`${currentMonthName} Debits`}>
           {/* <p>{add up all debits for this month}</p> */}
