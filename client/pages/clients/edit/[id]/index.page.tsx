@@ -3,6 +3,9 @@ import { useRouter } from 'next/router';
 
 import { Card } from 'primereact/card';
 
+import { Row } from 'components/Group';
+import BackButton from 'components/BackButton';
+
 import ClientForm from '../../components/ClientForm';
 
 import clientQuery from '../queries/client.gql';
@@ -20,7 +23,10 @@ export default function EditClient() {
 
   return (
     <Card>
-      <h1>Edit Client</h1>
+      <Row align="center" gap="2">
+        <BackButton />
+        <h1>Edit Client</h1>
+      </Row>
       {!loading && <ClientForm defaultValues={data?.client_by_pk} />}
     </Card>
   );

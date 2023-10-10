@@ -155,16 +155,18 @@ export default function TaskList() {
     const router = useRouter();
 
     return (
-      <Row>
+      <Row align="center" justify="between" gap="5">
         <AssignContractorTaskDropdown taskId={data?.id} />
-        <Button
-          size="small"
-          icon="pi pi-user-edit"
-          tooltip="Edit"
-          tooltipOptions={{ position: 'top' }}
-          onClick={() => router.push(`/tasks/edit/${data?.id}`)}
-        />
-        <TaskPreview data={data} toastRef={toastRef} />
+        <Row align="center">
+          <Button
+            size="small"
+            icon="pi pi-user-edit"
+            tooltip="Edit"
+            tooltipOptions={{ position: 'top' }}
+            onClick={() => router.push(`/tasks/edit/${data?.id}`)}
+          />
+          <TaskPreview data={data} toastRef={toastRef} />
+        </Row>
       </Row>
     );
   }

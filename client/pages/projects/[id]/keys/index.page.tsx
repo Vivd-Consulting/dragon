@@ -7,6 +7,7 @@ import { Card } from 'primereact/card';
 import { Role } from 'types/roles';
 
 import { Row, Column } from 'components/Group';
+import BackButton from 'components/BackButton';
 
 import SecretKeysList from './components/SecretKeysList';
 import SecretKeyFormModal from './components/SecretKeyFormModal';
@@ -36,7 +37,10 @@ export default function ProjectSecretKeys() {
         header={
           <Column>
             <Row justify="between" align="center" mx={4} mt={4}>
-              <h2 className="my-0">{`${projectName} Secret Keys`}</h2>
+              <Row align="center" gap="2">
+                <BackButton />
+                <h2 className="my-0">{`${projectName} Secret Keys`}</h2>
+              </Row>
               <SecretKeyFormModal projectName={projectName} projectId={projectId as string} />
             </Row>
           </Column>

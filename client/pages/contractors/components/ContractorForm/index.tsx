@@ -29,11 +29,11 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   const { dragonUser } = useAuth();
 
   const [createContractor] = useMutation(createContractorMutation, {
-    refetchQueries: ['contractors']
+    refetchQueries: ['contractors', 'projects']
   });
 
   const [updateContractor] = useMutation(updateContractorMutation, {
-    refetchQueries: ['contractors', 'contractor']
+    refetchQueries: ['contractors', 'contractor', 'projects']
   });
 
   const toast = useRef<any>(null);
