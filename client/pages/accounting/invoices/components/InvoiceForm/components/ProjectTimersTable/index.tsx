@@ -11,10 +11,9 @@ import calculateTotalTimeAndCost from 'utils/calculateTotalTimeAndCost';
 
 import projectTimeQuery from './queries/projectTime.gql';
 
-export default function ProjectTimersTable({ selectedClient, invoiceId, onSelectProjectTimeIds }) {
+export default function ProjectTimersTable({ formHook, selectedClient }) {
   const { data: projectTimesData, loading } = useQuery(projectTimeQuery, {
     variables: {
-      invoiceId,
       clientId: selectedClient
     },
     skip: !selectedClient,
@@ -22,18 +21,15 @@ export default function ProjectTimersTable({ selectedClient, invoiceId, onSelect
   });
 
   if (loading || !projectTimesData) {
-    return <div>Loading...</div>;
+    return null;
   }
 
-  return (
-    <ProjectTreeTable
-      projectTimesData={projectTimesData}
-      onSelectProjectTimeIds={onSelectProjectTimeIds}
-    />
-  );
+  return <ProjectTreeTable formHook={formHook} projectTimesData={projectTimesData} />;
 }
 
-function ProjectTreeTable({ projectTimesData, onSelectProjectTimeIds }) {
+function ProjectTreeTable({ formHook, projectTimesData }) {
+  const invoiceId = formHook.getValues('id');
+
   const projectTimes = _.get(projectTimesData, 'project', []).map((project, idx) => {
     const timers = project.project_times;
 
@@ -124,5 +120,12 @@ function ProjectTreeTable({ projectTimesData, onSelectProjectTimeIds }) {
     });
 
     return ids;
+  }
+
+  function onSelectProjectTimeIds(ids) {
+    formHook.setValue(
+      'project_times',
+      ids.map(id => ({ id: id, invoice_id: invoiceId }))
+    );
   }
 }

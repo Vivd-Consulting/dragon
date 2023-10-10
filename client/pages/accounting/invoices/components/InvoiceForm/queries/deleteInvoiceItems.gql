@@ -1,0 +1,9 @@
+mutation deleteInvoiceItems($items: [Int!]!, $deletedAt: timestamp!) {
+  update_invoice_item_many(
+    updates: { where: { id: { _in: $items } }, _set: { deleted_at: $deletedAt } }
+  ) {
+    returning {
+      id
+    }
+  }
+}
