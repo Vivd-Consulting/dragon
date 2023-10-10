@@ -8,6 +8,7 @@ import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
 
 import { Row } from 'components/Group';
 
@@ -22,6 +23,8 @@ import customDeleteSecretMutation from './queries/deleteSecret.gql';
 import nativeDeleteSecretMutation from './queries/delete_secret.gql';
 
 export default function SecretKeysList({ projectId }) {
+  const [selectedEnv, setSelectedEnv] = useState(null);
+
   const [customDeleteSecret] = useMutation(customDeleteSecretMutation, {
     refetchQueries: ['secrets']
   });
@@ -29,15 +32,21 @@ export default function SecretKeysList({ projectId }) {
     refetchQueries: ['secrets']
   });
 
+  const where: any = {
+    project_id: { _eq: projectId }
+  };
+
+  if (selectedEnv) {
+    where.env = { _eq: selectedEnv };
+  }
+
   const {
     query: { loading, previousData, data },
     paginationValues,
     onPage
   } = usePaginatedQuery(secretsQuery, {
     fetchPolicy: 'no-cache',
-    variables: {
-      projectId
-    }
+    variables: { where }
   });
 
   const toastRef = useRef<Toast>(null);
@@ -50,6 +59,25 @@ export default function SecretKeysList({ projectId }) {
   return (
     <>
       <Toast ref={toastRef} />
+
+      <Row align="center" px={2} pb={4}>
+        <Dropdown
+          showClear
+          value={selectedEnv}
+          onChange={e => setSelectedEnv(e.value)}
+          placeholder="Select env"
+          options={[
+            { label: 'Dev', value: 'dev' },
+            { label: 'Staging', value: 'staging' },
+            { label: 'Production', value: 'production' }
+          ]}
+        />
+        {/* <InputTextDebounced
+          placeholder="Search by"
+          value={searchText}
+          onChange={e => setSearchText(e)}
+        /> */}
+      </Row>
 
       <DataTable
         value={secrets}

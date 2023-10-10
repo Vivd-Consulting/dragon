@@ -37,7 +37,7 @@ export default function ProjectSecretKeys() {
           <Column>
             <Row justify="between" align="center" mx={4} mt={4}>
               <h2 className="my-0">{`${projectName} Secret Keys`}</h2>
-              <SecretKeyFormModal projectName={projectName} projectId={projectId} />
+              <SecretKeyFormModal projectName={projectName} projectId={projectId as string} />
             </Row>
           </Column>
         }
