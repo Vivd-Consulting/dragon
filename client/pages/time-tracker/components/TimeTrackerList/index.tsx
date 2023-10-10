@@ -210,8 +210,6 @@ export default function TimeTrackerList() {
 
     const value = new_time ?? calculateDuration(start_time, end_time).hours();
 
-    console.log(value);
-
     return (
       <InputNumber
         minFractionDigits={2}
