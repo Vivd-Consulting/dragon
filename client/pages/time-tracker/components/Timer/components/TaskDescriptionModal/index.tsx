@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 
-import { FormFooterButtons, Form } from 'components/Form';
+import { FormFooterButtons, Form, InputTextArea } from 'components/Form';
 
 import updateTimerDecriptionMutation from './queries/updateTimerDescription.gql';
 
@@ -28,13 +28,9 @@ export default function TaskDescriptionModal({ timerId, visible, setVisible }) {
         onHide={() => setVisible(false)}
       >
         <Form onSubmit={onSubmit} data-cy="time-description-form">
-          {({ InputTextArea }) => (
-            <>
-              <InputTextArea label="Description" name="description" />
+          <InputTextArea label="Description" name="description" />
 
-              <FormFooterButtons loading={loading} onSubmit={onSubmit} />
-            </>
-          )}
+          <FormFooterButtons loading={loading} onSubmit={onSubmit} />
         </Form>
       </Dialog>
     </div>

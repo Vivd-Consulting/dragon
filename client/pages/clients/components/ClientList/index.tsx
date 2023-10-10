@@ -9,7 +9,6 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 
 import { Row } from 'components/Group';
-import { FileNameTemplate } from 'components/FileNameTemplate';
 
 import { dateFormat } from 'utils';
 
@@ -76,13 +75,6 @@ export default function ClientList() {
         <Column
           field="name"
           header="Name"
-          headerClassName="white-space-nowrap"
-          className="white-space-nowrap"
-        />
-        <Column
-          body={({ contract_id }) => <FileNameTemplate fileId={contract_id} />}
-          field="contract_id"
-          header="Contract"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />

@@ -1,5 +1,5 @@
 query client($id: Int!) {
-  client(where: { id: { _eq: $id } }) {
+  client_by_pk(id: $id) {
     id
     contract_id
     logo_id

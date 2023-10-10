@@ -4,7 +4,15 @@ import { useMutation } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 
-import { Form, FormFooterButtons } from 'components/Form';
+import {
+  Form,
+  FormFooterButtons,
+  InputText,
+  InputTextArea,
+  InputCalendar,
+  InputNumber,
+  UploadFileInput
+} from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
 
@@ -59,20 +67,16 @@ export default function ContractorForm({
       <Toast ref={toast} />
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="contractor-form">
-        {({ InputText, InputTextArea, InputCalendar, InputNumber, UploadFileInput }) => (
-          <>
-            <InputText label="Name" name="name" isRequired={!isEditing} autoFocus />
-            <InputText label="Location" name="location" isRequired={!isEditing} />
-            <InputNumber label="Rate" name="contractor_rate.rate" isRequired={!isEditing} />
-            <InputNumber label="Markup" name="markup" isRequired={!isEditing} />
-            <InputTextArea label="GPT Persona" name="gpt_persona" />
-            <InputCalendar label="Start Date" name="start_date" isRequired={!isEditing} showIcon />
-            <InputCalendar label="End Date" name="end_date" showIcon />
-            <UploadFileInput label="Contract" name="contract_id" isRequired={!isEditing} />
+        <InputText label="Name" name="name" isRequired autoFocus />
+        <InputText label="Location" name="location" isRequired />
+        <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
+        <InputNumber label="Markup" name="markup" isRequired />
+        <InputTextArea label="GPT Persona" name="gpt_persona" />
+        <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
+        <InputCalendar label="End Date" name="end_date" showIcon />
+        <UploadFileInput label="Contract" name="contract_id" isRequired />
 
-            <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
-          </>
-        )}
+        <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
       </Form>
     </>
   );

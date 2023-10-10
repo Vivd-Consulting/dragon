@@ -11,16 +11,17 @@ export default function EditClient() {
   const router = useRouter();
   const { id: clientId } = router.query;
 
-  const { data: client, loading: isClientLoading } = useQuery(clientQuery, {
+  const { data, loading } = useQuery(clientQuery, {
     variables: {
       id: clientId
-    }
+    },
+    fetchPolicy: 'no-cache'
   });
 
   return (
     <Card>
       <h1>Edit Client</h1>
-      <ClientForm initialData={client} isInitialDataLoading={isClientLoading} />
+      {!loading && <ClientForm defaultValues={data?.client_by_pk} />}
     </Card>
   );
 }

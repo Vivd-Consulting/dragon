@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 
-import { Form, FormFooterButtons } from 'components/Form';
+import { Form, FormFooterButtons, InputText, InputTextArea, InputDropdown } from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
 
@@ -64,27 +64,23 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
       <Toast ref={toast} />
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="project-form">
-        {({ InputText, InputTextArea, InputDropdown }) => (
-          <>
-            <InputDropdown
-              placeholder="Select client"
-              label="Client"
-              name="client_id"
-              optionLabel="name"
-              optionValue="id"
-              options={data?.client}
-              disabled={isEditing}
-              isRequired
-            />
-            <InputText label="Name" name="name" isRequired autoFocus />
-            <InputText label="Github Repo Organization" name="github_repo_org" />
-            <InputText label="Github Repo Name" name="github_repo_name" />
-            <InputTextArea label="Description" name="description" />
-            <InputTextArea label="GPT Persona" name="gpt_persona" />
+        <InputDropdown
+          placeholder="Select client"
+          label="Client"
+          name="client_id"
+          optionLabel="name"
+          optionValue="id"
+          options={data?.client}
+          disabled={isEditing}
+          isRequired
+        />
+        <InputText label="Name" name="name" isRequired autoFocus />
+        <InputText label="Github Repo Organization" name="github_repo_org" />
+        <InputText label="Github Repo Name" name="github_repo_name" />
+        <InputTextArea label="Description" name="description" />
+        <InputTextArea label="GPT Persona" name="gpt_persona" />
 
-            <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
-          </>
-        )}
+        <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
       </Form>
     </>
   );

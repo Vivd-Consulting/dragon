@@ -4,7 +4,15 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 
-import { Form, FormFooterButtons } from 'components/Form';
+import {
+  Form,
+  FormFooterButtons,
+  InputText,
+  InputDropdown,
+  InputTextArea,
+  InputCalendar
+} from 'components/Form';
+
 import { useAuth } from 'hooks/useAuth';
 import { useTaskPriorities } from 'hooks/useTaskPriorities';
 
@@ -55,35 +63,31 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
       <Toast ref={toast} />
 
       <Form defaultValues={initialData} onSubmit={onSubmit} data-cy="task-form">
-        {({ InputText, InputDropdown, InputTextArea, InputCalendar }) => (
-          <>
-            <InputText label="Title" name="title" isRequired autoFocus />
-            <InputDropdown
-              placeholder="Select project"
-              label="Project"
-              name="project_id"
-              optionLabel="name"
-              optionValue="id"
-              options={projectsData?.project}
-              onChange={e => setSelectedProject(e.target.value)}
-              isRequired
-            />
+        <InputText label="Title" name="title" isRequired autoFocus />
+        <InputDropdown
+          placeholder="Select project"
+          label="Project"
+          name="project_id"
+          optionLabel="name"
+          optionValue="id"
+          options={projectsData?.project}
+          onChange={e => setSelectedProject(e.target.value)}
+          isRequired
+        />
 
-            <InputDropdown
-              placeholder="Priority"
-              label="Priority"
-              name="priority"
-              optionLabel="name"
-              optionValue="id"
-              options={TASK_PRIORITY}
-              isRequired
-            />
-            <InputTextArea label="Description" name="description" />
-            <InputCalendar label="Due Date" name="due_date" showIcon />
+        <InputDropdown
+          placeholder="Priority"
+          label="Priority"
+          name="priority"
+          optionLabel="name"
+          optionValue="id"
+          options={TASK_PRIORITY}
+          isRequired
+        />
+        <InputTextArea label="Description" name="description" />
+        <InputCalendar label="Due Date" name="due_date" showIcon />
 
-            <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
-          </>
-        )}
+        <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
       </Form>
     </>
   );
