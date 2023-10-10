@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useMutation } from '@apollo/client';
 
 import { Dialog } from 'primereact/dialog';
@@ -9,8 +9,6 @@ import { FormFooterButtons, Form, InputTextArea } from 'components/Form';
 import updateTimerDecriptionMutation from './queries/updateTimerDescription.gql';
 
 export default function TaskDescriptionModal({ timerId, visible, setVisible }) {
-  const [loading, setLoading] = useState(false);
-
   const [updateTimerDescription] = useMutation(updateTimerDecriptionMutation, {
     refetchQueries: ['timers']
   });
@@ -30,45 +28,44 @@ export default function TaskDescriptionModal({ timerId, visible, setVisible }) {
         <Form onSubmit={onSubmit} data-cy="time-description-form">
           <InputTextArea label="Description" name="description" />
 
-          <FormFooterButtons loading={loading} onSubmit={onSubmit} />
+          <FormFooterButtons onSubmit={onSubmit} />
         </Form>
       </Dialog>
     </div>
   );
 
   async function onSubmit(data) {
-    if (!data?.description) {
+    if (!data.description) {
       return setVisible(false);
     }
 
-    setLoading(true);
+    return new Promise(async resolve => {
+      try {
+        await updateTimerDescription({
+          variables: {
+            description: data.description,
+            timerId
+          }
+        });
 
-    try {
-      await updateTimerDescription({
-        variables: {
-          ...data,
-          timerId
-        }
-      });
-
-      toast?.current?.show({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Description is added!',
-        life: 3000
-      });
-    } catch {
-      setLoading(false);
-      // Show error toast
-      toast?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to add description',
-        life: 3000
-      });
-    } finally {
-      setVisible(false);
-      setLoading(false);
-    }
+        toast?.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Description is added!',
+          life: 3000
+        });
+      } catch {
+        // Show error toast
+        toast?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to add description',
+          life: 3000
+        });
+      } finally {
+        setVisible(false);
+        resolve(true);
+      }
+    });
   }
 }

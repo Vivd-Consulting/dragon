@@ -27,7 +27,8 @@ export function HookForm({
       React.Children.map(children, child =>
         React.cloneElement(child, {
           formHook,
-          disabled: formState.isSubmitting
+          // disabled should use the existing child prop value if it exists, otherwise default to formState.isSubmitting
+          disabled: child.props.disabled ?? formState.isSubmitting
         })
       ),
     [children, formHook, formState]

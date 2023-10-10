@@ -11,22 +11,17 @@ export default function EditInvoice() {
   const router = useRouter();
   const { id: invoiceId } = router.query;
 
-  const { data: invoice, loading: isInvoiceLoading } = useQuery(invoiceQuery, {
+  const { data, loading } = useQuery(invoiceQuery, {
     variables: {
       id: invoiceId
-    }
+    },
+    fetchPolicy: 'no-cache'
   });
-
-  if (!invoice || isInvoiceLoading) {
-    return null;
-  }
-
-  const invoiceData = invoice.invoice_by_pk;
 
   return (
     <Card>
       <h1>Edit Invoice - {`REF-${invoiceId}`}</h1>
-      <InvoiceForm initialData={invoiceData} isInitialDataLoading={isInvoiceLoading} />
+      {!loading && <InvoiceForm defaultValues={data?.invoice_by_pk} />}
     </Card>
   );
 }

@@ -11,16 +11,17 @@ export default function EditContractor() {
   const router = useRouter();
   const { id: contractorId } = router.query;
 
-  const { data: contractor, loading: isContractorLoading } = useQuery(contractorQuery, {
+  const { data, loading } = useQuery(contractorQuery, {
     variables: {
       id: contractorId
-    }
+    },
+    fetchPolicy: 'no-cache'
   });
 
   return (
     <Card>
       <h1>Edit Contractor</h1>
-      <ContractorForm initialData={contractor} isInitialDataLoading={isContractorLoading} />
+      {!loading && <ContractorForm defaultValues={data?.contractor_by_pk} />}
     </Card>
   );
 }

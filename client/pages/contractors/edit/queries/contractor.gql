@@ -1,5 +1,5 @@
 query contractor($id: Int!) {
-  contractor(where: { id: { _eq: $id } }) {
+  contractor_by_pk(id: $id) {
     id
     name
     location

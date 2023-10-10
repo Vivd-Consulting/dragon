@@ -19,7 +19,6 @@ mutation updateContractor(
       markup: $markup
       invoice: $invoice
       gpt_persona: $gpt_persona
-      document: $document
       start_date: $start_date
       end_date: $end_date
     }
