@@ -1,6 +1,7 @@
 query client($id: Int!) {
-  client(where: { id: { _eq: $id } }) {
+  client_by_pk(id: $id) {
     id
+    contract_id
     logo_id
     name
     description
@@ -9,6 +10,5 @@ query client($id: Int!) {
     end_date
     created_at
     archived_at
-    document
   }
 }

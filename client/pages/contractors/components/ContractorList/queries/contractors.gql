@@ -6,15 +6,14 @@ query contractors(
 ) {
   contractor(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     id
+    contract_id
     name
     location
     gpt_persona
-    document
     contractor_rate {
       id
       rate
     }
-    invoice
     start_date
     end_date
     created_at

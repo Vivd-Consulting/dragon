@@ -1,4 +1,4 @@
-import { Control, FieldErrors } from 'react-hook-form';
+import { UseFormReturn } from 'react-hook-form';
 import { InputTextarea as PrimeInputTextarea } from 'primereact/inputtextarea';
 import cx from 'clsx';
 
@@ -11,7 +11,6 @@ type InputTextAreaProps = {
   name?: string;
   isRequired?: boolean;
   autoFocus?: boolean;
-  controlProps: { errors: FieldErrors; control: Control };
   fullWidth?: boolean;
   halfWidth?: boolean;
   tutorial?: boolean;
@@ -24,14 +23,17 @@ export function InputTextArea({
   label,
   name,
   isRequired,
-  controlProps,
+  formHook,
   tutorial,
   tutorialKey,
   fullWidth,
   size = 'md',
   ...props
 }: InputTextAreaProps) {
-  const { control, errors } = controlProps;
+  const {
+    control,
+    formState: { errors }
+  } = formHook;
 
   const sizeStyle = {
     xl: styles.inputTextAreaXLarge,

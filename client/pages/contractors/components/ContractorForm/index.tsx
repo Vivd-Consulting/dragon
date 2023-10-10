@@ -4,7 +4,15 @@ import { useMutation } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 
-import { Form, FormFooterButtons } from 'components/Form';
+import {
+  Form,
+  FormFooterButtons,
+  InputText,
+  InputTextArea,
+  InputCalendar,
+  InputNumber,
+  UploadFileInput
+} from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
 
@@ -21,7 +29,10 @@ export default function ContractorForm({
   initialData,
   isInitialDataLoading
 }: ContractorFormPageProps) {
+  const isEditing = !!initialData;
+
   const { dragonUser } = useAuth();
+
   const [createContractor] = useMutation(createContractorMutation, {
     refetchQueries: ['contractors']
   });
@@ -45,9 +56,8 @@ export default function ContractorForm({
         gpt_persona: '',
         location: '',
         rate: undefined,
+        contractor_id: undefined,
         rate_id: undefined,
-        invoice: undefined,
-        document: '',
         start_date: '',
         end_data: ''
       };
@@ -57,21 +67,16 @@ export default function ContractorForm({
       <Toast ref={toast} />
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="contractor-form">
-        {({ InputText, InputTextArea, InputCalendar, InputNumber }) => (
-          <>
-            <InputText label="Name" name="name" isRequired autoFocus />
-            <InputText label="Location" name="location" isRequired />
-            <InputText label="Document" name="document" />
-            <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
-            <InputNumber label="Markup" name="markup" isRequired />
-            <InputNumber label="Invoice" name="invoice" />
-            <InputTextArea label="GPT Persona" name="gpt_persona" />
-            <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
-            <InputCalendar label="End Date" name="end_date" showIcon />
+        <InputText label="Name" name="name" isRequired autoFocus />
+        <InputText label="Location" name="location" isRequired />
+        <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
+        <InputNumber label="Markup" name="markup" isRequired />
+        <InputTextArea label="GPT Persona" name="gpt_persona" />
+        <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
+        <InputCalendar label="End Date" name="end_date" showIcon />
+        <UploadFileInput label="Contract" name="contract_id" isRequired />
 
-            <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
-          </>
-        )}
+        <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
       </Form>
     </>
   );

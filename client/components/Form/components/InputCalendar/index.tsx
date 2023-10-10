@@ -1,5 +1,5 @@
+import { UseFormReturn } from 'react-hook-form';
 import { Calendar } from 'primereact/calendar';
-import { Control, FieldErrors } from 'react-hook-form';
 import cx from 'clsx';
 
 import { FormField } from 'components/Form';
@@ -7,7 +7,6 @@ import { FormField } from 'components/Form';
 type InputCalendarProps = {
   label: string;
   name: string;
-  controlProps: { errors: FieldErrors; control: Control };
   fullWidth?: boolean;
   isRequired?: boolean;
   tutorial?: string | (() => void);
@@ -18,14 +17,17 @@ type InputCalendarProps = {
 export function InputCalendar({
   label,
   name,
-  controlProps,
+  formHook,
   fullWidth,
   isRequired,
   tutorial,
   onChange,
   ...props
 }: InputCalendarProps) {
-  const { control, errors } = controlProps;
+  const {
+    control,
+    formState: { errors }
+  } = formHook;
 
   return (
     <FormField
