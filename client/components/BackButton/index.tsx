@@ -8,6 +8,7 @@ export default function BackButton() {
     <Button
       icon="pi pi-arrow-left"
       size="small"
+      className="p-button-rounded"
       text
       raised
       aria-label="Back"
