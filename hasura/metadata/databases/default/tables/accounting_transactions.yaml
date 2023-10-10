@@ -16,7 +16,13 @@ object_relationships:
       foreign_key_constraint_on: invoice_item_id
   - name: personalCategory
     using:
-      foreign_key_constraint_on: category_id
+      manual_configuration:
+        column_mapping:
+          category_id: id
+        insertion_order: null
+        remote_table:
+          name: personal_finance_category
+          schema: accounting
   - name: relatedTransaction
     using:
       foreign_key_constraint_on: related_transaction_id

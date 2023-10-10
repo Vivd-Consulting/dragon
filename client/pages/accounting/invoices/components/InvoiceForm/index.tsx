@@ -20,10 +20,8 @@ import createInvoiceItemMutation from './queries/createInvoiceItem.gql';
 import updateInvoiceMutation from './queries/updateInvoice.gql';
 import updateProjectTimesMutation from './queries/updateProjectTimes.gql';
 
-// TODO: Add invoice Type
 interface InvoiceFormPageProps {
-  initialData?: any;
-  isInitialDataLoading?: boolean;
+  defaultValues?: any;
 }
 
 interface IItem {
@@ -33,13 +31,12 @@ interface IItem {
   currency: string;
 }
 
-export default function InvoiceForm({ initialData, isInitialDataLoading }: InvoiceFormPageProps) {
-  const isEditing = !!initialData;
+export default function InvoiceForm({ defaultValues }: InvoiceFormPageProps) {
+  const isEditing = !!defaultValues;
 
-  const [items, setItems] = useState<IItem[]>(initialData.invoice_items || []);
+  const [items, setItems] = useState<IItem[]>(defaultValues?.invoice_items || []);
   const [projectTimeIds, setProjectTimeIds] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(initialData?.client_id);
+  const [selectedClient, setSelectedClient] = useState(defaultValues?.client_id);
 
   const [contractorId] = useCurrentContractor();
 
@@ -73,14 +70,14 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
   const toast = useRef<any>(null);
   const router = useRouter();
 
-  if (isInitialDataLoading || isClientsLoading) {
+  if (isClientsLoading) {
     return null;
   }
 
   const nextWeek = getNextWeek();
 
-  const defaultValues = initialData
-    ? initialData
+  const _defaultValues = defaultValues
+    ? defaultValues
     : {
         due_date: nextWeek
       };
@@ -89,7 +86,7 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="invoice-form">
+      <Form defaultValues={_defaultValues} onSubmit={onSubmit} resetOnSubmit data-cy="invoice-form">
         <InputDropdown
           placeholder="Select client"
           label="Client"
@@ -99,85 +96,83 @@ export default function InvoiceForm({ initialData, isInitialDataLoading }: Invoi
           onChange={e => setSelectedClient(e.value)}
           options={allowedClientsForInvoice}
           isRequired
-          disabled={initialData}
+          disabled={isEditing}
         />
 
         <InputCalendar label="Due Date" name="due_date" isRequired showIcon />
         <ProjectTimersTable
           selectedClient={selectedClient}
-          invoiceId={initialData?.id}
+          invoiceId={defaultValues?.id}
           onSelectProjectTimeIds={setProjectTimeIds}
         />
 
         <InvoiceItemTable items={items} onAddItems={setItems} />
 
-        <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
+        <FormFooterButtons hideCancel onSubmit={onSubmit} />
       </Form>
     </>
   );
 
   async function onSubmit(data) {
-    setLoading(true);
+    return new Promise(async resolve => {
+      try {
+        if (isEditing) {
+          await updateInvoice({
+            variables: {
+              ...data
+            }
+          });
+        } else {
+          // first create invoice
+          const newInvoice = await createInvoice({
+            variables: {
+              ...data,
+              contractorId
+            }
+          });
 
-    try {
-      if (initialData) {
-        await updateInvoice({
-          variables: {
-            ...data
-          }
+          const invoiceId = _.get(newInvoice, 'data.insert_invoice_one.id') as number;
+
+          await updateProjectTimes({
+            variables: {
+              invoiceId,
+              projectTimeIds
+            }
+          });
+
+          const itemsWithInvoiceId = items.map(item => ({
+            ...item,
+            key: undefined,
+            invoice_id: invoiceId
+          }));
+
+          await createInvoiceItem({
+            variables: {
+              objects: itemsWithInvoiceId
+            }
+          });
+        }
+
+        // Show success toast
+        toast?.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Invoice is created.',
+          life: 3000
         });
-      } else {
-        // first create invoice
-        const newInvoice = await createInvoice({
-          variables: {
-            ...data,
-            contractorId
-          }
-        });
 
-        const invoiceId = _.get(newInvoice, 'data.insert_invoice_one.id') as number;
-
-        await updateProjectTimes({
-          variables: {
-            invoiceId,
-            projectTimeIds
-          }
-        });
-
-        const itemsWithInvoiceId = items.map(item => ({
-          ...item,
-          key: undefined,
-          invoice_id: invoiceId
-        }));
-
-        await createInvoiceItem({
-          variables: {
-            objects: itemsWithInvoiceId
-          }
+        router.push('/accounting/invoices');
+      } catch {
+        // Show error toast
+        toast?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to create invoice.',
+          life: 3000
         });
       }
 
-      // Show success toast
-      toast?.current?.show({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Invoice is created.',
-        life: 3000
-      });
-
-      router.push('/accounting/invoices');
-    } catch {
-      setLoading(false);
-
-      // Show error toast
-      toast?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to create invoice.',
-        life: 3000
-      });
-    }
-
-    setLoading(false);
+      resolve(true);
+    });
   }
 }

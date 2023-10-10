@@ -7,20 +7,21 @@ import ProjectForm from '../../components/ProjectForm';
 
 import projectQuery from '../queries/project.gql';
 
-export default function EditClient() {
+export default function EditProject() {
   const router = useRouter();
   const { id: projectId } = router.query;
 
-  const { data: project, loading: isProjectLoading } = useQuery(projectQuery, {
+  const { data, loading } = useQuery(projectQuery, {
     variables: {
       id: projectId
-    }
+    },
+    fetchPolicy: 'no-cache'
   });
 
   return (
     <Card>
       <h1>Edit Project</h1>
-      <ProjectForm initialData={project} isInitialDataLoading={isProjectLoading} />
+      {!loading && <ProjectForm defaultValues={data?.project_by_pk} />}
     </Card>
   );
 }

@@ -59,7 +59,7 @@ export default function ClientForm({ defaultValues }: ClientFormPageProps) {
   );
 
   async function onSubmit(data) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async resolve => {
       try {
         if (isEditing) {
           await updateClient({
@@ -86,9 +86,7 @@ export default function ClientForm({ defaultValues }: ClientFormPageProps) {
         });
 
         router.push('/clients');
-
-        resolve(true);
-      } catch (e) {
+      } catch {
         // Show error toast
         toast?.current?.show({
           severity: 'error',
@@ -96,9 +94,9 @@ export default function ClientForm({ defaultValues }: ClientFormPageProps) {
           detail: `Failed to ${isEditing ? 'update' : 'create'} Client`,
           life: 3000
         });
-
-        reject(e);
       }
+
+      resolve(true);
     });
   }
 }

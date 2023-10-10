@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@apollo/client';
 
@@ -13,13 +13,13 @@ import clientsQuery from '../queries/clients.gql';
 import updateProjectMutation from './queries/updateProject.gql';
 import createProjectMutation from './queries/createProject.gql';
 
-// TODO: Add client Type
 interface ProjectFormPageProps {
-  initialData?: any;
-  isInitialDataLoading?: boolean;
+  defaultValues?: any;
 }
 
-export default function ProjectForm({ initialData, isInitialDataLoading }: ProjectFormPageProps) {
+export default function ProjectForm({ defaultValues }: ProjectFormPageProps) {
+  const isEditing = !!defaultValues;
+
   const { dragonUser } = useAuth();
   const { data, loading: isClientsLoading } = useQuery(clientsQuery, {
     fetchPolicy: 'no-cache',
@@ -38,26 +38,12 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
     refetchQueries: ['projects', 'project']
   });
 
-  const [loading, setLoading] = useState(false);
   const toast = useRef<any>(null);
   const router = useRouter();
 
-  if (isInitialDataLoading || isClientsLoading) {
+  if (isClientsLoading) {
     return null;
   }
-
-  const isEditing = !!initialData;
-
-  const defaultValues = initialData
-    ? initialData.project[0]
-    : {
-        name: '',
-        github_repo_org: '',
-        github_repo_name: '',
-        client_id: '',
-        description: '',
-        gpt_persona: ''
-      };
 
   return (
     <>
@@ -80,52 +66,50 @@ export default function ProjectForm({ initialData, isInitialDataLoading }: Proje
         <InputTextArea label="Description" name="description" />
         <InputTextArea label="GPT Persona" name="gpt_persona" />
 
-        <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
+        <FormFooterButtons hideCancel onSubmit={onSubmit} />
       </Form>
     </>
   );
 
   async function onSubmit(data) {
-    setLoading(true);
+    return new Promise(async resolve => {
+      try {
+        if (isEditing) {
+          await updateProject({
+            variables: {
+              ...data,
+              userId: dragonUser?.id
+            }
+          });
+        } else {
+          await createProject({
+            variables: {
+              ...data,
+              userId: dragonUser?.id
+            }
+          });
+        }
 
-    try {
-      if (initialData) {
-        await updateProject({
-          variables: {
-            ...data,
-            userId: dragonUser?.id
-          }
+        // Show success toast
+        toast?.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Project Created!',
+          life: 3000
         });
-      } else {
-        await createProject({
-          variables: {
-            ...data,
-            userId: dragonUser?.id
-          }
+
+        router.push('/projects');
+      } catch {
+        // Show error toast
+        toast?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to create project!',
+          life: 3000
         });
       }
 
-      // Show success toast
-      toast?.current?.show({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Project Created!',
-        life: 3000
-      });
-
-      router.push('/projects');
-    } catch {
-      setLoading(false);
-
-      // Show error toast
-      toast?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to create project!',
-        life: 3000
-      });
-    }
-
-    setLoading(false);
+      resolve(true);
+    });
   }
 }

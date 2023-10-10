@@ -21,19 +21,18 @@ import projectsQuery from '../queries/projects.gql';
 import createTaskMutation from './queries/createTask.gql';
 import updateTaskMutation from './queries/updateTask.gql';
 
-// TODO: Add Task Type
 interface TaskFormPageProps {
-  initialData?: any;
-  isInitialDataLoading?: boolean;
+  defaultValues?: any;
 }
 
-export default function TaskForm({ initialData, isInitialDataLoading }: TaskFormPageProps) {
+export default function TaskForm({ defaultValues }: TaskFormPageProps) {
+  const isEditing = !!defaultValues;
   const [selectedProject, setSelectedProject] = useState(null);
 
   const { dragonUser } = useAuth();
-  const TASK_PRIORITY = useTaskPriorities(selectedProject ?? initialData?.project_id);
+  const TASK_PRIORITY = useTaskPriorities(selectedProject ?? defaultValues?.project_id);
 
-  const { data: projectsData, loading: isProjectLoading } = useQuery(projectsQuery, {
+  const { data: projectsData } = useQuery(projectsQuery, {
     fetchPolicy: 'no-cache',
     variables: {
       where: {
@@ -50,19 +49,14 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
     refetchQueries: ['tasks', 'task_by_pk']
   });
 
-  const [loading, setLoading] = useState(false);
   const toast = useRef<any>(null);
   const router = useRouter();
-
-  if (isInitialDataLoading || isProjectLoading) {
-    return null;
-  }
 
   return (
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={initialData} onSubmit={onSubmit} data-cy="task-form">
+      <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="task-form">
         <InputText label="Title" name="title" isRequired autoFocus />
         <InputDropdown
           placeholder="Select project"
@@ -87,52 +81,50 @@ export default function TaskForm({ initialData, isInitialDataLoading }: TaskForm
         <InputTextArea label="Description" name="description" />
         <InputCalendar label="Due Date" name="due_date" showIcon />
 
-        <FormFooterButtons hideCancel loading={loading} onSubmit={onSubmit} />
+        <FormFooterButtons hideCancel onSubmit={onSubmit} />
       </Form>
     </>
   );
 
   async function onSubmit(data) {
-    setLoading(true);
+    return new Promise(async resolve => {
+      try {
+        if (isEditing) {
+          await updateTask({
+            variables: {
+              ...data,
+              userId: dragonUser?.id
+            }
+          });
+        } else {
+          await createTask({
+            variables: {
+              ...data,
+              userId: dragonUser?.id
+            }
+          });
+        }
 
-    try {
-      if (initialData) {
-        await updateTask({
-          variables: {
-            ...data,
-            userId: dragonUser?.id
-          }
+        // Show success toast
+        toast?.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Task ${isEditing ? 'Updated' : 'Created'}!`,
+          life: 3000
         });
-      } else {
-        await createTask({
-          variables: {
-            ...data,
-            userId: dragonUser?.id
-          }
+
+        router.push('/tasks');
+      } catch {
+        // Show error toast
+        toast?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Failed to ${isEditing ? 'update' : 'create'} task!`,
+          life: 3000
         });
       }
 
-      // Show success toast
-      toast?.current?.show({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Task Created!',
-        life: 3000
-      });
-
-      router.push('/tasks');
-    } catch {
-      setLoading(false);
-
-      // Show error toast
-      toast?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to create task!',
-        life: 3000
-      });
-    }
-
-    setLoading(false);
+      resolve(true);
+    });
   }
 }
