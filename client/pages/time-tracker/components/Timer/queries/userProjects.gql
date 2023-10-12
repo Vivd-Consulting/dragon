@@ -18,6 +18,9 @@ query userProjects(
             id
             start_time
             end_time
+            invoice {
+              id
+            }
           }
           client {
             name

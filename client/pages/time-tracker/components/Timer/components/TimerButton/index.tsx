@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import _ from 'lodash';
 import dayjs from 'dayjs';
@@ -21,7 +21,6 @@ import startTimerMutation from './queries/startTimer.gql';
 import startTimerWithInvoiceMutation from './queries/startTimerWithInvoice.gql';
 import stopTimerMutation from './queries/stopTimer.gql';
 import stopAllTimersMutation from './queries/stopAllTimers.gql';
-import projectTimesQuery from './queries/projectTimes.gql';
 
 import styles from './styles.module.sass';
 
@@ -31,8 +30,7 @@ export default function TimerButton({ project, isListViewChecked }) {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
 
-  const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [descriptionModalVisible, setDescriptionModalVisible] = useState(false);
 
   const [timerId, setTimerId] = useState<number | null>(null);
   const [timeSinceStart, setTimeSinceStart] = useState(
@@ -40,18 +38,7 @@ export default function TimerButton({ project, isListViewChecked }) {
   );
 
   const formattedTime = dayjs.utc(timeSinceStart * 1000).format('HH:mm:ss');
-
-  const { data: projectTimesData } = useQuery(projectTimesQuery, {
-    variables: {
-      projectId: project.id
-    },
-    skip: !project.id
-  });
-
-  const projectTimesForInvoiceDetails = _.get(
-    projectTimesData,
-    'project[0].project_times[0].invoice'
-  );
+  const projectTimesForInvoiceDetails = _.get(project, 'project_times[0].invoice');
 
   const [startTimer] = useMutation(startTimerMutation, {
     refetchQueries: ['projectTimes']
@@ -89,7 +76,11 @@ export default function TimerButton({ project, isListViewChecked }) {
             project={project}
           />
         </Row>
-        <TaskDescriptionModal visible={visible} setVisible={setVisible} timerId={timerId} />
+        <TaskDescriptionModal
+          visible={descriptionModalVisible}
+          setVisible={setDescriptionModalVisible}
+          timerId={timerId}
+        />
       </>
     );
   } else {
@@ -107,14 +98,18 @@ export default function TimerButton({ project, isListViewChecked }) {
             {project.isActive ? formattedTime : project.name}
           </div>
         </div>
-        <TaskDescriptionModal visible={visible} setVisible={setVisible} timerId={timerId} />
+        <TaskDescriptionModal
+          visible={descriptionModalVisible}
+          setVisible={setDescriptionModalVisible}
+          timerId={timerId}
+        />
       </>
     );
   }
 
   async function projectTimerStart(_project) {
     if (_project.isActive) {
-      setVisible(true);
+      setDescriptionModalVisible(true);
       setTimeSinceStart(0);
 
       const newTimer = await stopTimer({
@@ -163,7 +158,7 @@ export default function TimerButton({ project, isListViewChecked }) {
 
   async function projectTimerStop(_project) {
     if (_project.isActive) {
-      setVisible(true);
+      setDescriptionModalVisible(true);
       setTimeSinceStart(0);
 
       const newTimer = await stopTimer({
