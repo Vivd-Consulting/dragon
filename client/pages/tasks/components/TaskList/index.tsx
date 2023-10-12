@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import { Badge } from 'primereact/badge';
 
 import { InputTextDebounced } from 'components/Form';
 import { Row } from 'components/Group';
@@ -115,7 +115,12 @@ export default function TaskList() {
               return null;
             }
 
-            return <Badge value={taskPriority.name} severity={taskPriority.severity} />;
+            return (
+              <Row align="center" gap="2" className={`${taskPriority.textColor}`}>
+                <FontAwesomeIcon icon={taskPriority.icon} size="sm" />
+                <div>{taskPriority.name}</div>
+              </Row>
+            );
           }}
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"

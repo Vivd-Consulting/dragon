@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@apollo/client';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Toast } from 'primereact/toast';
 
@@ -12,6 +13,7 @@ import {
   InputTextArea,
   InputCalendar
 } from 'components/Form';
+import { Row } from 'components/Group';
 
 import { useAuth } from 'hooks/useAuth';
 import { useTaskPriorities } from 'hooks/useTaskPriorities';
@@ -79,6 +81,8 @@ export default function TaskForm({ defaultValues }: TaskFormPageProps) {
           optionLabel="name"
           optionValue="id"
           options={TASK_PRIORITY}
+          itemTemplate={PrioritiesOptionTemplate}
+          valueTemplate={SelectedPriorityTemplate}
           isRequired
         />
 
@@ -98,6 +102,28 @@ export default function TaskForm({ defaultValues }: TaskFormPageProps) {
       </Form>
     </>
   );
+
+  function PrioritiesOptionTemplate(option) {
+    return (
+      <Row align="center" gap="2" className={`${option.textColor}`}>
+        <FontAwesomeIcon icon={option.icon} size="sm" />
+        <div>{option.name}</div>
+      </Row>
+    );
+  }
+
+  function SelectedPriorityTemplate(option, props) {
+    if (option) {
+      return (
+        <Row align="center" gap="2" className={`${option.textColor}`}>
+          <FontAwesomeIcon icon={option.icon} size="sm" />
+          <div>{option.name}</div>
+        </Row>
+      );
+    }
+
+    return <span>{props.placeholder}</span>;
+  }
 
   async function onSubmit(data) {
     return new Promise(async resolve => {

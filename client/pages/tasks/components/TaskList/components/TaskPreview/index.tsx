@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
@@ -91,7 +92,10 @@ export default function TaskPreview({ data, toastRef }) {
 
           <Row align="center" gap="5">
             <span className={styles.header}>Priority</span>
-            <Badge value={taskPriority?.name} severity={taskPriority?.severity} />
+            <Row align="center" gap="2" className={`${taskPriority?.textColor}`}>
+              {taskPriority?.icon && <FontAwesomeIcon icon={taskPriority.icon} size="sm" />}
+              <div>{taskPriority?.name}</div>
+            </Row>
           </Row>
 
           <Row align="center" gap="5">
