@@ -1,3 +1,5 @@
+import { faFire, faArrowDown, faArrowUp, faCircle } from '@fortawesome/free-solid-svg-icons';
+
 export const VALIDATION_PATTERNS = {
   EMAIL: {
     value: /\S+@\S+\.\S+/,
@@ -17,8 +19,8 @@ export const ACCEPTED_TYPES = {
 };
 
 export const TASK_PRIORITY = [
-  { name: 'Low', id: 0, severity: 'success' },
-  { name: 'Medium', id: 1, severity: 'info' },
-  { name: 'High', id: 2, severity: 'warning' },
-  { name: 'Urgent', id: 3, severity: 'danger' }
+  { name: 'Low', id: 0, icon: faArrowDown, textColor: 'text-green-500' },
+  { name: 'Medium', id: 1, icon: faCircle, textColor: 'text-orange-500' },
+  { name: 'High', id: 2, icon: faArrowUp, textColor: 'text-orange-500' },
+  { name: 'Urgent', id: 3, icon: faFire, textColor: 'text-red-500' }
 ] as const;
