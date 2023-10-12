@@ -22,3 +22,5 @@ export const TASK_PRIORITY = [
   { name: 'High', id: 2, severity: 'warning' },
   { name: 'Urgent', id: 3, severity: 'danger' }
 ] as const;
+
+export const TASK_STATUS = ['Backlog', 'Grooming', 'Todo', 'In Progress', 'In Review', 'Complete'];

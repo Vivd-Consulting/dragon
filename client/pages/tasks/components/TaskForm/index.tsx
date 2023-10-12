@@ -16,6 +16,8 @@ import {
 import { useAuth } from 'hooks/useAuth';
 import { useTaskPriorities } from 'hooks/useTaskPriorities';
 
+import { TASK_STATUS } from 'consts';
+
 import projectsQuery from '../queries/projects.gql';
 
 import createTaskMutation from './queries/createTask.gql';
@@ -58,6 +60,7 @@ export default function TaskForm({ defaultValues }: TaskFormPageProps) {
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="task-form">
         <InputText label="Title" name="title" isRequired autoFocus />
+
         <InputDropdown
           placeholder="Select project"
           label="Project"
@@ -78,7 +81,17 @@ export default function TaskForm({ defaultValues }: TaskFormPageProps) {
           options={TASK_PRIORITY}
           isRequired
         />
+
+        <InputDropdown
+          placeholder="Status"
+          label="Status"
+          name="status"
+          options={TASK_STATUS}
+          isRequired
+        />
+
         <InputTextArea label="Description" name="description" />
+
         <InputCalendar label="Due Date" name="due_date" showIcon />
 
         <FormFooterButtons hideCancel onSubmit={onSubmit} />
