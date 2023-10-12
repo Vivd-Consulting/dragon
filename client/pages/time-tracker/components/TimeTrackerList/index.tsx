@@ -89,10 +89,12 @@ export default function TimeTrackerList() {
         project: { name },
         description: '', // TODO
         new_time: timers.reduce((acc, { new_time }) => acc + new_time, 0), // TODO
-        start_time: timers[0].start_time, // TODO
-        end_time: timers[timers.length - 1].end_time // TODO
+        start_time: timers[timers.length - 1].start_time, // TODO
+        end_time: timers[0].end_time // TODO
       }))
       .value();
+
+    console.log(timers);
 
     totalRecords = timers.length;
   }
@@ -198,7 +200,7 @@ export default function TimeTrackerList() {
           header="Duration"
           body={({ start_time, end_time, new_time }) => (
             <span>
-              {(new_time && `${new_time} hr`) ?? calculateDurationFormatted(start_time, end_time)}
+              {(new_time && `${new_time} hr`) || calculateDurationFormatted(start_time, end_time)}
             </span>
           )}
           editor={options => numberEditor(options)}
@@ -219,12 +221,17 @@ export default function TimeTrackerList() {
   );
 
   function textEditor(options) {
-    return (
+    const { rowData } = options;
+    const { end_time, description } = rowData;
+
+    return !!end_time && !grouped ? (
       <InputText
         type="text"
         value={options.value}
         onChange={e => options.editorCallback(e.target.value)}
       />
+    ) : (
+      description
     );
   }
 
@@ -232,16 +239,16 @@ export default function TimeTrackerList() {
     const { rowData } = options;
     const { new_time, start_time, end_time } = rowData;
 
-    const value = new_time ?? calculateDuration(start_time, end_time).hours();
+    const value = new_time || calculateDuration(start_time, end_time).hours();
 
-    return (
-      end_time && (
-        <InputNumber
-          minFractionDigits={2}
-          value={value}
-          onChange={e => options.editorCallback(e.value)}
-        />
-      )
+    return !!end_time && !grouped ? (
+      <InputNumber
+        minFractionDigits={2}
+        value={value}
+        onChange={e => options.editorCallback(e.value)}
+      />
+    ) : (
+      `${value} hr`
     );
   }
 
@@ -284,20 +291,18 @@ export default function TimeTrackerList() {
       });
     };
 
-    return (
-      data?.end_time && (
-        <Row>
-          <Button
-            size="small"
-            severity="danger"
-            tooltip="Archive"
-            tooltipOptions={{ position: 'top' }}
-            icon="pi pi-trash"
-            onClick={confirmArchiveHistory}
-          />
-        </Row>
-      )
-    );
+    return data?.end_time && !grouped ? (
+      <Row>
+        <Button
+          size="small"
+          severity="danger"
+          tooltip="Archive"
+          tooltipOptions={{ position: 'top' }}
+          icon="pi pi-trash"
+          onClick={confirmArchiveHistory}
+        />
+      </Row>
+    ) : null;
   }
 
   async function _deleteTime(data) {
