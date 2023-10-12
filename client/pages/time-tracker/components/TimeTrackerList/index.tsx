@@ -13,6 +13,7 @@ import { Toast } from 'primereact/toast';
 import { Calendar } from 'primereact/calendar';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
+import { SelectButton } from 'primereact/selectbutton';
 
 import { Nullable } from 'primereact/ts-helpers';
 
@@ -35,6 +36,7 @@ dayjs.extend(duration);
 export default function TimeTrackerList() {
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
   const [dates, setDates] = useState<Nullable<string | Date | Date[]>>(null);
+  const [grouped, setGrouped] = useState(false);
 
   const where: any = {
     deleted_at: { _is_null: true }
@@ -74,10 +76,26 @@ export default function TimeTrackerList() {
 
   const toastRef = useRef<Toast>(null);
 
-  const timers = loading ? previousData?.project_time : data?.project_time;
-  const totalRecords = loading
+  let timers = loading ? previousData?.project_time : data?.project_time;
+  let totalRecords = loading
     ? previousData?.project_time_aggregate.aggregate.count
     : data?.project_time_aggregate.aggregate.count;
+
+  if (grouped) {
+    timers = _.chain(timers)
+      .groupBy(({ project }) => project?.name)
+      .map((timers, name) => ({
+        id: timers[0].id,
+        project: { name },
+        description: '', // TODO
+        new_time: timers.reduce((acc, { new_time }) => acc + new_time, 0), // TODO
+        start_time: timers[0].start_time, // TODO
+        end_time: timers[timers.length - 1].end_time // TODO
+      }))
+      .value();
+
+    totalRecords = timers.length;
+  }
 
   return (
     <>
@@ -97,6 +115,12 @@ export default function TimeTrackerList() {
             onChange={e => setDates(e.value)}
             selectionMode="range"
             readOnlyInput
+          />
+
+          <SelectButton
+            value={grouped ? 'Grouped' : 'Ungrouped'}
+            onChange={e => setGrouped(e.value === 'Grouped')}
+            options={['Grouped', 'Ungrouped']}
           />
         </Row>
 
@@ -162,7 +186,7 @@ export default function TimeTrackerList() {
 
         <Column
           field="end_time"
-          header="end Time"
+          header="End Time"
           body={({ end_time }) => <span>{dateFormat(end_time)}</span>}
           sortable
           headerClassName="white-space-nowrap"
@@ -211,11 +235,13 @@ export default function TimeTrackerList() {
     const value = new_time ?? calculateDuration(start_time, end_time).hours();
 
     return (
-      <InputNumber
-        minFractionDigits={2}
-        value={value}
-        onChange={e => options.editorCallback(e.value)}
-      />
+      end_time && (
+        <InputNumber
+          minFractionDigits={2}
+          value={value}
+          onChange={e => options.editorCallback(e.value)}
+        />
+      )
     );
   }
 
@@ -259,16 +285,18 @@ export default function TimeTrackerList() {
     };
 
     return (
-      <Row>
-        <Button
-          size="small"
-          severity="danger"
-          tooltip="Archive"
-          tooltipOptions={{ position: 'top' }}
-          icon="pi pi-trash"
-          onClick={confirmArchiveHistory}
-        />
-      </Row>
+      data?.end_time && (
+        <Row>
+          <Button
+            size="small"
+            severity="danger"
+            tooltip="Archive"
+            tooltipOptions={{ position: 'top' }}
+            icon="pi pi-trash"
+            onClick={confirmArchiveHistory}
+          />
+        </Row>
+      )
     );
   }
 

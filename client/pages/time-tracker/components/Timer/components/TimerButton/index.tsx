@@ -26,6 +26,7 @@ import styles from './styles.module.sass';
 
 dayjs.extend(utc);
 
+// TODO: This is causing a lot of re-renders, refactor this component
 export default function TimerButton({ project, isListViewChecked }) {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
@@ -89,7 +90,9 @@ export default function TimerButton({ project, isListViewChecked }) {
         <div
           key={project.id}
           className={cx(styles.bigButton, project.isActive && styles.isActive)}
-          onClick={() => projectTimerStart(project)}
+          onClick={() =>
+            project.isActive ? projectTimerStop(project) : projectTimerStart(project)
+          }
         >
           <div className="flex flex-column align-items-center">
             <S3Image s3Key={project?.client?.logo?.key} className="logo-img" />
