@@ -3,6 +3,7 @@ mutation createTask(
   $title: String!
   $project_id: Int!
   $priority: Int!
+  $status: String!
   $description: String
   $due_date: timestamp
 ) {
@@ -12,6 +13,7 @@ mutation createTask(
       title: $title
       project_id: $project_id
       priority: $priority
+      status: $status
       description: $description
       due_date: $due_date
     }

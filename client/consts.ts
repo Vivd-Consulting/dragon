@@ -24,3 +24,5 @@ export const TASK_PRIORITY = [
   { name: 'High', id: 2, icon: faArrowUp, textColor: 'text-orange-500' },
   { name: 'Urgent', id: 3, icon: faFire, textColor: 'text-red-500' }
 ] as const;
+
+export const TASK_STATUS = ['Backlog', 'Grooming', 'Todo', 'In Progress', 'In Review', 'Complete'];
