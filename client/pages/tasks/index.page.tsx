@@ -9,6 +9,9 @@ import { Row, Column } from 'components/Group';
 
 import TaskList from './components/TaskList';
 
+// import { DragDropContext } from 'react-beautiful-dnd';
+import { ManyItems } from './components/DraggableContainers';
+
 export default function Tasks() {
   const router = useRouter();
 
@@ -30,10 +33,15 @@ export default function Tasks() {
           </Column>
         }
       >
-        <TaskList />
+        {/* <TaskList /> */}
+        <ManyItems />
       </Card>
     </Column>
   );
 }
 
 Tasks.roles = [Role.Admin, Role.Client, Role.Contractor];
+
+// function TaskCardView() {
+//   return <></>;
+// }
