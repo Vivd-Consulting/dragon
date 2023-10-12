@@ -66,14 +66,14 @@ export default function ContractorList() {
         data-cy="contractors-table"
       >
         <Column
-          field="name"
-          header="Name"
+          header="Full Name"
+          body={({ first_name, last_name }) => <span>{`${first_name} ${last_name}`}</span>}
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />
         <Column
-          field="location"
-          header="Location"
+          field="country"
+          header="Country"
           headerClassName="white-space-nowrap"
           className="white-space-nowrap"
         />

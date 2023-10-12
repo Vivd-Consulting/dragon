@@ -1,0 +1,3 @@
+ALTER TABLE contractor DROP COLUMN name;
+ALTER TABLE contractor ADD COLUMN first_name TEXT NOT NULL;
+ALTER TABLE contractor ADD COLUMN last_name TEXT NOT NULL;

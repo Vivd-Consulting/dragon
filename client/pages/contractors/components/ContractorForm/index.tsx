@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation } from '@apollo/client';
+import { useForm } from 'react-hook-form';
+import countryList from 'country-list';
 
 import { Toast } from 'primereact/toast';
 
@@ -11,7 +13,9 @@ import {
   InputTextArea,
   InputCalendar,
   InputNumber,
-  UploadFileInput
+  UploadFileInput,
+  InputDropdown,
+  HookForm
 } from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
@@ -28,6 +32,10 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
 
   const { dragonUser } = useAuth();
 
+  const countries = countryList.getNames();
+
+  const formHook = useForm({ defaultValues });
+
   const [createContractor] = useMutation(createContractorMutation, {
     refetchQueries: ['contractors', 'projects']
   });
@@ -39,13 +47,41 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   const toast = useRef<any>(null);
   const router = useRouter();
 
+  const firstName = formHook.watch('first_name') || 'f';
+  const lastName = formHook.watch('last_name') || 'last';
+
   return (
     <>
       <Toast ref={toast} />
 
-      <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="contractor-form">
-        <InputText label="Name" name="name" isRequired autoFocus />
-        <InputText label="Location" name="location" isRequired />
+      <HookForm formHook={formHook} onSubmit={onSubmit} data-cy="contractor-form">
+        <InputText label="First Name" name="first_name" isRequired autoFocus />
+
+        <InputText label="Last Name" name="last_name" isRequired />
+
+        <InputDropdown
+          placeholder="Country"
+          label="Country"
+          name="country"
+          options={countries}
+          isRequired
+        />
+
+        <InputText label="City" name="city" isRequired />
+
+        <InputTextArea label="Address" name="address" isRequired />
+
+        <InputText label="Post Code" name="post_code" isRequired />
+
+        <InputText label="Personal Email" name="personal_email" isRequired />
+
+        <InputText
+          label="Work Email"
+          name="work_email"
+          value={`${firstName[0]?.toLowerCase()}${lastName?.toLowerCase()}@vivd.ca`}
+          isRequired
+        />
+
         <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
         <InputNumber label="Markup" name="markup" isRequired />
         <InputTextArea label="GPT Persona" name="gpt_persona" />
@@ -54,7 +90,7 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
         <UploadFileInput label="Contract" name="contract_id" isRequired />
 
         <FormFooterButtons hideCancel onSubmit={onSubmit} />
-      </Form>
+      </HookForm>
     </>
   );
 
