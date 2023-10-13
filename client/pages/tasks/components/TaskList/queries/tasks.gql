@@ -15,7 +15,7 @@ query tasks($limit: Int, $offset: Int, $order_by: [task_order_by!], $where: task
     }
     task_assignees {
       contractor {
-        name
+        first_name
       }
     }
     task_viewed_by {

@@ -12,7 +12,7 @@ query invoices(
         contractors {
           contractor {
             id
-            name
+            first_name
             contractor_rate {
               rate
             }

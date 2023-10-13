@@ -13,8 +13,6 @@ import { AssignContractorProjectDropdown } from 'components/AssignContractorProj
 import { Row } from 'components/Group';
 import { InputTextDebounced } from 'components/Form';
 
-import { dateFormat } from 'utils';
-
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
 import projectsQuery from './queries/projects.gql';

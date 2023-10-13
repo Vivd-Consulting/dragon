@@ -27,7 +27,7 @@ export function AssignContractorProjectDropdown({ projectId }) {
       }}
       placeholder="Assign contractor"
       options={contractors}
-      optionLabel="name"
+      optionLabel="first_name"
       optionValue="id"
     />
   );

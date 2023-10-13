@@ -24,7 +24,7 @@ const CONTRACTORS = gql`
   query contractors {
     contractor(where: { archived_at: { _is_null: true } }) {
       id
-      name
+      first_name
     }
   }
 `;
