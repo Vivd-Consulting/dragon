@@ -7,7 +7,6 @@ import countryList from 'country-list';
 import { Toast } from 'primereact/toast';
 
 import {
-  Form,
   FormFooterButtons,
   InputText,
   InputTextArea,
@@ -19,6 +18,8 @@ import {
 } from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
+
+import { PAYMENT_METHODS } from 'consts';
 
 import createContractorMutation from './queries/createContractor.gql';
 import updateContractorMutation from './queries/updateContractor.gql';
@@ -72,15 +73,68 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
 
         <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
         <InputNumber label="Markup" name="markup" isRequired />
+
+        <PaymentTemplate formHook={formHook} />
+
         <InputTextArea label="GPT Persona" name="gpt_persona" />
         <InputCalendar label="Start Date" name="start_date" isRequired showIcon />
         <InputCalendar label="End Date" name="end_date" showIcon />
-        <UploadFileInput label="Contract" name="contract_id" isRequired />
+        <UploadFileInput label="Contract" name="contract_id" />
 
         <FormFooterButtons hideCancel onSubmit={onSubmit} />
       </HookForm>
     </>
   );
+
+  function PaymentTemplate({ formHook }) {
+    const selectedPayment = formHook.watch('method');
+
+    return (
+      <>
+        <InputDropdown
+          formHook={formHook}
+          filter
+          placeholder="Payment method"
+          label="Payment Method"
+          name="method"
+          options={PAYMENT_METHODS}
+          isRequired
+        />
+        <PaymentInfoTemplate formHook={formHook} selectedPayment={selectedPayment} />
+      </>
+    );
+  }
+
+  function PaymentInfoTemplate({ selectedPayment, formHook }) {
+    switch (selectedPayment) {
+      case 'swift':
+        return (
+          <>
+            <InputText formHook={formHook} label="SWIFT / BIC" name="swift" isRequired />
+            <InputText formHook={formHook} label="IBAN / Account Number" name="swift_iban" />
+          </>
+        );
+
+      case 'ach':
+        return (
+          <>
+            <InputText
+              formHook={formHook}
+              label="ACH Routing Number"
+              name="ach_routing"
+              isRequired
+            />
+            <InputText formHook={formHook} label="Account Number" name="ach_account" />
+          </>
+        );
+
+      case 'usdt':
+        return <InputText formHook={formHook} label="Wallet Address" name="usdt_wallet" />;
+
+      default:
+        return null;
+    }
+  }
 
   function onNameBlur() {
     const firstName = formHook.getValues('first_name');
@@ -97,6 +151,9 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   }
 
   async function onSubmit(data) {
+    console.log(data);
+    return;
+
     return new Promise(async resolve => {
       try {
         if (isEditing) {
