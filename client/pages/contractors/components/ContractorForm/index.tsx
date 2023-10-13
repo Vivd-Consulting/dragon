@@ -61,8 +61,6 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   const toast = useRef<any>(null);
   const router = useRouter();
 
-  console.log(defaultValues);
-
   return (
     <>
       <Toast ref={toast} />
