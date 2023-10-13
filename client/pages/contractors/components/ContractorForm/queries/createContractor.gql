@@ -1,8 +1,14 @@
 mutation createContractor(
-  $name: String!
+  $first_name: String!
+  $last_name: String!
+  $country: String!
+  $city: String!
+  $address: String!
+  $post_code: String!
+  $personal_email: String!
+  $work_email: String!
   $contract_id: Int!
   $gpt_persona: String
-  $location: String!
   $rate: float8!
   $markup: float8!
   $start_date: timestamp!
@@ -10,10 +16,16 @@ mutation createContractor(
 ) {
   insert_contractor_one(
     object: {
-      name: $name
+      first_name: $first_name
+      last_name: $last_name
+      country: $country
+      city: $city
+      address: $address
+      post_code: $post_code
+      personal_email: $personal_email
+      work_email: $work_email
       contract_id: $contract_id
       gpt_persona: $gpt_persona
-      location: $location
       start_date: $start_date
       end_date: $end_date
       markup: $markup

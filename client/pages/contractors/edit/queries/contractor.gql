@@ -1,12 +1,20 @@
 query contractor($id: Int!) {
   contractor_by_pk(id: $id) {
     id
-    name
-    location
+    first_name
+    last_name
+    country
+    city
+    address
+    post_code
+    personal_email
+    work_email
+    markup
     contractor_rate {
       id
       rate
     }
+    contract_id
     gpt_persona
     start_date
     end_date
