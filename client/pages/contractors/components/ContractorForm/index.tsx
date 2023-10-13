@@ -24,7 +24,9 @@ import { PAYMENT_METHODS } from 'consts';
 
 import createContractorMutation from './queries/createContractor.gql';
 import updateContractorMutation from './queries/updateContractor.gql';
+
 import createPaymentInfoMutation from './queries/createPaymentInfo.gql';
+import updatePaymentInfoMutation from './queries/updatePaymentInfo.gql';
 
 interface ContractorFormPageProps {
   defaultValues?: any;
@@ -48,11 +50,17 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   });
 
   const [updateContractor] = useMutation(updateContractorMutation, {
-    refetchQueries: ['contractors', 'contractor', 'projects']
+    // refetchQueries: ['contractors', 'contractor', 'projects']
+  });
+
+  const [updatePaymentInfo] = useMutation(updatePaymentInfoMutation, {
+    refetchQueries: ['contractors', 'contractor']
   });
 
   const toast = useRef<any>(null);
   const router = useRouter();
+
+  console.log(defaultValues);
 
   return (
     <>
@@ -93,18 +101,25 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   );
 
   function PaymentTemplate({ formHook }) {
-    const selectedPayment = formHook.watch('method');
+    const selectedPayment = formHook.watch('payment_info.method');
 
     return (
       <>
         <InputDropdown
-          formHook={formHook}
           filter
+          isRequired
+          formHook={formHook}
           placeholder="Payment method"
           label="Payment Method"
-          name="method"
+          name="payment_info.method"
+          onChange={() => {
+            formHook.setValue('payment_info.swift', '');
+            formHook.setValue('payment_info.swift_iban', '');
+            formHook.setValue('payment_info.ach_routing', '');
+            formHook.setValue('payment_info.ach_account', '');
+            formHook.setValue('payment_info.usdt_wallet', '');
+          }}
           options={PAYMENT_METHODS}
-          isRequired
         />
         <PaymentInfoTemplate formHook={formHook} selectedPayment={selectedPayment} />
       </>
@@ -116,8 +131,18 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
       case 'swift':
         return (
           <>
-            <InputText formHook={formHook} label="SWIFT / BIC" name="swift" isRequired />
-            <InputText formHook={formHook} label="IBAN / Account Number" name="swift_iban" />
+            <InputText
+              isRequired
+              formHook={formHook}
+              label="SWIFT / BIC"
+              name="payment_info.swift"
+            />
+            <InputText
+              isRequired
+              formHook={formHook}
+              label="IBAN / Account Number"
+              name="payment_info.swift_iban"
+            />
           </>
         );
 
@@ -125,17 +150,29 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
         return (
           <>
             <InputText
+              isRequired
               formHook={formHook}
               label="ACH Routing Number"
-              name="ach_routing"
-              isRequired
+              name="payment_info.ach_routing"
             />
-            <InputText formHook={formHook} label="Account Number" name="ach_account" />
+            <InputText
+              isRequired
+              formHook={formHook}
+              label="Account Number"
+              name="payment_info.ach_account"
+            />
           </>
         );
 
       case 'usdt':
-        return <InputText formHook={formHook} label="Wallet Address" name="usdt_wallet" />;
+        return (
+          <InputText
+            isRequired
+            formHook={formHook}
+            label="Wallet Address"
+            name="payment_info.usdt_wallet"
+          />
+        );
 
       default:
         return null;
@@ -157,8 +194,6 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   }
 
   async function onSubmit(data) {
-    const { method, swift, swift_iban, ach_routing, ach_account, usdt_wallet } = data;
-
     return new Promise(async resolve => {
       try {
         if (isEditing) {
@@ -168,6 +203,13 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
               rate: data.contractor_rate.rate,
               rate_id: data.contractor_rate.id,
               userId: dragonUser?.id
+            }
+          });
+
+          await updatePaymentInfo({
+            variables: {
+              ...data.payment_info,
+              id: defaultValues.payment_info.id
             }
           });
         } else {
@@ -183,13 +225,8 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
 
           await createPaymentInfo({
             variables: {
-              contractorId,
-              method,
-              swift,
-              swift_iban,
-              ach_routing,
-              ach_account,
-              usdt_wallet
+              ...data.payment_info,
+              contractorId
             }
           });
         }
