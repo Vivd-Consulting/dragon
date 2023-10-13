@@ -8,9 +8,12 @@ import { Role } from 'types/roles';
 import { Row, Column } from 'components/Group';
 
 import TaskList from './components/TaskList';
+import TaskCardView from './components/TaskCardView';
 
 export default function Tasks() {
   const router = useRouter();
+
+  // TOOD: Add toggle to change views
 
   return (
     <Column gap="4" fullWidth>
@@ -30,7 +33,8 @@ export default function Tasks() {
           </Column>
         }
       >
-        <TaskList />
+        {/* <TaskList /> */}
+        <TaskCardView />
       </Card>
     </Column>
   );

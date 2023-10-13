@@ -19,6 +19,8 @@
     min-width: 100%
     min-height: 100%
     background-color: var(--surface-ground)
+    width: fit-content
+    height: fit-content
 
 .cardImage
   max-width: 100%
@@ -35,12 +37,12 @@
 
 .entire-page-grid
   display: grid
-  grid-template-rows: consts.$banner_height 100vh
+  grid-template-rows: consts.$banner_height calc(100vh - consts.$banner_height)
 
   @media screen and (min-width: consts.$smallLaptop)
-    grid-template-rows: 0px 100vh
+    grid-template-rows: 0px calc(100vh - consts.$banner_height)
     transition: grid-template-rows 0.6s cubic-bezier(.05,.74,.2,.99)
 
   @media screen and (max-width: consts.$smallLaptop)
-    grid-template-rows: consts.$banner_height 100vh
+    grid-template-rows: consts.$banner_height calc(100vh - consts.$banner_height)
     transition: grid-template-rows 0.6s cubic-bezier(.05,.74,.2,.99)
