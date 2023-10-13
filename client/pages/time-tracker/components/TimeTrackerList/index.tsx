@@ -94,8 +94,6 @@ export default function TimeTrackerList() {
       }))
       .value();
 
-    console.log(timers);
-
     totalRecords = timers.length;
   }
 

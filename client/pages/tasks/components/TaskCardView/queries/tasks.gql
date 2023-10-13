@@ -1,0 +1,13 @@
+query tasks {
+  task {
+    id
+    title
+    description
+    status
+    task_assignees {
+      contractor {
+        name
+      }
+    }
+  }
+}
