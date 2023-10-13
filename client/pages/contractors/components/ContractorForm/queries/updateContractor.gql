@@ -1,8 +1,14 @@
 mutation updateContractor(
   $id: Int!
   $contract_id: Int
-  $name: String
-  $location: String
+  $first_name: String!
+  $last_name: String!
+  $country: String!
+  $city: String!
+  $address: String!
+  $post_code: String!
+  $personal_email: String!
+  $work_email: String!
   $rate_id: Int
   $rate: float8
   $markup: float8
@@ -12,12 +18,17 @@ mutation updateContractor(
 ) {
   update_contractor(
     _set: {
-      name: $name
+      first_name: $first_name
+      last_name: $last_name
+      country: $country
+      city: $city
+      address: $address
+      post_code: $post_code
+      personal_email: $personal_email
+      work_email: $work_email
       contract_id: $contract_id
-      location: $location
       rate_id: $rate_id
       markup: $markup
-      invoice: $invoice
       gpt_persona: $gpt_persona
       start_date: $start_date
       end_date: $end_date

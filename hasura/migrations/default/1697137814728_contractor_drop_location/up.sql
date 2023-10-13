@@ -1,0 +1,1 @@
+ALTER TABLE contractor DROP COLUMN location;

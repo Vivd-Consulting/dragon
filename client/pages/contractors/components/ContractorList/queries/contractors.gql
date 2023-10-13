@@ -7,8 +7,14 @@ query contractors(
   contractor(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     id
     contract_id
-    name
-    location
+    first_name
+    last_name
+    country
+    city
+    address
+    post_code
+    personal_email
+    work_email
     gpt_persona
     contractor_rate {
       id
