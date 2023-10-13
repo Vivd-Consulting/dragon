@@ -14,7 +14,6 @@ import {
   MouseSensor,
   TouchSensor,
   Modifiers,
-  useDroppable,
   UniqueIdentifier,
   useSensors,
   useSensor,
@@ -34,10 +33,9 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import { createRange } from './createRange';
-import { coordinateGetter as multipleContainersCoordinateGetter } from './multipleContainersKeyboardCoordinates';
-
-import { Item, Container, ContainerProps } from './components';
+import { coordinateGetter as multipleContainersCoordinateGetter } from './coordinateGetter';
+import { Item } from './Item';
+import { Container, ContainerProps } from './Container';
 
 const animateLayoutChanges: AnimateLayoutChanges = args =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -133,7 +131,6 @@ interface Props {
 
 export const TRASH_ID = 'void';
 const PLACEHOLDER_ID = 'placeholder';
-const empty: UniqueIdentifier[] = [];
 
 const columnNameMapping = {
   todo: 'To Do',
@@ -145,7 +142,6 @@ const columnNameMapping = {
 
 export function MultipleContainers({
   adjustScale = false,
-  itemCount = 3,
   cancelDrop,
   columns,
   handle = false,
@@ -158,7 +154,6 @@ export function MultipleContainers({
   modifiers,
   renderItem,
   strategy = verticalListSortingStrategy,
-  trashable = false,
   vertical = false,
   scrollable
 }: Props) {
