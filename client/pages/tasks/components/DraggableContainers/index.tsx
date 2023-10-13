@@ -1,10 +1,48 @@
 import React from 'react';
 import type { CancelDrop, UniqueIdentifier } from '@dnd-kit/core';
 import { rectSortingStrategy } from '@dnd-kit/sortable';
+import { useQuery } from '@apollo/client';
 
 import { MultipleContainers, TRASH_ID } from './MultipleContainers';
 
-export const BasicSetup = () => <MultipleContainers />;
+import tasksQuery from './queries/tasks.gql';
+
+export const BasicSetup = () => {
+  const { data, loading } = useQuery(tasksQuery);
+  const tasks = data?.task || [];
+
+  console.log(tasks);
+
+  if (loading) {
+    return null;
+  }
+
+  let groups = {
+    todo: [],
+    grooming: [],
+    in_progress: [],
+    in_review: [],
+    done: []
+  };
+
+  // Group tasks by status
+  const groupedTasks = tasks.reduce((acc, task) => {
+    const { status } = task;
+
+    if (!acc[status]) {
+      acc[status] = [];
+    }
+    acc[status].push(task.title);
+    return acc;
+  }, {});
+
+  groups = {
+    ...groups,
+    ...groupedTasks
+  };
+
+  return <MultipleContainers items={groups} />;
+};
 
 export const DragHandle = () => <MultipleContainers handle />;
 

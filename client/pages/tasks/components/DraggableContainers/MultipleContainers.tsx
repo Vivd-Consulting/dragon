@@ -135,6 +135,14 @@ export const TRASH_ID = 'void';
 const PLACEHOLDER_ID = 'placeholder';
 const empty: UniqueIdentifier[] = [];
 
+const columnNameMapping = {
+  todo: 'To Do',
+  grooming: 'Grooming',
+  in_progress: 'In Progress',
+  in_review: 'In Review',
+  done: 'Done'
+};
+
 export function MultipleContainers({
   adjustScale = false,
   itemCount = 3,
@@ -154,15 +162,7 @@ export function MultipleContainers({
   vertical = false,
   scrollable
 }: Props) {
-  const [items, setItems] = useState<Items>(
-    () =>
-      initialItems ?? {
-        A: createRange(itemCount, index => `A${index + 1}`),
-        B: createRange(itemCount, index => `B${index + 1}`),
-        C: createRange(itemCount, index => `C${index + 1}`),
-        D: createRange(itemCount, index => `D${index + 1}`)
-      }
-  );
+  const [items, setItems] = useState<Items | any>(initialItems);
   const [containers, setContainers] = useState(Object.keys(items) as UniqueIdentifier[]);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const lastOverId = useRef<UniqueIdentifier | null>(null);
@@ -427,7 +427,7 @@ export function MultipleContainers({
             <DroppableContainer
               key={containerId}
               id={containerId}
-              label={minimal ? undefined : `Column ${containerId}`}
+              label={minimal ? undefined : columnNameMapping[containerId]}
               columns={columns}
               items={items[containerId]}
               scrollable={scrollable}
@@ -455,17 +455,6 @@ export function MultipleContainers({
               </SortableContext>
             </DroppableContainer>
           ))}
-          {minimal ? undefined : (
-            <DroppableContainer
-              id={PLACEHOLDER_ID}
-              disabled={isSortingContainer}
-              items={empty}
-              onClick={handleAddColumn}
-              placeholder
-            >
-              + Add column
-            </DroppableContainer>
-          )}
         </SortableContext>
       </div>
       {createPortal(
@@ -478,7 +467,6 @@ export function MultipleContainers({
         </DragOverlay>,
         document.body
       )}
-      {trashable && activeId && !containers.includes(activeId) ? <Trash id={TRASH_ID} /> : null}
     </DndContext>
   );
 
@@ -563,46 +551,19 @@ export function MultipleContainers({
 }
 
 function getColor(id: UniqueIdentifier) {
+  // This won't work, we need to pass the whole task, not just the title
   switch (String(id)[0]) {
-    case 'A':
+    case 'todo':
       return '#7193f1';
-    case 'B':
+    case 'in_progress':
       return '#ffda6c';
-    case 'C':
+    case 'in_review':
       return '#00bcd4';
-    case 'D':
+    case 'done':
       return '#ef769f';
   }
 
   return undefined;
-}
-
-function Trash({ id }: { id: UniqueIdentifier }) {
-  const { setNodeRef, isOver } = useDroppable({
-    id
-  });
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'fixed',
-        left: '50%',
-        marginLeft: -150,
-        bottom: 20,
-        width: 300,
-        height: 60,
-        borderRadius: 5,
-        border: '1px solid',
-        borderColor: isOver ? 'red' : '#DDD'
-      }}
-    >
-      Drop here to delete
-    </div>
-  );
 }
 
 interface SortableItemProps {

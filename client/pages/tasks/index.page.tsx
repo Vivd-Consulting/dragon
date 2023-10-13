@@ -10,7 +10,7 @@ import { Row, Column } from 'components/Group';
 import TaskList from './components/TaskList';
 
 // import { DragDropContext } from 'react-beautiful-dnd';
-import { ManyItems } from './components/DraggableContainers';
+import { BasicSetup } from './components/DraggableContainers';
 
 export default function Tasks() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function Tasks() {
         }
       >
         {/* <TaskList /> */}
-        <ManyItems />
+        <BasicSetup />
       </Card>
     </Column>
   );
