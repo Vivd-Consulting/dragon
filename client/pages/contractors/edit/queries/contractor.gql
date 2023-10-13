@@ -14,6 +14,7 @@ query contractor($id: Int!) {
       id
       rate
     }
+    contract_id
     gpt_persona
     start_date
     end_date

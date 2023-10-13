@@ -47,19 +47,16 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   const toast = useRef<any>(null);
   const router = useRouter();
 
-  const firstName = formHook.watch('first_name') || 'f';
-  const lastName = formHook.watch('last_name') || 'last';
-
   return (
     <>
       <Toast ref={toast} />
 
       <HookForm formHook={formHook} onSubmit={onSubmit} data-cy="contractor-form">
-        <InputText label="First Name" name="first_name" isRequired autoFocus />
-
-        <InputText label="Last Name" name="last_name" isRequired />
+        <InputText label="First Name" name="first_name" onBlur={onNameBlur} isRequired autoFocus />
+        <InputText label="Last Name" name="last_name" onBlur={onNameBlur} isRequired />
 
         <InputDropdown
+          filter
           placeholder="Country"
           label="Country"
           name="country"
@@ -68,19 +65,10 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
         />
 
         <InputText label="City" name="city" isRequired />
-
-        <InputTextArea label="Address" name="address" isRequired />
-
+        <InputText label="Address" name="address" isRequired />
         <InputText label="Post Code" name="post_code" isRequired />
-
         <InputText label="Personal Email" name="personal_email" isRequired />
-
-        <InputText
-          label="Work Email"
-          name="work_email"
-          value={`${firstName[0]?.toLowerCase()}${lastName?.toLowerCase()}@vivd.ca`}
-          isRequired
-        />
+        <InputText label="Work Email" name="work_email" isRequired />
 
         <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
         <InputNumber label="Markup" name="markup" isRequired />
@@ -93,6 +81,20 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
       </HookForm>
     </>
   );
+
+  function onNameBlur() {
+    const firstName = formHook.getValues('first_name');
+    const lastName = formHook.getValues('last_name');
+
+    if (formHook.getValues('work_email') || !firstName || !lastName) {
+      return;
+    }
+
+    formHook.setValue(
+      'work_email',
+      `${firstName[0].toLowerCase()}${lastName.toLowerCase()}@vivd.ca`
+    );
+  }
 
   async function onSubmit(data) {
     return new Promise(async resolve => {

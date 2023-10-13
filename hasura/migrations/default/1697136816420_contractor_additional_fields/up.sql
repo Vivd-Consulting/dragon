@@ -1,6 +1,17 @@
-ALTER TABLE contractor ADD COLUMN country text NOT NULL;
-ALTER TABLE contractor ADD COLUMN city text NOT NULL;
-ALTER TABLE contractor ADD COLUMN address text NOT NULL;
-ALTER TABLE contractor ADD COLUMN post_code text NOT NULL;
-ALTER TABLE contractor ADD COLUMN personal_email text NOT NULL UNIQUE;
-ALTER TABLE contractor ADD COLUMN work_email text NOT NULL UNIQUE;
+ALTER TABLE contractor ADD COLUMN country text NOT NULL DEFAULT '';
+ALTER TABLE contractor ALTER COLUMN country DROP DEFAULT;
+
+ALTER TABLE contractor ADD COLUMN city text NOT NULL NOT NULL DEFAULT '';
+ALTER TABLE contractor ALTER COLUMN city DROP DEFAULT;
+
+ALTER TABLE contractor ADD COLUMN address text NOT NULL NOT NULL DEFAULT '';
+ALTER TABLE contractor ALTER COLUMN address DROP DEFAULT;
+
+ALTER TABLE contractor ADD COLUMN post_code text NOT NULL NOT NULL DEFAULT '';
+ALTER TABLE contractor ALTER COLUMN post_code DROP DEFAULT;
+
+ALTER TABLE contractor ADD COLUMN personal_email text NOT NULL UNIQUE NOT NULL DEFAULT md5(random()::text);
+ALTER TABLE contractor ALTER COLUMN personal_email DROP DEFAULT;
+
+ALTER TABLE contractor ADD COLUMN work_email text NOT NULL UNIQUE NOT NULL DEFAULT md5(random()::text);
+ALTER TABLE contractor ALTER COLUMN work_email DROP DEFAULT;

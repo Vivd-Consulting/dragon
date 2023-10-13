@@ -29,7 +29,6 @@ mutation updateContractor(
       contract_id: $contract_id
       rate_id: $rate_id
       markup: $markup
-      invoice: $invoice
       gpt_persona: $gpt_persona
       start_date: $start_date
       end_date: $end_date
