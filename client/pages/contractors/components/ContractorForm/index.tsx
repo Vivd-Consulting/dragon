@@ -15,7 +15,8 @@ import {
   InputNumber,
   UploadFileInput,
   InputDropdown,
-  HookForm
+  HookForm,
+  HookRow
 } from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
@@ -67,26 +68,42 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
       <Toast ref={toast} />
 
       <HookForm formHook={formHook} onSubmit={onSubmit} data-cy="contractor-form">
-        <InputText label="First Name" name="first_name" onBlur={onNameBlur} isRequired autoFocus />
-        <InputText label="Last Name" name="last_name" onBlur={onNameBlur} isRequired />
+        <HookRow fullWidth>
+          <InputText
+            label="First Name"
+            name="first_name"
+            onBlur={onNameBlur}
+            isRequired
+            autoFocus
+          />
+          <InputText label="Last Name" name="last_name" onBlur={onNameBlur} isRequired />
+        </HookRow>
 
-        <InputDropdown
-          filter
-          placeholder="Country"
-          label="Country"
-          name="country"
-          options={countries}
-          isRequired
-        />
+        <HookRow fullWidth>
+          <InputDropdown
+            filter
+            placeholder="Country"
+            label="Country"
+            name="country"
+            options={countries}
+            isRequired
+          />
+          <InputText label="City" name="city" isRequired />
+        </HookRow>
+        <HookRow fullWidth>
+          <InputText label="Address" name="address" isRequired />
+          <InputText label="Post Code" name="post_code" isRequired />
+        </HookRow>
 
-        <InputText label="City" name="city" isRequired />
-        <InputText label="Address" name="address" isRequired />
-        <InputText label="Post Code" name="post_code" isRequired />
-        <InputText label="Personal Email" name="personal_email" isRequired />
-        <InputText label="Work Email" name="work_email" isRequired />
+        <HookRow fullWidth>
+          <InputText label="Personal Email" name="personal_email" isRequired />
+          <InputText label="Work Email" name="work_email" isRequired />
+        </HookRow>
 
-        <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
-        <InputNumber label="Markup" name="markup" isRequired />
+        <HookRow fullWidth>
+          <InputNumber label="Rate" name="contractor_rate.rate" isRequired />
+          <InputNumber label="Markup" name="markup" isRequired />
+        </HookRow>
 
         <PaymentTemplate formHook={formHook} />
 
