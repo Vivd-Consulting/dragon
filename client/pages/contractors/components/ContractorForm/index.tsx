@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation } from '@apollo/client';
@@ -23,6 +24,7 @@ import { PAYMENT_METHODS } from 'consts';
 
 import createContractorMutation from './queries/createContractor.gql';
 import updateContractorMutation from './queries/updateContractor.gql';
+import createPaymentInfoMutation from './queries/createPaymentInfo.gql';
 
 interface ContractorFormPageProps {
   defaultValues?: any;
@@ -38,6 +40,10 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   const formHook = useForm({ defaultValues });
 
   const [createContractor] = useMutation(createContractorMutation, {
+    refetchQueries: ['contractors', 'projects']
+  });
+
+  const [createPaymentInfo] = useMutation(createPaymentInfoMutation, {
     refetchQueries: ['contractors', 'projects']
   });
 
@@ -151,8 +157,7 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
   }
 
   async function onSubmit(data) {
-    console.log(data);
-    return;
+    const { method, swift, swift_iban, ach_routing, ach_account, usdt_wallet } = data;
 
     return new Promise(async resolve => {
       try {
@@ -166,11 +171,25 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
             }
           });
         } else {
-          await createContractor({
+          const newContractor = await createContractor({
             variables: {
               ...data,
               rate: data.contractor_rate.rate,
               userId: dragonUser?.id
+            }
+          });
+
+          const contractorId = _.get(newContractor, 'data.insert_contractor_one.id');
+
+          await createPaymentInfo({
+            variables: {
+              contractorId,
+              method,
+              swift,
+              swift_iban,
+              ach_routing,
+              ach_account,
+              usdt_wallet
             }
           });
         }
