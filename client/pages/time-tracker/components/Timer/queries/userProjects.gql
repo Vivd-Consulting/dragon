@@ -9,7 +9,7 @@ query userProjects(
     name
     contractor {
       id
-      name
+      first_name
       projects(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
         project {
           id

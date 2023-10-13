@@ -92,7 +92,7 @@ export default function InvoiceList() {
               <>
                 {contractors.map(({ contractor }) => (
                   <Row key={contractor.id}>
-                    <span>{contractor.name}</span>
+                    <span>{contractor.first_name}</span>
                   </Row>
                 ))}
               </>
