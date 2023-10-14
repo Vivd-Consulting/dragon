@@ -1,7 +1,7 @@
 # API IAM Role
 data "aws_ses_domain_identity" "main" {
   count  = var.tf_env == "prd" ? 1 : 0
-  domain = trimprefix(var.domain, "${var.tf_env}.")
+  domain = "dragon.vivd.ca"
 }
 
 resource "aws_iam_role" "api_service" {

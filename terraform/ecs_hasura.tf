@@ -171,7 +171,7 @@ resource "aws_security_group_rule" "hasura_ecs_lb" {
 }
 
 resource "aws_lb_target_group" "hasura" {
-  name = "${var.project}-${var.tf_env}-hasura"
+  name                 = "${var.project}-${var.tf_env}-hasura"
   port                 = "8080"
   protocol             = "HTTP"
   protocol_version     = "HTTP2"
@@ -206,7 +206,7 @@ resource "aws_lb_listener_rule" "hasura" {
 
 # Service autoscaling.
 resource "aws_appautoscaling_target" "hasura" {
-  min_capacity       = var.tf_env == "prd" ? 2 : 1
+  min_capacity       = 1
   max_capacity       = 4
   resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.hasura.name}"
   scalable_dimension = "ecs:service:DesiredCount"

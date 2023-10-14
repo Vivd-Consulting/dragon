@@ -18,12 +18,9 @@ resource "aws_ecs_service" "api" {
     capacity_provider = aws_ecs_capacity_provider.ecs_ci.name
   }
 
-  dynamic "ordered_placement_strategy" {
-    for_each = local.ordered_placement_strategies
-    content {
-      type  = ordered_placement_strategy.value["type"]
-      field = ordered_placement_strategy.value["field"]
-    }
+  ordered_placement_strategy {
+    field = "cpu"
+    type  = "binpack"
   }
 
   load_balancer {
@@ -346,7 +343,7 @@ resource "aws_lb_listener_rule" "apollo" {
 
 # Service autoscaling.
 resource "aws_appautoscaling_target" "api" {
-  min_capacity       = var.tf_env == "prd" ? 2 : 1
+  min_capacity       = 1
   max_capacity       = 4
   resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.api.name}"
   scalable_dimension = "ecs:service:DesiredCount"
