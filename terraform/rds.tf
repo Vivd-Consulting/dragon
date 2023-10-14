@@ -30,7 +30,7 @@ module "database" {
   backup_retention_period = var.tf_env == "prd" ? 14 : 7
   apply_immediately       = true
 
-  multi_az               = var.tf_env == "prd" ? true : false
+  multi_az               = false
   db_subnet_group_name   = module.vpc.database_subnet_group
   vpc_security_group_ids = [aws_security_group.database.id]
 

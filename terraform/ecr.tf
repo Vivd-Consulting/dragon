@@ -21,7 +21,7 @@ EOT
 
 data "aws_ecr_repository" "api" {
   count = var.tf_env == "prd" ? 1 : 0
-  name  = "${var.project}-api"
+  name  = "vms-api"
 }
 
 resource "aws_ecr_repository" "api" {
@@ -37,7 +37,7 @@ resource "aws_ecr_lifecycle_policy" "api" {
 
 data "aws_ecr_repository" "hasura" {
   count = var.tf_env == "prd" ? 1 : 0
-  name  = "${var.project}-hasura"
+  name  = "vms-hasura"
 }
 
 resource "aws_ecr_repository" "hasura" {

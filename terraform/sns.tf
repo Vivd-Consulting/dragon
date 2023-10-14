@@ -1,7 +1,7 @@
 # Generic SNS topic to send notifications to related to AWS resources or alarms.
 
 data "aws_sns_topic" "aws_notifications" {
-  count = var.tf_env == "prod" ? 1 : 0
+  count = var.tf_env == "prd" ? 1 : 0
   name  = "aws_notifications"
 }
 
