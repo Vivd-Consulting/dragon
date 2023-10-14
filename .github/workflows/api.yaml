@@ -90,6 +90,7 @@ jobs:
 
     env:
       ENVIRONMENT: ${{ github.ref_name == 'main' && 'prd' || 'stg' }}
+      PREFIX: ${{ github.ref_name == 'main' && 'dragon' || 'vms' }}
 
     steps:
       - name: Checkout
@@ -98,9 +99,9 @@ jobs:
       - name: Setup additional vars
         id: setup-vars
         run: |
-          echo "ecs_cluster=vms-$ENVIRONMENT" >> $GITHUB_OUTPUT
-          echo "ecs_service=vms-$ENVIRONMENT-api" >> $GITHUB_OUTPUT
-          echo "ECS_TASK_DEFINITION=vms-$ENVIRONMENT-api" >> $GITHUB_ENV
+          echo "ecs_cluster=$PREFIX-$ENVIRONMENT" >> $GITHUB_OUTPUT
+          echo "ecs_service=$PREFIX-$ENVIRONMENT-api" >> $GITHUB_OUTPUT
+          echo "ECS_TASK_DEFINITION=$PREFIX-$ENVIRONMENT-api" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2.2.0
