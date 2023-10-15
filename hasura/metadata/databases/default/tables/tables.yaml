@@ -1,6 +1,7 @@
 - "!include accounting_account.yaml"
 - "!include accounting_bank.yaml"
 - "!include accounting_category.yaml"
+- "!include accounting_payment_info.yaml"
 - "!include accounting_personal_finance_category.yaml"
 - "!include accounting_transactions.yaml"
 - "!include accounting_transactions_recommendations.yaml"
