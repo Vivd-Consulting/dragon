@@ -15,7 +15,8 @@ import {
   InputNumber,
   UploadFileInput,
   InputDropdown,
-  HookForm
+  HookForm,
+  UploadImageInput
 } from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
@@ -52,6 +53,7 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
       <Toast ref={toast} />
 
       <HookForm formHook={formHook} onSubmit={onSubmit} data-cy="contractor-form">
+        <UploadImageInput label="Profile Image" name="image_id" />
         <InputText label="First Name" name="first_name" onBlur={onNameBlur} isRequired autoFocus />
         <InputText label="Last Name" name="last_name" onBlur={onNameBlur} isRequired />
 
