@@ -27,6 +27,13 @@ array_relationships:
         table:
           name: contractor
           schema: public
+  - name: projects
+    using:
+      foreign_key_constraint_on:
+        column: logo_id
+        table:
+          name: project
+          schema: public
   - name: contractorsByImageId
     using:
       foreign_key_constraint_on:

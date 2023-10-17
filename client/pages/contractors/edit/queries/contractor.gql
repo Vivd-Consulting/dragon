@@ -15,6 +15,15 @@ query contractor($id: Int!) {
       id
       rate
     }
+    payment_info {
+      id
+      ach_account
+      ach_routing
+      method
+      swift
+      swift_iban
+      usdt_wallet
+    }
     contract_id
     gpt_persona
     start_date
