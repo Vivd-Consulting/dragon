@@ -1,4 +1,5 @@
 mutation createContractor(
+  $image_id: Int
   $first_name: String!
   $last_name: String!
   $country: String!
@@ -16,6 +17,7 @@ mutation createContractor(
 ) {
   insert_contractor_one(
     object: {
+      image_id: $image_id
       first_name: $first_name
       last_name: $last_name
       country: $country
