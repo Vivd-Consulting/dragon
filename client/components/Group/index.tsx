@@ -4,7 +4,7 @@ import { GenericProps } from '../index';
 
 import styles from './style.module.sass';
 
-interface GroupProps extends GenericProps {
+export interface GroupProps extends GenericProps {
   direction?: 'row' | 'column';
   gap?: '0' | '1' | '2' | '3' | '4' | '5';
   fullWidth?: boolean;
