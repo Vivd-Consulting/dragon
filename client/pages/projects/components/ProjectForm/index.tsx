@@ -4,7 +4,14 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import { Toast } from 'primereact/toast';
 
-import { Form, FormFooterButtons, InputText, InputTextArea, InputDropdown } from 'components/Form';
+import {
+  Form,
+  FormFooterButtons,
+  InputText,
+  InputTextArea,
+  InputDropdown,
+  UploadImageInput
+} from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
 
@@ -50,6 +57,7 @@ export default function ProjectForm({ defaultValues }: ProjectFormPageProps) {
       <Toast ref={toast} />
 
       <Form defaultValues={defaultValues} onSubmit={onSubmit} data-cy="project-form">
+        <UploadImageInput label="Logo" name="logo_id" />
         <InputDropdown
           placeholder="Select client"
           label="Client"
