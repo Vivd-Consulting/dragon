@@ -16,6 +16,9 @@ query contractors(
     personal_email
     work_email
     gpt_persona
+    image {
+      key
+    }
     contractor_rate {
       id
       rate

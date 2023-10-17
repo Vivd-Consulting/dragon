@@ -14,6 +14,8 @@ import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
+import { S3Image } from 'components/Image';
+
 import contractorsQuery from './queries/contractors.gql';
 import archiveContractorMutation from './queries/archiveContractor.gql';
 
@@ -65,6 +67,13 @@ export default function ContractorList() {
         emptyMessage="No Contractors found."
         data-cy="contractors-table"
       >
+        <Column
+          header="Profile Image"
+          body={({ image }) => <S3Image s3Key={image?.key} className="logo-img" />}
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
+
         <Column
           header="Full Name"
           body={({ first_name, last_name }) => <span>{`${first_name} ${last_name}`}</span>}

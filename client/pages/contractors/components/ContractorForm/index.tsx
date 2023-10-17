@@ -16,7 +16,8 @@ import {
   UploadFileInput,
   InputDropdown,
   HookForm,
-  HookRow
+  HookRow,
+  UploadImageInput
 } from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
@@ -67,6 +68,7 @@ export default function ContractorForm({ defaultValues }: ContractorFormPageProp
 
       <HookForm formHook={formHook} onSubmit={onSubmit} data-cy="contractor-form">
         <HookRow fullWidth>
+          <UploadImageInput label="Profile Image" name="image_id" />
           <InputText
             label="First Name"
             name="first_name"
