@@ -11,6 +11,9 @@ query projects(
     github_repo_name
     description
     gpt_persona
+    logo {
+      key
+    }
     client {
       name
     }

@@ -1,6 +1,7 @@
 mutation createProject(
   $name: String!
   $client_id: Int!
+  $logo_id: Int
   $github_repo_org: String
   $github_repo_name: String
   $description: String
@@ -10,6 +11,7 @@ mutation createProject(
     object: {
       name: $name
       client_id: $client_id
+      logo_id: $logo_id
       github_repo_org: $github_repo_org
       github_repo_name: $github_repo_name
       description: $description

@@ -26,3 +26,10 @@ export const TASK_PRIORITY = [
 ] as const;
 
 export const TASK_STATUS = ['Backlog', 'Grooming', 'Todo', 'In Progress', 'In Review', 'Complete'];
+
+export const PAYMENT_METHODS = [
+  { label: 'SWIFT', value: 'swift' },
+  { label: 'ACH', value: 'ach' },
+  { label: 'E-Transfer', value: 'e-transfer' },
+  { label: 'USDT', value: 'usdt' }
+];
