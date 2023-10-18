@@ -1,0 +1,24 @@
+mutation createPaymentInfo(
+  $contractorId: Int!
+  $method: String!
+  $swift: String
+  $swift_iban: String
+  $ach_routing: String
+  $ach_account: String
+  $usdt_wallet: String
+) {
+  insert_accounting_payment_info_one(
+    object: {
+      contractor_id: $contractorId
+      method: $method
+      swift: $swift
+      swift_iban: $swift_iban
+      ach_routing: $ach_routing
+      ach_account: $ach_account
+      usdt_wallet: $usdt_wallet
+    }
+  ) {
+    id
+    method
+  }
+}

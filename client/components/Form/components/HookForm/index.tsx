@@ -2,6 +2,8 @@ import { useForm, UseFormReturn } from 'react-hook-form';
 import React, { useMemo, useCallback } from 'react';
 import cx from 'clsx';
 
+import { Row, Column, GroupProps } from 'components/Group';
+
 type HookFormProps = {
   formHook: UseFormReturn;
   onSubmit?: (data: any) => void;
@@ -21,7 +23,7 @@ export function HookForm({
 }: HookFormProps) {
   const { handleSubmit, formState, reset } = formHook;
 
-  // Inject the formHook into any child components
+  // Inject the formHook into any child components, and recursively pass it down to their children
   const childrenWithProps = useMemo(
     () =>
       React.Children.map(children, child =>
@@ -56,6 +58,40 @@ export function HookForm({
 
     return onSubmit?.(data);
   }
+}
+
+type HookGroupProps = {
+  children: any; // TODO: React.ReactNode;
+} & GroupProps;
+
+export function HookRow({ formHook, children, ...props }: HookGroupProps) {
+  const { formState } = formHook;
+
+  return (
+    <Row {...props}>
+      {React.Children.map(children, child =>
+        React.cloneElement(child, {
+          formHook,
+          disabled: child.props.disabled ?? formState.isSubmitting
+        })
+      )}
+    </Row>
+  );
+}
+
+export function HookColumn({ formHook, children, ...props }: HookGroupProps) {
+  const { formState } = formHook;
+
+  return (
+    <Column {...props}>
+      {React.Children.map(children, child =>
+        React.cloneElement(child, {
+          formHook,
+          disabled: child.props.disabled ?? formState.isSubmitting
+        })
+      )}
+    </Column>
+  );
 }
 
 type FormProps = {
