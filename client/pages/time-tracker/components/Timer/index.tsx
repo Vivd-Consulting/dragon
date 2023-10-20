@@ -49,6 +49,7 @@ export default function Timer({ isListViewChecked }) {
   });
 
   const { data: cardViewData } = useQuery(userProjectsQuery, {
+    fetchPolicy: 'no-cache',
     variables: {
       userId,
       where
@@ -125,7 +126,9 @@ export default function Timer({ isListViewChecked }) {
 
           <Column
             header="Logo"
-            body={({ logo }) => <S3Image s3Key={logo?.key} className="logo-img" />}
+            body={({ logo, client }) => (
+              <S3Image s3Key={logo?.key || client?.logo?.key} className="logo-img" />
+            )}
             headerClassName="white-space-nowrap"
             className="white-space-nowrap"
           />
