@@ -80,6 +80,10 @@ export default function ProjectForm({ defaultValues }: ProjectFormPageProps) {
   );
 
   async function onSubmit(data) {
+    if (!data.logo_id) {
+      data.logo_id = undefined;
+    }
+
     return new Promise(async resolve => {
       try {
         if (isEditing) {
