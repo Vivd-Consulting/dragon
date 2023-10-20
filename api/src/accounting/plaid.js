@@ -149,25 +149,25 @@ async function fetchTransactions({ token, cursor }) {
 
   // Removed transaction ids
   let removed = [];
-  // let hasMore = true;
+  let hasMore = true;
 
   // Iterate through each page of new transaction updates for item
-  // while (hasMore) {
-  const request = {
-    access_token: token,
-    cursor: cursor
-  };
-  const response = await client.transactionsSync(request);
-  const data = response.data;
+  while (hasMore) {
+    const request = {
+      access_token: token,
+      cursor: cursor
+    };
+    const response = await client.transactionsSync(request);
+    const data = response.data;
 
-  // Add this page of results
-  added = added.concat(data.added);
-  modified = modified.concat(data.modified);
-  removed = removed.concat(data.removed);
-  hasMore = data.has_more;
-  // Update cursor to the next cursor
-  cursor = data.next_cursor;
-  // }
+    // Add this page of results
+    added = added.concat(data.added);
+    modified = modified.concat(data.modified);
+    removed = removed.concat(data.removed);
+    hasMore = data.has_more;
+    // Update cursor to the next cursor
+    cursor = data.next_cursor;
+  }
 
   return {
     added,
