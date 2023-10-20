@@ -15,6 +15,8 @@ import { InputTextDebounced } from 'components/Form';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
+import { S3Image } from 'components/Image';
+
 import clientsQuery from '../queries/clients.gql';
 
 import projectsQuery from './queries/projects.gql';
@@ -108,6 +110,13 @@ export default function ProjectList() {
         emptyMessage="No Projects found."
         data-cy="projects-table"
       >
+        <Column
+          field="logo"
+          header="Logo"
+          body={({ logo }) => <S3Image s3Key={logo?.key} className="logo-img" />}
+          headerClassName="white-space-nowrap"
+          className="white-space-nowrap"
+        />
         <Column
           field="client.name"
           header="Client Name"

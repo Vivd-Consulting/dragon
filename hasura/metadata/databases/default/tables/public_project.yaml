@@ -5,6 +5,18 @@ object_relationships:
   - name: client
     using:
       foreign_key_constraint_on: client_id
+  - name: logo
+    using:
+      manual_configuration:
+        column_mapping:
+          logo_id: id
+        insertion_order: null
+        remote_table:
+          name: media
+          schema: public
+  - name: medium
+    using:
+      foreign_key_constraint_on: logo_id
 array_relationships:
   - name: budgets
     using:

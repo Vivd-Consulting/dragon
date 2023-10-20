@@ -8,9 +8,28 @@ object_relationships:
   - name: contractor_rate
     using:
       foreign_key_constraint_on: rate_id
+  - name: image
+    using:
+      manual_configuration:
+        column_mapping:
+          image_id: id
+        insertion_order: null
+        remote_table:
+          name: media
+          schema: public
   - name: medium
     using:
       foreign_key_constraint_on: contract_id
+  - name: payment_info
+    using:
+      foreign_key_constraint_on:
+        column: contractor_id
+        table:
+          name: payment_info
+          schema: accounting
+  - name: mediumByImageId
+    using:
+      foreign_key_constraint_on: image_id
 array_relationships:
   - name: dragon_users
     using:
