@@ -1,5 +1,6 @@
 mutation updateContractor(
   $id: Int!
+  $image_id: Int
   $contract_id: Int
   $first_name: String!
   $last_name: String!
@@ -18,6 +19,7 @@ mutation updateContractor(
 ) {
   update_contractor(
     _set: {
+      image_id: $image_id
       first_name: $first_name
       last_name: $last_name
       country: $country
