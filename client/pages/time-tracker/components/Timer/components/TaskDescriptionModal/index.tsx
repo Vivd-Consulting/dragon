@@ -8,7 +8,7 @@ import { FormFooterButtons, Form, InputTextArea } from 'components/Form';
 
 import updateTimerDecriptionMutation from './queries/updateTimerDescription.gql';
 
-export default function TaskDescriptionModal({ timerId, visible, setVisible }) {
+export default function TaskDescriptionModal({ timerId, resetTimerId }) {
   const [updateTimerDescription] = useMutation(updateTimerDecriptionMutation, {
     refetchQueries: ['timers']
   });
@@ -21,9 +21,9 @@ export default function TaskDescriptionModal({ timerId, visible, setVisible }) {
 
       <Dialog
         header="Add new time"
-        visible={visible}
+        visible={!!timerId}
         style={{ width: '70vw' }}
-        onHide={() => setVisible(false)}
+        onHide={resetTimerId}
       >
         <Form onSubmit={onSubmit} data-cy="time-description-form">
           <InputTextArea label="Description" name="description" />
@@ -36,7 +36,7 @@ export default function TaskDescriptionModal({ timerId, visible, setVisible }) {
 
   async function onSubmit(data) {
     if (!data.description) {
-      return setVisible(false);
+      return resetTimerId();
     }
 
     return new Promise(async resolve => {
@@ -63,7 +63,7 @@ export default function TaskDescriptionModal({ timerId, visible, setVisible }) {
           life: 3000
         });
       } finally {
-        setVisible(false);
+        resetTimerId();
         resolve(true);
       }
     });

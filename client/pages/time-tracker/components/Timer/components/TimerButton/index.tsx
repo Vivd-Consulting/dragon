@@ -31,8 +31,6 @@ export default function TimerButton({ project, isListViewChecked }) {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
 
-  const [descriptionModalVisible, setDescriptionModalVisible] = useState(false);
-
   const [timerId, setTimerId] = useState<number | null>(null);
   const [timeSinceStart, setTimeSinceStart] = useState(
     project.isActive ? diffSeconds(project.startTime) : 0
@@ -77,11 +75,7 @@ export default function TimerButton({ project, isListViewChecked }) {
             project={project}
           />
         </Row>
-        <TaskDescriptionModal
-          visible={descriptionModalVisible}
-          setVisible={setDescriptionModalVisible}
-          timerId={timerId}
-        />
+        <TaskDescriptionModal timerId={timerId} resetTimerId={() => setTimerId(null)} />
       </>
     );
   } else {
@@ -101,20 +95,13 @@ export default function TimerButton({ project, isListViewChecked }) {
             {project.isActive ? formattedTime : project.name}
           </div>
         </div>
-        <TaskDescriptionModal
-          visible={descriptionModalVisible}
-          setVisible={setDescriptionModalVisible}
-          timerId={timerId}
-        />
+        <TaskDescriptionModal timerId={timerId} resetTimerId={() => setTimerId(null)} />
       </>
     );
   }
 
   async function projectTimerStart(_project) {
     if (_project.isActive) {
-      setDescriptionModalVisible(true);
-      setTimeSinceStart(0);
-
       const newTimer = await stopTimer({
         variables: {
           timerId: _project.timerId,
@@ -126,10 +113,10 @@ export default function TimerButton({ project, isListViewChecked }) {
       const _timerId = _.get(newTimer, 'data.update_project_time.returning[0].id') as number;
 
       setTimerId(_timerId);
-    } else {
-      setTimeSinceStart(0);
 
-      await stopAllTimers({
+      setTimeSinceStart(0);
+    } else {
+      const { data: stoppedTimers } = await stopAllTimers({
         variables: {
           userId,
           endTime: new Date()
@@ -156,14 +143,19 @@ export default function TimerButton({ project, isListViewChecked }) {
           refetchQueries: ['userProjects', 'timers']
         });
       }
+
+      setTimeSinceStart(0);
+
+      const _stoppedTimers = stoppedTimers.update_project_time.returning;
+
+      if (_stoppedTimers.length > 0) {
+        setTimerId(_stoppedTimers[0].id);
+      }
     }
   }
 
   async function projectTimerStop(_project) {
     if (_project.isActive) {
-      setDescriptionModalVisible(true);
-      setTimeSinceStart(0);
-
       const newTimer = await stopTimer({
         variables: {
           timerId: _project.timerId,
@@ -175,6 +167,8 @@ export default function TimerButton({ project, isListViewChecked }) {
       const _timerId = _.get(newTimer, 'data.update_project_time.returning[0].id') as number;
 
       setTimerId(_timerId);
+
+      setTimeSinceStart(0);
     }
   }
 
