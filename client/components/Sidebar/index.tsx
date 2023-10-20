@@ -160,6 +160,7 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
               label="Transactions"
               href="/accounting/transactions"
               onClick={onItemClick}
+              allowedRoles={[Role.Admin]}
             />
           </SidebarGroup>
         </Column>
