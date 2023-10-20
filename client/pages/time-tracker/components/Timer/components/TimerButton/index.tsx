@@ -89,7 +89,10 @@ export default function TimerButton({ project, isListViewChecked }) {
           }
         >
           <div className="flex flex-column align-items-center">
-            <S3Image s3Key={project?.client?.logo?.key} className="logo-img" />
+            <S3Image
+              s3Key={project?.logo?.key || project?.client?.logo?.key}
+              className="logo-img"
+            />
             <span className="text-sm">{project.client.name}</span>
             {project.isActive && <p>{project.name}</p>}
             {project.isActive ? formattedTime : project.name}
