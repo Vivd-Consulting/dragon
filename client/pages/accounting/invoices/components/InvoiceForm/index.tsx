@@ -172,10 +172,12 @@ export default function InvoiceForm({ defaultValues }: InvoiceFormPageProps) {
 
           const invoiceId = _.get(newInvoice, 'data.insert_invoice_one.id') as number;
 
+          const projectTimeIds = data.project_times.map(({ id }) => id);
+
           await addProjectTimes({
             variables: {
               invoiceId,
-              projectTimeIds: data.project_time_ids
+              projectTimeIds
             }
           });
 
