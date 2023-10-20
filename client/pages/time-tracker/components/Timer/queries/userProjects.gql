@@ -14,6 +14,9 @@ query userProjects(
         project {
           id
           name
+          logo {
+            key
+          }
           project_times {
             id
             start_time
@@ -24,9 +27,6 @@ query userProjects(
           }
           client {
             name
-            logo {
-              key
-            }
           }
         }
       }
