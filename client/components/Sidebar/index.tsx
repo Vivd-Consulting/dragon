@@ -78,16 +78,33 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
 
       <div className={styles['sidebar-items-container']}>
         <Column className={styles['sidebar-items']}>
-          <SidebarItem icon="pi pi-home" label="Home" href="/" onClick={onItemClick} />
+          <SidebarItem
+            icon="pi pi-home"
+            label="Home"
+            href="/"
+            onClick={onItemClick}
+            allowedRoles={[Role.Admin]}
+          />
 
           <SidebarGroup
             icon="pi pi-briefcase"
             title="Clients"
             expanded={selectedGroup === 'Clients'}
             setExpanded={setSelectedGroup}
+            allowedRoles={[Role.Admin]}
           >
-            <SidebarItem label="Clients" href="/clients" onClick={onItemClick} />
-            <SidebarItem label="Projects" href="/projects" onClick={onItemClick} />
+            <SidebarItem
+              label="Clients"
+              href="/clients"
+              onClick={onItemClick}
+              allowedRoles={[Role.Admin]}
+            />
+            <SidebarItem
+              label="Projects"
+              href="/projects"
+              onClick={onItemClick}
+              allowedRoles={[Role.Admin]}
+            />
           </SidebarGroup>
 
           <SidebarItem
@@ -95,15 +112,23 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
             label="Contractors"
             href="/contractors"
             onClick={onItemClick}
+            allowedRoles={[Role.Admin]}
           />
 
-          <SidebarItem icon="pi pi-list" label="Tasks" href="/tasks" onClick={onItemClick} />
+          <SidebarItem
+            icon="pi pi-list"
+            label="Tasks"
+            href="/tasks"
+            onClick={onItemClick}
+            allowedRoles={[Role.Admin]}
+          />
 
           <SidebarItem
             icon="pi pi-clock"
             label="Time Tracker"
             href="/time-tracker"
             onClick={onItemClick}
+            allowedRoles={[Role.Admin, Role.Contractor]}
           />
 
           <SidebarGroup
@@ -111,10 +136,26 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
             title="Accounting"
             expanded={selectedGroup === 'Accounting'}
             setExpanded={setSelectedGroup}
+            allowedRoles={[Role.Admin]}
           >
-            <SidebarItem label="Invoices" href="/accounting/invoices" onClick={onItemClick} />
-            <SidebarItem label="Reports" href="/accounting/reports" onClick={onItemClick} />
-            <SidebarItem label="Banks" href="/accounting/banks" onClick={onItemClick} />
+            <SidebarItem
+              label="Invoices"
+              href="/accounting/invoices"
+              onClick={onItemClick}
+              allowedRoles={[Role.Admin]}
+            />
+            <SidebarItem
+              label="Reports"
+              href="/accounting/reports"
+              onClick={onItemClick}
+              allowedRoles={[Role.Admin]}
+            />
+            <SidebarItem
+              label="Banks"
+              href="/accounting/banks"
+              onClick={onItemClick}
+              allowedRoles={[Role.Admin]}
+            />
             <SidebarItem
               label="Transactions"
               href="/accounting/transactions"
@@ -135,14 +176,14 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
 
 // Icon should be changed to correct type, not any: WIP
 const SidebarItem = ({
-  allowedRole,
+  allowedRoles,
   icon,
   label,
   href,
   external,
   onClick
 }: {
-  allowedRole?: Role;
+  allowedRoles?: Role[];
   icon?: string;
   label: string;
   href: string;
@@ -152,7 +193,7 @@ const SidebarItem = ({
   const { role } = useAuth();
   const { asPath } = useRouter();
 
-  if (allowedRole !== null && allowedRole !== undefined && role !== allowedRole) {
+  if (!allowedRoles?.includes(role)) {
     return null;
   }
 
@@ -187,7 +228,7 @@ const SidebarItem = ({
 
 // Icon should be changed to correct type, not any: WIP
 type sidebarGroupProps = {
-  allowedRole?: Role;
+  allowedRoles?: Role[];
   icon: any;
   title: string;
   expanded?: boolean;
@@ -197,7 +238,7 @@ type sidebarGroupProps = {
 };
 
 const SidebarGroup = ({
-  allowedRole,
+  allowedRoles,
   icon,
   title,
   expanded,
@@ -214,7 +255,7 @@ const SidebarGroup = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (allowedRole && role !== allowedRole) {
+  if (!allowedRoles?.includes(role)) {
     return null;
   }
 
