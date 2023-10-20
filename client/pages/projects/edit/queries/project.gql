@@ -1,6 +1,7 @@
 query project($id: Int!) {
   project_by_pk(id: $id) {
     id
+    logo_id
     name
     client_id
     github_repo_org

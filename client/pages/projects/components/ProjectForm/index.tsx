@@ -10,7 +10,8 @@ import {
   InputText,
   InputTextArea,
   InputDropdown,
-  UploadImageInput
+  UploadImageInput,
+  UploadFileInput
 } from 'components/Form';
 
 import { useAuth } from 'hooks/useAuth';
@@ -82,20 +83,16 @@ export default function ProjectForm({ defaultValues }: ProjectFormPageProps) {
   async function onSubmit(data) {
     return new Promise(async resolve => {
       try {
+        const variables = {
+          ...data,
+          logo_id: data.logo_id || undefined,
+          userId: dragonUser?.id
+        };
+
         if (isEditing) {
-          await updateProject({
-            variables: {
-              ...data,
-              userId: dragonUser?.id
-            }
-          });
+          await updateProject({ variables });
         } else {
-          await createProject({
-            variables: {
-              ...data,
-              userId: dragonUser?.id
-            }
-          });
+          await createProject({ variables });
         }
 
         // Show success toast
