@@ -31,8 +31,6 @@ export default function TimerButton({ project, isListViewChecked }) {
   const { dragonUser } = useAuth();
   const { id: userId } = dragonUser;
 
-  const [descriptionModalVisible, setDescriptionModalVisible] = useState(false);
-
   const [timerId, setTimerId] = useState<number | null>(null);
   const [timeSinceStart, setTimeSinceStart] = useState(
     project.isActive ? diffSeconds(project.startTime) : 0
@@ -77,11 +75,7 @@ export default function TimerButton({ project, isListViewChecked }) {
             project={project}
           />
         </Row>
-        <TaskDescriptionModal
-          visible={descriptionModalVisible}
-          setVisible={setDescriptionModalVisible}
-          timerId={timerId}
-        />
+        <TaskDescriptionModal timerId={timerId} resetTimerId={() => setTimerId(null)} />
       </>
     );
   } else {
@@ -101,11 +95,7 @@ export default function TimerButton({ project, isListViewChecked }) {
             {project.isActive ? formattedTime : project.name}
           </div>
         </div>
-        <TaskDescriptionModal
-          visible={descriptionModalVisible}
-          setVisible={setDescriptionModalVisible}
-          timerId={timerId}
-        />
+        <TaskDescriptionModal timerId={timerId} resetTimerId={() => setTimerId(null)} />
       </>
     );
   }
@@ -124,7 +114,6 @@ export default function TimerButton({ project, isListViewChecked }) {
 
       setTimerId(_timerId);
 
-      setDescriptionModalVisible(true);
       setTimeSinceStart(0);
     } else {
       const { data: stoppedTimers } = await stopAllTimers({
@@ -161,7 +150,6 @@ export default function TimerButton({ project, isListViewChecked }) {
 
       if (_stoppedTimers.length > 0) {
         setTimerId(_stoppedTimers[0].id);
-        setDescriptionModalVisible(true);
       }
     }
   }
@@ -180,7 +168,6 @@ export default function TimerButton({ project, isListViewChecked }) {
 
       setTimerId(_timerId);
 
-      setDescriptionModalVisible(true);
       setTimeSinceStart(0);
     }
   }
