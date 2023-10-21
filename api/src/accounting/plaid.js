@@ -38,7 +38,7 @@ export async function backfillTransactions() {
     // Get all transactions for this account
     try {
       const transaction = await fetchTransactions({ token, cursor });
-      const { added, removed, modified, error } = transaction;
+      const { added, removed, modified } = transaction;
 
       if (added.length > 0) {
         // Insert the transactions into the database
