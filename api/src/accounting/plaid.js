@@ -123,7 +123,7 @@ export async function backfillTransactions() {
       // Update the cursor
       await knex('accounting.bank').update({ cursor }).where({ token });
     } catch (error) {
-      await knex('accounting.bank').update({ error }).where({ token });
+      await knex('accounting.bank').update({ error: error.message }).where({ token });
     }
   }
 }

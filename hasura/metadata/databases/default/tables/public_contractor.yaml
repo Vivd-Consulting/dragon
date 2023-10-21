@@ -20,6 +20,9 @@ object_relationships:
   - name: medium
     using:
       foreign_key_constraint_on: contract_id
+  - name: mediumByImageId
+    using:
+      foreign_key_constraint_on: image_id
   - name: payment_info
     using:
       foreign_key_constraint_on:
@@ -27,9 +30,6 @@ object_relationships:
         table:
           name: payment_info
           schema: accounting
-  - name: mediumByImageId
-    using:
-      foreign_key_constraint_on: image_id
 array_relationships:
   - name: dragon_users
     using:
