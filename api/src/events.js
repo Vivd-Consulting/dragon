@@ -30,7 +30,7 @@ router.post('/accounting/transactions', async (req, res) => {
   }
 });
 
-router.get('/accounting/relate', async (req, res) => {
+router.post('/accounting/relate', async (req, res) => {
   const changedRows = await recommendRelatedTransactions();
 
   res.status(200).json({ changedRows });
@@ -68,7 +68,10 @@ async function recommendRelatedTransactions() {
 }
 
 async function lookForRelatedTransactions(transaction) {
-  const { debit, credit } = transaction;
+  let { debit, credit } = transaction;
+
+  debit = Math.abs(debit);
+  credit = Math.abs(credit);
 
   const relatedTransactions = await knex('accounting.transactions')
     .select('id')
