@@ -1,0 +1,1 @@
+ALTER TABLE accounting.bank add column error text;

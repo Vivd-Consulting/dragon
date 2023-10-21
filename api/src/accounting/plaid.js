@@ -36,91 +36,95 @@ export async function backfillTransactions() {
     const { token, cursor } = account;
 
     // Get all transactions for this account
-    const transaction = await fetchTransactions({ token, cursor });
-    const { added, removed, modified } = transaction;
+    try {
+      const transaction = await fetchTransactions({ token, cursor });
+      const { added, removed, modified, error } = transaction;
 
-    if (added.length > 0) {
-      // Insert the transactions into the database
-      await knex('accounting.transactions')
-        .insert(
-          added.map((transaction) => ({
-            account_id: transaction.account_id,
-            account_owner: transaction.account_owner,
-            credit: transaction.amount < 0 ? transaction.amount : null,
-            debit: transaction.amount > 0 ? transaction.amount : null,
-            date: transaction.datetime || transaction.date,
-            currency: transaction.iso_currency_code,
-            location: transaction.location,
-            logo_url: transaction.logo_url,
-            merchant_name: transaction.merchant_name,
-            name: transaction.name,
-            payment_channel: transaction.payment_channel,
-            payment_meta: transaction.payment_meta,
-            personal_finance_category: transaction.detailed,
-            personal_finance_category_confidence: transaction.confidence_level,
-            personal_finance_category_icon_url:
-              transaction.personal_finance_category_icon_url,
-            id: transaction.transaction_id,
-            transaction_type: transaction.transaction_type,
-            website: transaction.website,
-            counterparties: transaction.counterparties,
-            category_id: transaction.category_id,
-            category: transaction.category
-          }))
-        )
-        .onConflict(['id'])
-        .merge()
-        .returning('*');
+      if (added.length > 0) {
+        // Insert the transactions into the database
+        await knex('accounting.transactions')
+          .insert(
+            added.map((transaction) => ({
+              account_id: transaction.account_id,
+              account_owner: transaction.account_owner,
+              credit: transaction.amount < 0 ? transaction.amount : null,
+              debit: transaction.amount > 0 ? transaction.amount : null,
+              date: transaction.datetime || transaction.date,
+              currency: transaction.iso_currency_code,
+              location: transaction.location,
+              logo_url: transaction.logo_url,
+              merchant_name: transaction.merchant_name,
+              name: transaction.name,
+              payment_channel: transaction.payment_channel,
+              payment_meta: transaction.payment_meta,
+              personal_finance_category: transaction.detailed,
+              personal_finance_category_confidence: transaction.confidence_level,
+              personal_finance_category_icon_url:
+                transaction.personal_finance_category_icon_url,
+              id: transaction.transaction_id,
+              transaction_type: transaction.transaction_type,
+              website: transaction.website,
+              counterparties: transaction.counterparties,
+              category_id: transaction.category_id,
+              category: transaction.category
+            }))
+          )
+          .onConflict(['id'])
+          .merge()
+          .returning('*');
+      }
+
+      if (modified.length > 0) {
+        // Update the transactions in the database
+        await knex('accounting.transactions')
+          .update(
+            modified.map((transaction) => ({
+              account_id: transaction.account_id,
+              account_owner: transaction.account_owner,
+              credit: transaction.amount < 0 ? transaction.amount : null,
+              debit: transaction.amount > 0 ? transaction.amount : null,
+              date: transaction.datetime || transaction.date,
+              currency: transaction.iso_currency_code,
+              location: transaction.location,
+              logo_url: transaction.logo_url,
+              merchant_name: transaction.merchant_name,
+              name: transaction.name,
+              payment_channel: transaction.payment_channel,
+              payment_meta: transaction.payment_meta,
+              personal_finance_category: transaction.detailed,
+              personal_finance_category_confidence: transaction.confidence_level,
+              personal_finance_category_icon_url:
+                transaction.personal_finance_category_icon_url,
+              id: transaction.transaction_id,
+              transaction_type: transaction.transaction_type,
+              website: transaction.website,
+              counterparties: transaction.counterparties,
+              category_id: transaction.category_id,
+              category: transaction.category
+            }))
+          )
+          .whereIn(
+            'id',
+            modified.map((transaction) => transaction.transaction_id)
+          )
+          .returning('*');
+      }
+
+      if (removed.length > 0) {
+        // Remove the transactions from the database
+        await knex('accounting.transactions')
+          .delete()
+          .whereIn(
+            'id',
+            removed.map((transaction) => transaction.transaction_id)
+          );
+      }
+
+      // Update the cursor
+      await knex('accounting.bank').update({ cursor }).where({ token });
+    } catch (error) {
+      await knex('accounting.bank').update({ error }).where({ token });
     }
-
-    if (modified.length > 0) {
-      // Update the transactions in the database
-      await knex('accounting.transactions')
-        .update(
-          modified.map((transaction) => ({
-            account_id: transaction.account_id,
-            account_owner: transaction.account_owner,
-            credit: transaction.amount < 0 ? transaction.amount : null,
-            debit: transaction.amount > 0 ? transaction.amount : null,
-            date: transaction.datetime || transaction.date,
-            currency: transaction.iso_currency_code,
-            location: transaction.location,
-            logo_url: transaction.logo_url,
-            merchant_name: transaction.merchant_name,
-            name: transaction.name,
-            payment_channel: transaction.payment_channel,
-            payment_meta: transaction.payment_meta,
-            personal_finance_category: transaction.detailed,
-            personal_finance_category_confidence: transaction.confidence_level,
-            personal_finance_category_icon_url:
-              transaction.personal_finance_category_icon_url,
-            id: transaction.transaction_id,
-            transaction_type: transaction.transaction_type,
-            website: transaction.website,
-            counterparties: transaction.counterparties,
-            category_id: transaction.category_id,
-            category: transaction.category
-          }))
-        )
-        .whereIn(
-          'id',
-          modified.map((transaction) => transaction.transaction_id)
-        )
-        .returning('*');
-    }
-
-    if (removed.length > 0) {
-      // Remove the transactions from the database
-      await knex('accounting.transactions')
-        .delete()
-        .whereIn(
-          'id',
-          removed.map((transaction) => transaction.transaction_id)
-        );
-    }
-
-    // Update the cursor
-    await knex('accounting.bank').update({ cursor }).where({ token });
   }
 }
 
@@ -158,6 +162,11 @@ async function fetchTransactions({ token, cursor }) {
       cursor: cursor
     };
     const response = await client.transactionsSync(request);
+
+    if (response.error) {
+      throw response.error;
+    }
+
     const data = response.data;
 
     // Add this page of results
