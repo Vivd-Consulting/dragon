@@ -5,6 +5,7 @@ query banks($limit: Int, $offset: Int, $order_by: [accounting_bank_order_by!], $
     logo
     primary_color
     created_at
+    error
   }
   accounting_bank_aggregate(order_by: $order_by, where: $where) {
     aggregate {

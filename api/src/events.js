@@ -78,10 +78,10 @@ async function lookForRelatedTransactions(transaction) {
     // find matching debits where debit is not null
     // or matching credits where credit is not null
     .where(function () {
-      this.where('credit', debit).andWhereNot('credit', null);
+      this.whereRaw('ABS(credit) = ABS(?)', debit).andWhereNot('credit', null);
     })
     .orWhere(function () {
-      this.where('debit', credit).andWhereNot('debit', null);
+      this.whereRaw('ABS(debit) = ABS(?)', credit).andWhereNot('debit', null);
     })
     .orderBy('date', 'desc');
 

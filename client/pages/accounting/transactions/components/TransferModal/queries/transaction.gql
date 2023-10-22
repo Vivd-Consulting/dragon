@@ -1,16 +1,14 @@
-query transaction($id: Int!) {
+query transaction($id: String!) {
   accounting_transactions_by_pk(id: $id) {
     id
-    tid
-    description
+    name
     date
     credit
     debit
-    recommendations(where: { recommendation: { gic_id: { _is_null: true } } }) {
+    recommendations(where: {recommendation: {gic_category_id: {_is_null: true}}}) {
       recommendation {
         id
-        tid
-        description
+        name
         date
         credit
         debit

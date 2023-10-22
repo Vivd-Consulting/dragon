@@ -70,7 +70,7 @@ export default function CategoryModal() {
         <Column>
           {transactions.map(transaction => (
             <div key={transaction.id}>
-              {transaction.id} | {transaction.amount} | {transaction.description}
+              {transaction.id} | {transaction.amount} | {transaction.name}
             </div>
           ))}
           <CategoryDropdown

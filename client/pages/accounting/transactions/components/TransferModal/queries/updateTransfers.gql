@@ -1,17 +1,15 @@
 mutation updateTransfers(
   $sourceGic: Int!
   $matchedGic: Int!
-  $transactionType: String!
   $notes: String
-  $sourceTransfer: Int!
-  $matchedTransfer: Int!
+  $sourceTransfer: String!
+  $matchedTransfer: String!
 ) {
   updateSource: update_accounting_transactions_by_pk(
     _set: {
-      gic_id: $sourceGic
+      gic_category_id: $sourceGic
       notes: $notes
-      transaction_type: $transactionType
-      related_transaction: $matchedTransfer
+      related_transaction_id: $matchedTransfer
     }
     pk_columns: { id: $sourceTransfer }
   ) {
@@ -19,10 +17,9 @@ mutation updateTransfers(
   }
   updateMatch: update_accounting_transactions_by_pk(
     _set: {
-      gic_id: $matchedGic
+      gic_category_id: $matchedGic
       notes: $notes
-      transaction_type: $transactionType
-      related_transaction: $sourceTransfer
+      related_transaction_id: $sourceTransfer
     }
     pk_columns: { id: $matchedTransfer }
   ) {
