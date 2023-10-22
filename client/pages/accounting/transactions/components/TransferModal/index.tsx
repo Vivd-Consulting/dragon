@@ -6,6 +6,8 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
 import { Column as PColumn } from 'primereact/column';
 
+import { useCategories } from 'hooks/useCategories';
+
 import { Column, Row } from 'components/Group';
 import { ModalVisible } from 'components/Modal';
 
@@ -13,6 +15,15 @@ import transactionQuery from './queries/transaction.gql';
 import updateTransfersMutation from './queries/updateTransfers.gql';
 
 export default function TransferModal({ transferSourceId, setTransferSource }) {
+  const [, getBy] = useCategories();
+
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
+  const [notes, setNotes] = useState<string | null>(null);
+
+  const [updateTransfers] = useMutation(updateTransfersMutation, {
+    refetchQueries: ['transactions']
+  });
+
   const { data } = useQuery(transactionQuery, {
     variables: {
       id: transferSourceId
@@ -28,7 +39,7 @@ export default function TransferModal({ transferSourceId, setTransferSource }) {
       header="Associate transfer"
       onHide={() => setTransferSource(null)}
       footer={
-        <Row>
+        <Row justify="end">
           <Button
             type="button"
             label="Close"
@@ -38,29 +49,55 @@ export default function TransferModal({ transferSourceId, setTransferSource }) {
               setTransferSource(null);
             }}
           />
+          <Button
+            type="button"
+            label="Save"
+            icon="pi pi-check"
+            disabled={!selectedTransaction}
+            onClick={onSubmit}
+          />
         </Row>
       }
     >
-      {transferSource && <TransferModalForm transferSource={transferSource} />}
+      {transferSource && (
+        <TransferModalForm
+          transferSource={transferSource}
+          notes={notes}
+          setNotes={setNotes}
+          selectedTransaction={selectedTransaction}
+          setSelectedTransaction={setSelectedTransaction}
+        />
+      )}
     </ModalVisible>
   );
+
+  function onSubmit() {
+    return updateTransfers({
+      variables: {
+        sourceGic: getBy({ name: 'Transfer' }).id,
+        matchedGic: getBy({ name: 'Transfer' }).id,
+        notes,
+        sourceTransfer: transferSourceId,
+        matchedTransfer: selectedTransaction.id
+      }
+    }).then(() => setTransferSource(null));
+  }
 }
 
-function TransferModalForm({ transferSource }) {
-  const [updateTransfers] = useMutation(updateTransfersMutation, {
-    refetchQueries: ['transactions']
-  });
-
+function TransferModalForm({
+  transferSource,
+  notes,
+  setNotes,
+  selectedTransaction,
+  setSelectedTransaction
+}) {
   const recommendations = transferSource.recommendations.map(r => r.recommendation);
-
-  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
 
   return (
     <Column align="center" justify="center">
       <DataTable value={[transferSource]} tableStyle={{ minWidth: '50rem' }}>
         <PColumn field="id" header="ID" />
-        <PColumn field="tid" header="TID" />
-        <PColumn field="description" header="Description" />
+        <PColumn field="name" header="Description" />
         <PColumn
           field="amount"
           header="Amount"
@@ -94,8 +131,7 @@ function TransferModalForm({ transferSource }) {
       >
         <PColumn selectionMode="single" headerStyle={{ width: '3rem' }} />
         <PColumn field="id" header="ID" />
-        <PColumn field="tid" header="TID" />
-        <PColumn field="description" header="Description" />
+        <PColumn field="name" header="Description" />
         <PColumn
           field="amount"
           header="Amount"
@@ -117,7 +153,12 @@ function TransferModalForm({ transferSource }) {
         <PColumn field="date" header="Date" />
       </DataTable>
 
-      <InputTextarea placeholder="Notes" className="w-full" />
+      <InputTextarea
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+        placeholder="Notes"
+        className="w-full"
+      />
     </Column>
   );
 }

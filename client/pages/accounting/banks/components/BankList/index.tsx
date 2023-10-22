@@ -62,6 +62,13 @@ export default function BankList({ paginatedQuery }) {
         field="created_at"
         header="Created At"
       />
+      <Column
+        body={({ error }) =>
+          error ? <span className="text-red-500">{error}</span> : <i className="pi pi-check"></i>
+        }
+        field="error"
+        header="Errors"
+      />
     </DataTable>
   );
 }

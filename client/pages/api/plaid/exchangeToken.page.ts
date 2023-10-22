@@ -48,7 +48,8 @@ export default async function handler(request, response) {
         token: ACCESS_TOKEN,
         name: institution_name,
         primary_color,
-        logo: logo || null
+        logo: logo || null,
+        error: null
       })
       // On conflict, overwrite the existing record
       .onConflict('id')
