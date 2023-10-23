@@ -150,7 +150,19 @@ function TransferModalForm({
             );
           }}
         />
-        <PColumn field="date" header="Date" />
+        <PColumn
+          field="date"
+          header="Date"
+          body={({ date }) => (
+            <span>
+              {new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })}
+            </span>
+          )}
+        />
       </DataTable>
 
       <InputTextarea
