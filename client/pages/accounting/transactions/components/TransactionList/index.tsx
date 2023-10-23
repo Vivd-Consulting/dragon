@@ -52,7 +52,7 @@ export default function TransactionList() {
 
   if (searchText) {
     where._or = [
-      { description: { _ilike: `%${searchText}%` } },
+      { name: { _ilike: `%${searchText}%` } },
       { debit: { _eq: parseFloat(searchText) || -1 } },
       { credit: { _eq: parseFloat(searchText) || -1 } }
     ];
