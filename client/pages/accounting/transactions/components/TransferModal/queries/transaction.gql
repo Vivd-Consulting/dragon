@@ -1,6 +1,9 @@
 query transaction($id: String!) {
   accounting_transactions_by_pk(id: $id) {
     id
+    account {
+      name
+    }
     name
     date
     credit
@@ -8,6 +11,9 @@ query transaction($id: String!) {
     recommendations(where: {recommendation: {gic_category_id: {_is_null: true}}}) {
       recommendation {
         id
+        account {
+          name
+        }
         name
         date
         credit

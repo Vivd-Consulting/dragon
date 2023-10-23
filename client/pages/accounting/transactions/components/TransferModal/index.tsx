@@ -130,7 +130,7 @@ function TransferModalForm({
         tableStyle={{ minWidth: '50rem' }}
       >
         <PColumn selectionMode="single" headerStyle={{ width: '3rem' }} />
-        <PColumn field="id" header="ID" />
+        <PColumn field="account.name" header="Account" />
         <PColumn field="name" header="Description" />
         <PColumn
           field="amount"
