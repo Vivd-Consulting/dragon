@@ -96,7 +96,7 @@ function TransferModalForm({
   return (
     <Column align="center" justify="center">
       <DataTable value={[transferSource]} tableStyle={{ minWidth: '50rem' }}>
-        <PColumn field="id" header="ID" />
+        <PColumn field="account.name" header="Account" />
         <PColumn field="name" header="Description" />
         <PColumn
           field="amount"
@@ -116,7 +116,19 @@ function TransferModalForm({
             );
           }}
         />
-        <PColumn field="date" header="Date" />
+        <PColumn
+          field="date"
+          header="Date"
+          body={({ date }) => (
+            <span>
+              {new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })}
+            </span>
+          )}
+        />
       </DataTable>
 
       <i className="pi pi-arrow-down pt-4"></i>
