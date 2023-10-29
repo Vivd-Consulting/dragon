@@ -45,9 +45,11 @@ export default function CategoryModal() {
               type="button"
               label="Save"
               icon="pi pi-check"
+              severity={type === 'personal' ? 'success' : undefined}
               onClick={async () => {
                 await updateTransactionCategory();
                 resetSelectedTransactions();
+                resetFields();
               }}
             />
           )}
@@ -59,6 +61,7 @@ export default function CategoryModal() {
             className="p-button-secondary"
             onClick={() => {
               resetSelectedTransactions();
+              resetFields();
             }}
           />
         </Row>
@@ -68,11 +71,6 @@ export default function CategoryModal() {
         <span>Can only bulk set 1 type of transaction at a time</span>
       ) : (
         <Column>
-          {transactions.map(transaction => (
-            <div key={transaction.id}>
-              {transaction.id} | {transaction.amount} | {transaction.name}
-            </div>
-          ))}
           <CategoryDropdown
             category={category}
             setCategory={setCategory}
@@ -98,6 +96,11 @@ export default function CategoryModal() {
         transactionIds: transactions.map(transaction => transaction.id)
       }
     });
+  }
+
+  function resetFields() {
+    setCategory(null);
+    setNotes('');
   }
 }
 

@@ -16,6 +16,7 @@ export default function AccountsDropdown({ value, onChange }) {
       optionValue="id"
       placeholder="Select an Account"
       filter
+      showClear
       value={value}
       onChange={e => onChange(e.value)}
     />
