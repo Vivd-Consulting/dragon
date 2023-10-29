@@ -34,7 +34,7 @@ export default function CategoryModal() {
   const [category, setCategory] = useState<any>(null);
   const [notes, setNotes] = useState<string>('');
 
-  useKeyPress(['meta.enter'], submit);
+  useKeyPress(['meta.delete'], submit);
 
   return (
     <ModalVisible
@@ -49,6 +49,7 @@ export default function CategoryModal() {
               type="button"
               label="Save"
               icon="pi pi-check"
+              disabled={!category}
               severity={type === 'personal' ? 'success' : undefined}
               onClick={submit}
             />
