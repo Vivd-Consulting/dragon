@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { useState, useRef, useEffect } from 'react';
+import { useKeyPress } from 'ahooks';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -101,6 +102,19 @@ export default function TransactionList() {
     dateRange,
     setBulkSelectTransactions
   ]);
+
+  useKeyPress(['meta.p'], e => {
+    if (bulkSelectTransactions.length > 0) {
+      e.preventDefault();
+      markPersonal(bulkSelectTransactions);
+    }
+  });
+  useKeyPress(['meta.b'], e => {
+    if (bulkSelectTransactions.length > 0) {
+      e.preventDefault();
+      markBusiness(bulkSelectTransactions);
+    }
+  });
 
   return (
     <>
