@@ -115,6 +115,24 @@ export default function TransactionList() {
       markBusiness(bulkSelectTransactions);
     }
   });
+  useKeyPress(['meta.a'], e => {
+    e.preventDefault();
+
+    if (transactions?.length > 0) {
+      const transactionsIds = transactions.map(({ id }) => id);
+
+      if (
+        _.isEqual(
+          transactionsIds,
+          bulkSelectTransactions.map(({ id }) => id)
+        )
+      ) {
+        setBulkSelectTransactions([]);
+      } else {
+        setBulkSelectTransactions(transactions);
+      }
+    }
+  });
 
   return (
     <>
