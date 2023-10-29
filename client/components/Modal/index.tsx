@@ -65,6 +65,7 @@ export function ModalVisible({
         onHide && onHide();
       }}
       footer={footer || <Button label="Close" onClick={onHide} className="p-button-secondary" />}
+      dismissableMask
       /* eslint-disable-next-line react/forbid-component-props */
       style={style}
     >

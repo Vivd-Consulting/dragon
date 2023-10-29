@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { useState } from 'react';
+import { useKeyPress } from 'ahooks';
 import { useQuery, useMutation } from '@apollo/client';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
@@ -33,24 +34,23 @@ export default function CategoryModal() {
   const [category, setCategory] = useState<any>(null);
   const [notes, setNotes] = useState<string>('');
 
+  useKeyPress(['meta.enter'], submit);
+
   return (
     <ModalVisible
       visible={hasSelectedTransactions()}
       header={`Categorize ${_.upperFirst(type)} ${_.upperFirst(categoryType)}`}
       onHide={() => resetSelectedTransactions()}
+      style={{ width: '50vw' }}
       footer={
-        <Row>
+        <Row justify="end">
           {!hasMixedDebitAndCredits && (
             <Button
               type="button"
               label="Save"
               icon="pi pi-check"
               severity={type === 'personal' ? 'success' : undefined}
-              onClick={async () => {
-                await updateTransactionCategory();
-                resetSelectedTransactions();
-                resetFields();
-              }}
+              onClick={submit}
             />
           )}
 
@@ -87,6 +87,12 @@ export default function CategoryModal() {
     </ModalVisible>
   );
 
+  async function submit() {
+    await updateTransactionCategory();
+    resetSelectedTransactions();
+    resetFields();
+  }
+
   function updateTransactionCategory() {
     return updateTransaction({
       variables: {
@@ -113,17 +119,17 @@ function CategoryDropdown({ category, setCategory, categoryType, transactionType
     skip: _.isEmpty(categoryType)
   });
 
-  const categories = data?.accounting_category;
-
   return (
     <Dropdown
-      options={categories}
+      options={data?.accounting_category}
       optionLabel="name"
       placeholder="Select a Category"
       value={category}
       onChange={e => setCategory(e.value)}
       data-cy="category-dropdown"
       filter
+      filterInputAutoFocus
+      autoFocus
     />
   );
 }

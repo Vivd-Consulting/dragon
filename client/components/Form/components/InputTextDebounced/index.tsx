@@ -1,4 +1,5 @@
-import { useUpdateEffect } from 'ahooks';
+import { useRef } from 'react';
+import { useUpdateEffect, useKeyPress } from 'ahooks';
 import { InputText as PrimeInputText } from 'primereact/inputtext';
 
 import useDebounceState from 'hooks/useDebounceState';
@@ -17,6 +18,13 @@ export function InputTextDebounced({
 }: InputTextDebouncedProps) {
   const [internalValue, setInternalValue, debouncedValue] = useDebounceState(value);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useKeyPress(['meta.k'], () => {
+    setInternalValue('');
+    inputRef.current?.focus();
+  });
+
   useUpdateEffect(() => {
     onChange(debouncedValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -32,12 +40,12 @@ export function InputTextDebounced({
       <span className="p-input-icon-left">
         <i className={`pi ${icon}`} />
 
-        <PrimeInputText value={internalValue} onChange={handleChange} {...rest} />
+        <PrimeInputText value={internalValue} onChange={handleChange} ref={inputRef} {...rest} />
       </span>
     );
   }
 
-  return <PrimeInputText value={internalValue} onChange={handleChange} {...rest} />;
+  return <PrimeInputText value={internalValue} onChange={handleChange} ref={inputRef} {...rest} />;
 
   function handleChange(e) {
     setInternalValue(e.target.value);
