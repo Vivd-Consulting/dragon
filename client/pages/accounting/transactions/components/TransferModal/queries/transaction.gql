@@ -8,7 +8,10 @@ query transaction($id: String!) {
     date
     credit
     debit
-    recommendations(where: {recommendation: {gic_category_id: {_is_null: true}}}) {
+    recommendations(
+      where: { recommendation: { gic_category_id: { _is_null: true } } }
+      order_by: { recommendation: { date: desc } }
+    ) {
       recommendation {
         id
         account {
