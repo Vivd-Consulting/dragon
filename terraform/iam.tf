@@ -63,4 +63,17 @@ data "aws_iam_policy_document" "api_service" {
       var.tf_env == "stg" ? aws_ses_domain_identity.main[0].arn : data.aws_ses_domain_identity.main[0].arn
     ]
   }
+
+  statement {
+    sid = "SSMAccess"
+    actions = [
+      "secretsmanager:CreateSecret",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:ListSecrets",
+      "secretsmanager:PutSecretValue",
+      "secretsmanager:UpdateSecret",
+      "secretsmanager:DeleteSecret"
+    ]
+    resources = ["*"]
+  }
 }
