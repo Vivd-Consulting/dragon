@@ -65,15 +65,39 @@ data "aws_iam_policy_document" "api_service" {
   }
 
   statement {
-    sid = "SSMAccess"
+    sid = "SSMDescribe"
     actions = [
-      "secretsmanager:CreateSecret",
-      "secretsmanager:GetSecretValue",
-      "secretsmanager:ListSecrets",
-      "secretsmanager:PutSecretValue",
-      "secretsmanager:UpdateSecret",
-      "secretsmanager:DeleteSecret"
+      "ssm:DescribeParameters"
     ]
     resources = ["*"]
+  }
+
+  statement {
+    sid = "SSMAccess"
+    actions = [
+      "ssm:PutParameter",
+      "ssm:LabelParameterVersion",
+      "ssm:DeleteParameter",
+      "ssm:UnlabelParameterVersion",
+      "ssm:GetParameterHistory",
+      "ssm:GetParametersByPath",
+      "ssm:GetParameters",
+      "ssm:GetParameter",
+      "ssm:DeleteParameters"
+    ]
+    resources = [
+      "arn:aws:ssm:*:467522471440:parameter/*"
+    ]
+  }
+
+  statement {
+    sid = "KMSAccess"
+    actions = [
+      "kms:Decrypt",
+      "kms:Encrypt"
+    ]
+    resources = [
+      "arn:aws:kms:*:467522471440:key/*"
+    ]
   }
 }
