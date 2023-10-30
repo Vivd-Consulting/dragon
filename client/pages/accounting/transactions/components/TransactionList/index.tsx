@@ -63,7 +63,7 @@ export default function TransactionList() {
     if (transactionType === 'debit') {
       where.debit = { _gt: 0 };
     } else {
-      where.credit = { _gt: 0 };
+      where.credit = { _lt: 0 };
     }
   }
 
