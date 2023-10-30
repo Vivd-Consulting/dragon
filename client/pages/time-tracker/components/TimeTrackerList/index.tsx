@@ -20,7 +20,7 @@ import { Nullable } from 'primereact/ts-helpers';
 import { Row } from 'components/Group';
 import { InputTextDebounced } from 'components/Form';
 
-import { dateFormat } from 'utils';
+import { dateFormat, formatDuration } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 
@@ -90,7 +90,9 @@ export default function TimeTrackerList() {
         description: '', // TODO
         new_time: timers.reduce((acc, { new_time }) => acc + new_time, 0), // TODO
         start_time: timers[timers.length - 1].start_time, // TODO
-        end_time: timers[0].end_time // TODO
+        end_time: timers[0].end_time, // TODO
+        grouped: true,
+        grouped_time: calculateTotalDurations(timers)
       }))
       .value();
 
@@ -196,9 +198,13 @@ export default function TimeTrackerList() {
         <Column
           field="duration"
           header="Duration"
-          body={({ start_time, end_time, new_time }) => (
+          body={({ start_time, end_time, new_time, grouped = false, grouped_time = null }) => (
             <span>
-              {(new_time && `${new_time} hr`) || calculateDurationFormatted(start_time, end_time)}
+              {new_time
+                ? `${new_time} hr`
+                : grouped
+                ? grouped_time
+                : calculateDurationFormatted(start_time, end_time)}
             </span>
           )}
           editor={options => numberEditor(options)}
@@ -343,10 +349,16 @@ function calculateDurationFormatted(start_time, end_time) {
 
   const duration = calculateDuration(start_time, end_time);
 
-  const formattedTotalTime =
-    (duration.hours() && `${duration.hours()} hr`) ||
-    (duration.minutes() && `${duration.minutes()} min`) ||
-    (duration.seconds() && `${duration.seconds()} sec`);
+  return formatDuration(duration);
+}
 
-  return formattedTotalTime;
+function calculateTotalDurations(data) {
+  const totalDuration = data.reduce((acc, item) => {
+    const startTime = dayjs(item.start_time);
+    const endTime = dayjs(item.end_time);
+
+    return acc.add(endTime.diff(startTime, 's'), 's');
+  }, dayjs.duration(0));
+
+  return formatDuration(totalDuration);
 }
