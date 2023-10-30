@@ -139,3 +139,12 @@ export function getCurrentMonthRange() {
 
   return { startOfMonth, endOfMonth };
 }
+
+export function formatDuration(duration) {
+  const formattedDuration =
+    (duration.hours() && `${duration.hours()} hr`) ||
+    (duration.minutes() && `${duration.minutes()} min`) ||
+    (duration.seconds() && `${duration.seconds()} sec`);
+
+  return formattedDuration;
+}
