@@ -141,6 +141,8 @@ export function getCurrentMonthRange() {
 }
 
 export function formatDuration(duration) {
+  return duration.format('HH:mm:ss');
+
   const formattedDuration =
     (duration.hours() && `${duration.hours()} hr`) ||
     (duration.minutes() && `${duration.minutes()} min`) ||

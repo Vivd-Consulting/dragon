@@ -200,10 +200,10 @@ export default function TimeTrackerList() {
           header="Duration"
           body={({ start_time, end_time, new_time, grouped = false, grouped_time = null }) => (
             <span>
-              {new_time
-                ? `${new_time} hr`
-                : grouped
+              {grouped
                 ? grouped_time
+                : new_time
+                ? `${new_time} hr`
                 : calculateDurationFormatted(start_time, end_time)}
             </span>
           )}
@@ -354,6 +354,10 @@ function calculateDurationFormatted(start_time, end_time) {
 
 function calculateTotalDurations(data) {
   const totalDuration = data.reduce((acc, item) => {
+    if (item.new_time) {
+      return acc.add(item.new_time, 'h');
+    }
+
     const startTime = dayjs(item.start_time);
     const endTime = dayjs(item.end_time);
 
