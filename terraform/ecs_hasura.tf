@@ -46,7 +46,7 @@ data "aws_ecs_container_definition" "hasura" {
 
 locals {
   current_hasura_image  = var.bootstrap == false ? split(":", data.aws_ecs_container_definition.hasura[0].image)[1] : "latest"
-  hasura_repository_url = var.tf_env == "prd" ? data.aws_ecr_repository.hasura[0].repository_url : var.tf_env == "stg" ? aws_ecr_repository.hasura[0].repository_url : ""
+  hasura_repository_url = aws_ecr_repository.hasura[0].repository_url
 }
 resource "aws_ecs_task_definition" "hasura" {
   family       = "${var.project}-${var.tf_env}-hasura"
