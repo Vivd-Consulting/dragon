@@ -60,7 +60,7 @@ data "aws_iam_policy_document" "api_service" {
       "ses:SendEmail"
     ]
     resources = [
-      var.tf_env == "stg" ? aws_ses_domain_identity.main[0].arn : data.aws_ses_domain_identity.main[0].arn
+      aws_ses_domain_identity.main_dragon[0].arn
     ]
   }
 

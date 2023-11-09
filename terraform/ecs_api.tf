@@ -1,6 +1,3 @@
-locals {
-}
-
 resource "aws_ecs_service" "api" {
   name            = "${var.project}-${var.tf_env}-api"
   cluster         = aws_ecs_cluster.cluster.arn
@@ -61,7 +58,7 @@ data "aws_ecs_container_definition" "api" {
 
 locals {
   current_api_image  = var.bootstrap == false ? split(":", data.aws_ecs_container_definition.api[0].image)[1] : "latest"
-  api_repository_url = var.tf_env == "prd" ? data.aws_ecr_repository.api[0].repository_url : var.tf_env == "stg" ? aws_ecr_repository.api[0].repository_url : ""
+  api_repository_url = aws_ecr_repository.api[0].repository_url
 }
 
 resource "aws_ecs_task_definition" "api" {

@@ -1,5 +1,5 @@
 locals {
-  sns_topic_arn = var.tf_env == "stg" ? aws_sns_topic.aws_notifications[0].arn : data.aws_sns_topic.aws_notifications[0].arn
+  sns_topic_arn = aws_sns_topic.aws_notifications[0].arn
   ecs_services = toset([
     "${var.project}-${var.tf_env}-api",
     "${var.project}-${var.tf_env}-hasura"
@@ -8,7 +8,7 @@ locals {
 
 # Monitor ECS services for OOM events.
 resource "aws_cloudwatch_event_rule" "oom_ecs_task_state_change" {
-  count       = var.tf_env == "stg" ? 1 : 0
+  count       = var.tf_env == "prd" ? 1 : 0
   name        = "OOM_ECS_Task_State_Change_Rule"
   description = "Event rule for monitoring OOM ECS task state changes."
 
@@ -23,7 +23,7 @@ resource "aws_cloudwatch_event_rule" "oom_ecs_task_state_change" {
 }
 
 resource "aws_cloudwatch_event_target" "eventbridge_to_sns" {
-  count     = var.tf_env == "stg" ? 1 : 0
+  count     = var.tf_env == "prd" ? 1 : 0
   rule      = aws_cloudwatch_event_rule.oom_ecs_task_state_change[0].name
   target_id = "OOM_ECS_Task_State_Change_Target"
 
