@@ -71,7 +71,7 @@ resource "aws_ecs_task_definition" "api" {
       {
         name      = "api"
         image     = "${local.api_repository_url}:${local.current_api_image}"
-        cpu       = 2048
+        cpu       = 1024
         memory    = 512
         essential = true
         portMappings = [
