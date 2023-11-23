@@ -18,7 +18,7 @@ jobs:
 
     env:
       ECR_REGISTRY: 467522471440.dkr.ecr.us-west-2.amazonaws.com
-      ECR_REPOSITORY: vms-hasura
+      ECR_REPOSITORY: dragon-hasura
       IMAGE_TAG: ${{ github.sha }}
 
     outputs:

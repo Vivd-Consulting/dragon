@@ -41,7 +41,7 @@ jobs:
 
     env:
       ECR_REGISTRY: 467522471440.dkr.ecr.us-west-2.amazonaws.com
-      ECR_REPOSITORY: vms-api
+      ECR_REPOSITORY: dragon-api
       IMAGE_TAG: ${{ github.sha }}
 
     outputs:
