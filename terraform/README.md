@@ -31,11 +31,11 @@ If you are new to Terraform it is recommend to read through the following set of
 4. Make your changes as necessary, using `terraform validate` and `terraform plan` as you go to validate your changes.
 5. Run `terraform fmt -recursive` to format.
 6. Run `terraform-docs markdown . --output-file README.md` to update the README.md file.
-7. Commit and push your changes.
-8. Open a PR. This will trigger a Terraform Cloud plan run, wait for the plan results to be reported in the `Runs` section in the [Terraform Cloud UI](https://app.terraform.io/app/Vivd/workspaces) for the target branch's workspace.
-9. If the plan looks good, merge the PR. This will trigger another plan operation.
-10. If the new plan looks good, select the `Confirm & Apply` button at the bottom of the run.
-11. The planned changes will be applied and the result will be reported in that run.
+7. Run `terraform apply`, entering `yes` if the apply operations look okay.
+
+**Note**: _You may see diff related to `aws_ecs_task_definition` and `aws_ecs_service` resources. This is expected and safe to apply._
+
+8. Commit and push your changes.
 
 ## Common Tasks
 
