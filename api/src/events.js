@@ -56,8 +56,6 @@ async function recommendRelatedTransactions() {
     if (recomendations.length > 0) {
       const changes = await knex('accounting.transactions_recommendations')
         .insert(recomendations)
-        .onConflict(['transaction_id', 'recommended_transaction_id'])
-        .ignore()
         .returning('*');
 
       changedRows = changedRows.concat(changes);
