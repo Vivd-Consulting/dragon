@@ -87,6 +87,7 @@ export function UpdatePlaidLink({ oldToken, onSuccess, onFail }) {
   return (
     <UpdatePlaidLinkButton
       plaidLinkToken={plaidLinkToken}
+      oldToken={oldToken}
       authToken={authToken}
       onSuccessCallback={onSuccess}
       onFailCallback={onFail}
@@ -94,10 +95,16 @@ export function UpdatePlaidLink({ oldToken, onSuccess, onFail }) {
   );
 }
 
-function UpdatePlaidLinkButton({ plaidLinkToken, authToken, onSuccessCallback, onFailCallback }) {
+function UpdatePlaidLinkButton({
+  plaidLinkToken,
+  authToken,
+  oldToken,
+  onSuccessCallback,
+  onFailCallback
+}) {
   const config: Parameters<typeof usePlaidLink>[0] = {
     token: plaidLinkToken,
-    onSuccess: response => onSuccess(response),
+    onSuccess: response => onSuccess(response, oldToken),
     onEvent: eventName => {
       if (eventName === 'HANDOFF') {
         isOauth = true;
@@ -119,13 +126,29 @@ function UpdatePlaidLinkButton({ plaidLinkToken, authToken, onSuccessCallback, o
     <Button
       type="button"
       onClick={() => open()}
-      icon="pi pi-plus"
+      icon="pi pi-refresh"
       label="Update Account"
       disabled={!ready}
     />
   );
 
-  async function onSuccess(response: any) {
-    console.log({ response });
+  async function onSuccess(newToken: string, oldToken: string) {
+    const response = await fetch('/api/plaid/updateLinkTokenSuccess', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`
+      },
+      body: JSON.stringify({ authToken, newToken, oldToken })
+    });
+
+    if (!response.ok) {
+      onFailCallback();
+      return;
+    }
+
+    const data = await response.json();
+
+    onSuccessCallback(data);
   }
 }
