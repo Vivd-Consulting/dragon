@@ -13,7 +13,19 @@ export default async function handler(request, response) {
         access_token: account.token
       });
 
-      responses[account.name] = accountsRequest.data.accounts;
+      const _accounts = accountsRequest.data.accounts;
+
+      const transactions = await client.transactionsSync({
+        access_token: account.token,
+        count: 10
+      });
+
+      const data = {
+        accounts: _accounts,
+        transactions: transactions.data
+      };
+
+      responses[account.name] = data;
 
       await knex('accounting.bank')
         .update({
