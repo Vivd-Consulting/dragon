@@ -39,7 +39,10 @@ router.post('/accounting/relate', async (req, res) => {
 async function recommendRelatedTransactions() {
   const insertedTransactions = await knex('accounting.transactions').select(
     '*'
-  );
+  ).where({
+    related_transaction_id: null,
+    gic_category_id: null
+  });
 
   let changedRows = [];
 
@@ -56,6 +59,8 @@ async function recommendRelatedTransactions() {
     if (recomendations.length > 0) {
       const changes = await knex('accounting.transactions_recommendations')
         .insert(recomendations)
+        .onConflict(['transactixon_id', 'recommended_transaction_id'])
+        .ignore()
         .returning('*');
 
       changedRows = changedRows.concat(changes);
