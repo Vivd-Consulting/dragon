@@ -4,9 +4,12 @@ import { Column } from 'primereact/column';
 
 import { dateFormat } from 'utils';
 
+import { UpdatePlaidLink } from 'components/PlaidLink';
+
 export default function BankList({ paginatedQuery }) {
   const {
     query: { loading, previousData, data },
+    refetch,
     paginationValues,
     onPage
   } = paginatedQuery;
@@ -69,6 +72,31 @@ export default function BankList({ paginatedQuery }) {
         field="error"
         header="Errors"
       />
+      <Column
+        header="Actions"
+        body={({ token }) => (
+          <UpdatePlaidLink oldToken={token} onSuccess={onSuccessLink} onFail={onFailLink} />
+        )}
+      />
     </DataTable>
   );
+
+  function onSuccessLink() {
+    refetch();
+    // toast.current.show({
+    //   severity: 'success',
+    //   summary: 'Success',
+    //   detail: 'Bank is successfully linked!',
+    //   life: 3000
+    // });
+  }
+
+  function onFailLink() {
+    // toast.current.show({
+    //   severity: 'error',
+    //   summary: 'Error',
+    //   detail: 'Bank failed to link!',
+    //   life: 3000
+    // });
+  }
 }

@@ -1,7 +1,7 @@
 import { Card } from 'primereact/card';
 
 import { Row, Column } from 'components/Group';
-import PlaidLink from 'components/PlaidLink';
+import { PlaidLink } from 'components/PlaidLink';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 

@@ -5,7 +5,7 @@ import { Button } from 'primereact/button';
 import { useAuth } from 'hooks/useAuth';
 import usePlaidLinkToken from 'hooks/usePlaidLinkToken';
 
-export default function PlaidLink({ onSuccess, onFail }) {
+export function PlaidLink({ onSuccess, onFail }) {
   const { token: authToken } = useAuth();
   const [plaidLinkToken, loading] = usePlaidLinkToken(authToken);
 
@@ -73,5 +73,59 @@ function PlaidLinkButton({ plaidLinkToken, authToken, onSuccessCallback, onFailC
     const data = await response.json();
 
     onSuccessCallback(data);
+  }
+}
+
+export function UpdatePlaidLink({ oldToken, onSuccess, onFail }) {
+  const { token: authToken } = useAuth();
+  const [plaidLinkToken, loading] = usePlaidLinkToken(authToken, oldToken);
+
+  if (loading) {
+    return <Button type="button" icon="pi pi-spin pi-spinner" label="Update Account" disabled />;
+  }
+
+  return (
+    <UpdatePlaidLinkButton
+      plaidLinkToken={plaidLinkToken}
+      authToken={authToken}
+      onSuccessCallback={onSuccess}
+      onFailCallback={onFail}
+    />
+  );
+}
+
+function UpdatePlaidLinkButton({ plaidLinkToken, authToken, onSuccessCallback, onFailCallback }) {
+  const config: Parameters<typeof usePlaidLink>[0] = {
+    token: plaidLinkToken,
+    onSuccess: response => onSuccess(response),
+    onEvent: eventName => {
+      if (eventName === 'HANDOFF') {
+        isOauth = true;
+      }
+    }
+  };
+
+  let isOauth = false;
+
+  const { open, ready } = usePlaidLink(config);
+
+  useEffect(() => {
+    if (isOauth && ready) {
+      open();
+    }
+  }, [ready, open, isOauth]);
+
+  return (
+    <Button
+      type="button"
+      onClick={() => open()}
+      icon="pi pi-plus"
+      label="Update Account"
+      disabled={!ready}
+    />
+  );
+
+  async function onSuccess(response: any) {
+    console.log({ response });
   }
 }
