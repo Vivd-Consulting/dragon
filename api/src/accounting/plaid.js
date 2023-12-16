@@ -71,7 +71,6 @@ export async function backfillTransactions() {
           )
           .onConflict(['id'])
           .merge()
-          .returning('*');
       }
 
       if (modified.length > 0) {
@@ -176,6 +175,8 @@ async function fetchTransactions({ token, cursor }) {
     hasMore = data.has_more;
     // Update cursor to the next cursor
     cursor = data.next_cursor;
+
+    await knex('accounting.bank').update({ cursor }).where({ token });
   }
 
   return {
