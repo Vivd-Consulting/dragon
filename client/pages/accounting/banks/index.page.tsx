@@ -33,6 +33,7 @@ export default function Banks() {
               <Button
                 onClick={testAccountFetching}
                 label="Test Accounts"
+                icon="pi pi-question-circle"
                 severity="warning"
                 loading={testButtonDisabled}
               />
