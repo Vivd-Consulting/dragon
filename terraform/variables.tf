@@ -5,7 +5,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 variable "tf_env" {
-  description = "Terraform environment name. (stg/prd)"
+  description = "Terraform environment name."
   type        = string
 }
 

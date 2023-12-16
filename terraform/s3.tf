@@ -1,6 +1,10 @@
 # API media
 resource "aws_s3_bucket" "api_media" {
   bucket = "${var.project}-${var.tf_env}-media"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_s3_bucket_ownership_controls" "api_media" {
