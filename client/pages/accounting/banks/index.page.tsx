@@ -1,4 +1,7 @@
+import React, { useState } from 'react';
+
 import { Card } from 'primereact/card';
+import { Button } from 'primereact/button';
 
 import { Row, Column } from 'components/Group';
 import { PlaidLink } from 'components/PlaidLink';
@@ -17,6 +20,8 @@ export default function Banks() {
     query: { refetch }
   } = bankQuery;
 
+  const [testButtonDisabled, setTestButtonDisabled] = useState(false);
+
   return (
     <Column gap="4" fullWidth>
       <Card
@@ -24,9 +29,15 @@ export default function Banks() {
           <Row justify="between" align="center" mx={4} mt={4}>
             <h2 className="my-0">Imported Banks</h2>
 
-            <div>
+            <Row>
+              <Button
+                onClick={testAccountFetching}
+                label="Test Accounts"
+                severity="warning"
+                loading={testButtonDisabled}
+              />
               <PlaidLink onSuccess={onSuccessLink} onFail={onFailLink} />
-            </div>
+            </Row>
           </Row>
         }
       >
@@ -53,5 +64,35 @@ export default function Banks() {
     //   detail: 'Bank failed to link!',
     //   life: 3000
     // });
+  }
+
+  async function testAccountFetching() {
+    setTestButtonDisabled(true);
+
+    // If the access_token is needed, send public_token to server
+    const response = await fetch('/api/plaid/testAccounts', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // eslint-disable-next-line no-console
+      console.error({
+        testAccountFetching: data
+      });
+      return;
+    }
+
+    // eslint-disable-next-line no-console
+    console.log({
+      testAccountFetching: data
+    });
+
+    setTestButtonDisabled(false);
+    refetch();
   }
 }

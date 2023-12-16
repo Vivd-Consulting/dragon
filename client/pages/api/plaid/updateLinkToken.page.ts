@@ -1,7 +1,5 @@
 import { Products } from 'plaid';
 
-import knex from '../db';
-
 import { verifyJwt } from './verfiyJwt';
 import { client } from './plaid';
 
@@ -40,9 +38,6 @@ export default async function handler(request, response) {
     const createTokenResponse = await client.linkTokenCreate(configs);
 
     const tokenData = createTokenResponse.data;
-
-    // Find the matching bank account in the database, and remove the error status
-    await knex('bank').update({ error: null }).where({ token: accessToken });
 
     response.json(tokenData);
   } catch (error: any) {
