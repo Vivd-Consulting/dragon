@@ -103,9 +103,11 @@ app.use((err, req, res, next) => {
 });
 
 const port = process.env.PORT || 3006;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Express listening on: ${port}`);
 });
+
+server.setTimeout(600000);
 
 // Start apollo
 apollo();
