@@ -220,9 +220,9 @@ export default function TransactionList() {
             {bulkSelectTransactions
               ?.reduce((acc, { credit, currency }) => {
                 if (currency.toUpperCase() === 'CAD') {
-                  return Math.abs(acc + credit);
+                  return acc + Math.abs(credit);
                 } else {
-                  return Math.abs(acc + credit * cadUsdExchangeRate);
+                  return acc + Math.abs(credit) * cadUsdExchangeRate;
                 }
               }, 0)
               // Convert to a currency string
