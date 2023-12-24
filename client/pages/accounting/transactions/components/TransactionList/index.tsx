@@ -8,6 +8,7 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { SelectButton } from 'primereact/selectbutton';
 import { Calendar } from 'primereact/calendar';
+import { InputNumber } from 'primereact/inputnumber';
 
 import { Row } from 'components/Group';
 import { InputTextDebounced } from 'components/Form';
@@ -33,6 +34,7 @@ export default function TransactionList() {
   const [transactionType, setTransactionType] = useState<string | undefined>(undefined);
   const [onlyUncategorizedTransactions, setOnlyUncategorizedTransactions] = useState<boolean>(true);
   const [dateRange, setDateRange] = useState<String | Date | Date[] | any>(thisYear);
+  const [cadUsdExchangeRate, setCadUsdExchangeRate] = useState<number>(1.35);
 
   const [transferSource, setTransferSource] = useState<any>(undefined);
 
@@ -180,12 +182,25 @@ export default function TransactionList() {
             options={['Uncategorized', 'Categorized']}
             unselectable={false}
           />
+          <InputNumber
+            value={cadUsdExchangeRate}
+            onChange={e => setCadUsdExchangeRate(Number(e.value))}
+            placeholder="USD/CAD Exchange"
+            mode="decimal"
+            minFractionDigits={2}
+          />
         </Row>
         <Row>
           <span className="text-red-500">
             Debits:{' '}
             {bulkSelectTransactions
-              ?.reduce((acc, { debit }) => acc + debit, 0)
+              ?.reduce((acc, { debit, currency }) => {
+                if (currency.toUpperCase() === 'CAD') {
+                  return acc + debit;
+                } else {
+                  return acc + debit * cadUsdExchangeRate;
+                }
+              }, 0)
               // Convert to a currency string
               .toLocaleString('en-US', {
                 style: 'currency',
@@ -195,7 +210,13 @@ export default function TransactionList() {
           <span className="text-green-500">
             Credits:{' '}
             {bulkSelectTransactions
-              ?.reduce((acc, { credit }) => acc + credit, 0)
+              ?.reduce((acc, { credit, currency }) => {
+                if (currency.toUpperCase() === 'CAD') {
+                  return Math.abs(acc + credit);
+                } else {
+                  return Math.abs(acc + credit * cadUsdExchangeRate);
+                }
+              }, 0)
               // Convert to a currency string
               .toLocaleString('en-US', {
                 style: 'currency',
@@ -263,6 +284,12 @@ export default function TransactionList() {
             );
           }}
           sortField={transactionType === 'debit' ? 'debit' : 'credit'}
+          sortable
+        />
+        <Column
+          field="currency"
+          header="Currency"
+          body={({ currency }) => <span>{currency}</span>}
           sortable
         />
         {!onlyUncategorizedTransactions && (
