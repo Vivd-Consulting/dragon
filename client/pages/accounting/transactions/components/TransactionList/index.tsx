@@ -23,6 +23,7 @@ import TransferModal from '../TransferModal';
 import useSelectedTransactions from '../../hooks/useSelectedTransactions';
 
 import AccountsDropdown from './components/AccountsDropdown';
+import CategoryDropdown from './components/CategoryDropdown';
 
 import transactionsQuery from './queries/transactions.gql';
 
@@ -30,6 +31,7 @@ const thisYear = [new Date(new Date().getFullYear(), 0, 1), new Date()];
 
 export default function TransactionList() {
   const [selectedAccount, setSelectedAccount] = useState<string | undefined>(undefined);
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
   const [transactionType, setTransactionType] = useState<string | undefined>(undefined);
   const [onlyUncategorizedTransactions, setOnlyUncategorizedTransactions] = useState<boolean>(true);
@@ -51,6 +53,10 @@ export default function TransactionList() {
 
   if (selectedAccount) {
     where.account_id = { _eq: selectedAccount };
+  }
+
+  if (selectedCategory) {
+    where.gic_category_id = { _eq: selectedCategory };
   }
 
   if (searchText) {
@@ -98,6 +104,7 @@ export default function TransactionList() {
     setBulkSelectTransactions([]);
   }, [
     selectedAccount,
+    selectedCategory,
     searchText,
     transactionType,
     onlyUncategorizedTransactions,
@@ -189,6 +196,7 @@ export default function TransactionList() {
             mode="decimal"
             minFractionDigits={2}
           />
+          <CategoryDropdown value={selectedCategory} onChange={setSelectedCategory} />
         </Row>
         <Row>
           <span className="text-red-500">
