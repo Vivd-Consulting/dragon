@@ -172,6 +172,10 @@ resource "aws_ecs_task_definition" "api" {
             value = var.api_plaid_env
           },
           {
+            name  = "SLACK_TOKEN"
+            value = var.api_slack_token
+          },
+          {
             name  = "PORT"
             value = "8080"
           },

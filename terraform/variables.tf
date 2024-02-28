@@ -141,3 +141,8 @@ variable "api_plaid_env" {
   description = "Plaid env."
   type        = string
 }
+
+variable "api_slack_token" {
+  description = "Slack token."
+  type        = string
+}
