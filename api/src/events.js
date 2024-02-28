@@ -32,18 +32,26 @@ router.post('/accounting/transactions', async (req, res) => {
 });
 
 router.post('/accounting/relate', async (req, res) => {
-  const changedRows = await recommendRelatedTransactions();
+  try {
+    const changedRows = await recommendRelatedTransactions();
 
-  res.status(200).json({ changedRows });
+    res.status(200).json({ changedRows });
+  } catch (error) {
+    console.log(error);
+    res.status(500);
+  }
 });
 
 router.post('/accounting/transactions/alert', async (req, res) => {
   try {
     const { account_id, debit, currency, date } = req.body.data;
 
-    const accountQuery = await knex('accounting.account').select('name', 'currency').where({
-      id: account_id
-    }).first();
+    const accountQuery = await knex('accounting.account')
+      .select('name', 'currency')
+      .where({
+        id: account_id
+      })
+      .first();
 
     const response = await sendSlackMessage({
       account: accountQuery.name,
@@ -83,7 +91,7 @@ async function recommendRelatedTransactions() {
     if (recomendations.length > 0) {
       const changes = await knex('accounting.transactions_recommendations')
         .insert(recomendations)
-        .onConflict(['transactixon_id', 'recommended_transaction_id'])
+        .onConflict(['transaction_id', 'recommended_transaction_id'])
         .ignore()
         .returning('*');
 
