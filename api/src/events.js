@@ -1,8 +1,9 @@
 import express from 'express';
 
 import { backfillTransactions, getCategories } from './accounting/plaid.js';
-
 import knex from './accounting/db.js';
+
+import { sendSlackMessage } from './slack/index.js';
 
 const router = express.Router();
 
@@ -36,13 +37,36 @@ router.post('/accounting/relate', async (req, res) => {
   res.status(200).json({ changedRows });
 });
 
+router.post('/accounting/transactions/alert', async (req, res) => {
+  try {
+    const { account_id, debit, currency, date } = req.body.data;
+
+    const accountQuery = await knex('accounting.account').select('name', 'currency').where({
+      id: account_id
+    }).first();
+
+    const response = await sendSlackMessage({
+      account: accountQuery.name,
+      amount: debit,
+      currency,
+      accountCurrency: accountQuery.currency,
+      date
+    });
+
+    res.status(200).json({ response });
+  } catch (error) {
+    console.log(error);
+    res.status(500);
+  }
+});
+
 async function recommendRelatedTransactions() {
-  const insertedTransactions = await knex('accounting.transactions').select(
-    '*'
-  ).where({
-    related_transaction_id: null,
-    gic_category_id: null
-  });
+  const insertedTransactions = await knex('accounting.transactions')
+    .select('*')
+    .where({
+      related_transaction_id: null,
+      gic_category_id: null
+    });
 
   let changedRows = [];
 
