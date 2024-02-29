@@ -9,7 +9,7 @@ module "database" {
   identifier     = "${var.project}-${var.tf_env}"
   instance_class = "db.t4g.small"
   engine         = "postgres"
-  engine_version = "15.4"
+  engine_version = "15.5"
   family         = "postgres15"
 
   storage_type          = "gp3"
