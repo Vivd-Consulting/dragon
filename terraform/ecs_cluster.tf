@@ -88,8 +88,8 @@ EOT
 
 resource "aws_autoscaling_group" "ecs_ci" {
   name                  = "${var.project}-${var.tf_env}"
-  max_size              = 24
-  min_size              = 1
+  max_size              = 0
+  min_size              = 0
   protect_from_scale_in = true
   vpc_zone_identifier   = module.vpc.private_subnets
 

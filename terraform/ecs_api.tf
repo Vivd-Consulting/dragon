@@ -2,7 +2,7 @@ resource "aws_ecs_service" "api" {
   name            = "${var.project}-${var.tf_env}-api"
   cluster         = aws_ecs_cluster.cluster.arn
   task_definition = aws_ecs_task_definition.api.arn_without_revision
-  desired_count   = 1
+  desired_count   = 0
   propagate_tags  = "SERVICE"
 
   deployment_minimum_healthy_percent = 50
@@ -344,8 +344,8 @@ resource "aws_lb_listener_rule" "apollo" {
 
 # Service autoscaling.
 resource "aws_appautoscaling_target" "api" {
-  min_capacity       = 1
-  max_capacity       = 4
+  min_capacity       = 0
+  max_capacity       = 0
   resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.api.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
