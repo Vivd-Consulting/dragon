@@ -21,6 +21,7 @@
     "@slack/web-api": "^7.0.4",
     "@types/qs": "6.9.15",
     "ahooks": "3.8.0",
+    "classnames": "^2.5.1",
     "clsx": "2.1.1",
     "compressorjs": "1.2.1",
     "country-list": "^2.3.0",
