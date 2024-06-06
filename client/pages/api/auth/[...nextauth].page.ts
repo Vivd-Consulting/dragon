@@ -27,10 +27,14 @@ export default NextAuth({
       return token;
     },
     session({ session, token }) {
-      // session.id = token.sub;
-      // session.accessToken = token.accessToken;
-      // session.role = token.role;
-      // session.emailVerified = token.email_verified;
+      // @ts-ignore
+      session.id = token.sub;
+      // @ts-ignore
+      session.accessToken = token.accessToken;
+      // @ts-ignore
+      session.role = token.role;
+      // @ts-ignore
+      session.emailVerified = token.email_verified;
 
       return session;
     },
