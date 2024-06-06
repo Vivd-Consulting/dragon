@@ -1,5 +1,5 @@
 - name: Mark Transactions
-  webhook: '{{ACTION_API}}/events/accounting/relate'
+  webhook: '{{ACTION_API}}/events/relate'
   schedule: 0 * * * *
   include_in_metadata: true
   payload: {}
@@ -8,7 +8,7 @@
       value_from_env: ACTION_SECRET
   comment: ""
 - name: Transaction Sync
-  webhook: '{{ACTION_API}}/events/accounting/transactions'
+  webhook: '{{ACTION_API}}/events/transactions'
   schedule: '*/30 * * * *'
   include_in_metadata: true
   payload: {}
