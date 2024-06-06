@@ -3,6 +3,8 @@ import { backfillTransactions } from '../../plaid/plaid';
 
 import { recommendRelatedTransactions } from '../utils';
 
+export const maxDuration = 300; // This function can run for a maximum of 5 seconds
+
 export default async function handler(request, response) {
   if (!hasAdminToken(request.headers['action-secret'] as string)) {
     response.status(401).json({ error: 'Unauthorized' });
