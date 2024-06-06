@@ -48,30 +48,3 @@ array_relationships:
         table:
           name: transactions_recommendations
           schema: accounting
-event_triggers:
-  - name: new-transaction
-    definition:
-      enable_manual: false
-      insert:
-        columns: '*'
-    retry_conf:
-      interval_sec: 10
-      num_retries: 0
-      timeout_sec: 60
-    webhook: '{{ACTION_API}}/events/transactions/alert'
-    headers:
-      - name: action-secret
-        value_from_env: ACTION_SECRET
-    request_transform:
-      body:
-        action: transform
-        template: |-
-          {
-            "table": {
-              "name": {{$body.table.name}},
-              "schema": {{$body.table.schema}}
-            },
-            "data": {{$body.event.data.new}}
-          }
-      template_engine: Kriti
-      version: 2
