@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/events/*.ts": {
+      "maxDuration": 300
+    }
+  }
+}
