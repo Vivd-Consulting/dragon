@@ -5,7 +5,7 @@ import { recommendRelatedTransactions } from '../utils';
 
 export default async function handler(request, response) {
   console.log({ headers: request.headers });
-  if (!hasAdminToken(request.headers.action_secret as string)) {
+  if (!hasAdminToken(request.headers['action-secret'] as string)) {
     response.status(401).json({ error: 'Unauthorized' });
     return;
   }
