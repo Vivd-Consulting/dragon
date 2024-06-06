@@ -7,8 +7,8 @@ export default NextAuth({
   // Configure one or more authentication providers
   providers: [
     Auth0Provider({
-      clientId: process.env.AUTH0_CLIENT,
-      clientSecret: process.env.AUTH0_CLIENT_SECRET,
+      clientId: process.env.AUTH0_CLIENT as string,
+      clientSecret: process.env.AUTH0_CLIENT_SECRET as string,
       issuer: process.env.AUTH0_URI,
       checks: ['pkce', 'state']
     })
@@ -27,10 +27,10 @@ export default NextAuth({
       return token;
     },
     session({ session, token }) {
-      session.id = token.sub;
-      session.accessToken = token.accessToken;
-      session.role = token.role;
-      session.emailVerified = token.email_verified;
+      // session.id = token.sub;
+      // session.accessToken = token.accessToken;
+      // session.role = token.role;
+      // session.emailVerified = token.email_verified;
 
       return session;
     },
