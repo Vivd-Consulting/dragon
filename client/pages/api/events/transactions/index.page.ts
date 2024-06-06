@@ -22,7 +22,7 @@ export default async function handler(request, response) {
 
     response.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     response.status(500);
   }
 }
