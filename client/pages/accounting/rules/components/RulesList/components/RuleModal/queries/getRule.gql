@@ -1,0 +1,14 @@
+query rule($id: Int!) {
+  accounting_rules_by_pk(id: $id) {
+    id
+    name
+    rule_type
+    transaction_regex
+    gic_id
+    category {
+      id
+      name
+      is_business
+    }
+  }
+}

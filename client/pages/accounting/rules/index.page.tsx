@@ -4,9 +4,9 @@ import { Row, Column } from 'components/Group';
 
 import { Role } from 'types/roles';
 
-import TransactionList from './components/TransactionList';
+import RulesList from './components/RulesList';
 
-export default function Transactions() {
+export default function Rules() {
   return (
     <Column gap="4" fullWidth>
       <Card
@@ -16,10 +16,10 @@ export default function Transactions() {
           </Row>
         }
       >
-        <TransactionList />
+        <RulesList />
       </Card>
     </Column>
   );
 }
 
-Transactions.roles = [Role.Admin];
+Rules.roles = [Role.Admin];

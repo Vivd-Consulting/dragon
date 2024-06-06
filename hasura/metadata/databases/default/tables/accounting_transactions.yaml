@@ -5,6 +5,9 @@ object_relationships:
   - name: account
     using:
       foreign_key_constraint_on: account_id
+  - name: appliedRule
+    using:
+      foreign_key_constraint_on: applied_rule
   - name: gicCategory
     using:
       foreign_key_constraint_on: gic_category_id

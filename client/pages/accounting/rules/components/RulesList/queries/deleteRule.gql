@@ -1,0 +1,5 @@
+mutation deleteRule($id: Int!) {
+  update_accounting_rules_by_pk(pk_columns: { id: $id }, _set: { deleted_at: now }) {
+    id
+  }
+}

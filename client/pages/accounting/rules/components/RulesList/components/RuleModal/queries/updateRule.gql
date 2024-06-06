@@ -1,0 +1,19 @@
+mutation updateRule(
+  $id: Int!
+  $name: String!
+  $gic_id: Int!
+  $transaction_regex: String!
+  $rule_type: rule_type!
+) {
+  update_accounting_rules_by_pk(
+    pk_columns: { id: $id }
+    _set: {
+      name: $name
+      gic_id: $gic_id
+      transaction_regex: $transaction_regex
+      rule_type: $rule_type
+    }
+  ) {
+    id
+  }
+}
