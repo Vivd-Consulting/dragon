@@ -33,6 +33,7 @@ export function InputTextDebounced({
   // If the value changes outside of this component, update the internal value
   useUpdateEffect(() => {
     setInternalValue(value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   if (icon) {
