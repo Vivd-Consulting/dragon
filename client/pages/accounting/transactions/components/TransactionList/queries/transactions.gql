@@ -38,6 +38,7 @@ query transactions($limit: Int, $offset: Int, $order_by: [accounting_transaction
       }
     }
     notes
+    applied_rule
   }
   accounting_transactions_aggregate(order_by: $order_by, where: $where) {
     aggregate {
