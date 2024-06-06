@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
-const withGraphql = require('next-plugin-graphql');
+import withGraphql from 'next-plugin-graphql';
+
 const nextConfig = {
   reactStrictMode: false,
   ...withGraphql(),
@@ -14,4 +15,4 @@ const nextConfig = {
   }
 };
 
-module.exports = nextConfig;
+export default nextConfig;

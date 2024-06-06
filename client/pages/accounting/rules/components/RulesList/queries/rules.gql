@@ -1,0 +1,19 @@
+query rules($limit: Int, $offset: Int, $order_by: [accounting_rules_order_by!], $where: accounting_rules_bool_exp) {
+  accounting_rules(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    id
+    name
+    rule_type
+    transaction_regex
+    category {
+      id
+      name
+      is_business
+    }
+    created_at
+  }
+  accounting_rules_aggregate(order_by: $order_by, where: $where) {
+    aggregate {
+      count
+    }
+  }
+}

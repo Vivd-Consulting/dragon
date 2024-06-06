@@ -38,30 +38,40 @@ export async function backfillTransactions() {
         // Insert the transactions into the database
         await knex('accounting.transactions')
           .insert(
-            // @lkuich - TODO
-            added.map((transaction: any) => ({
-              account_id: transaction.account_id,
-              account_owner: transaction.account_owner,
-              credit: transaction.amount < 0 ? transaction.amount : null,
-              debit: transaction.amount > 0 ? transaction.amount : null,
-              date: transaction.datetime || transaction.date,
-              currency: transaction.iso_currency_code,
-              location: transaction.location,
-              logo_url: transaction.logo_url,
-              merchant_name: transaction.merchant_name,
-              name: transaction.name,
-              payment_channel: transaction.payment_channel,
-              payment_meta: transaction.payment_meta,
-              personal_finance_category: transaction.detailed,
-              personal_finance_category_confidence: transaction.confidence_level,
-              personal_finance_category_icon_url: transaction.personal_finance_category_icon_url,
-              id: transaction.transaction_id,
-              transaction_type: transaction.transaction_type,
-              website: transaction.website,
-              counterparties: transaction.counterparties,
-              category_id: transaction.category_id,
-              category: transaction.category
-            }))
+            added.map(async (transaction: any) => {
+              const credit = transaction.amount < 0 ? transaction.amount : null;
+              const debit = transaction.amount > 0 ? transaction.amount : null;
+
+              const isDebit = debit && debit > 0;
+              const type = isDebit ? 'DEBIT' : 'CREDIT';
+
+              const gic_category_id = (await getRule({ name: transaction.name, type }))?.gic_id;
+
+              return {
+                account_id: transaction.account_id,
+                account_owner: transaction.account_owner,
+                credit,
+                debit,
+                date: transaction.datetime || transaction.date,
+                currency: transaction.iso_currency_code,
+                location: transaction.location,
+                logo_url: transaction.logo_url,
+                merchant_name: transaction.merchant_name,
+                name: transaction.name,
+                payment_channel: transaction.payment_channel,
+                payment_meta: transaction.payment_meta,
+                personal_finance_category: transaction.detailed,
+                personal_finance_category_confidence: transaction.confidence_level,
+                personal_finance_category_icon_url: transaction.personal_finance_category_icon_url,
+                id: transaction.transaction_id,
+                transaction_type: transaction.transaction_type,
+                website: transaction.website,
+                counterparties: transaction.counterparties,
+                category_id: transaction.category_id,
+                category: transaction.category,
+                gic_category_id
+              };
+            })
           )
           .onConflict(['id'])
           .merge();
@@ -178,4 +188,14 @@ async function fetchTransactions({ token, cursor }) {
     removed,
     modified
   };
+}
+
+async function getRule({ name, type }) {
+  return await knex('accounting.rules')
+    .where('transaction_regex', 'ILIKE', name)
+    .andWhere({
+      ruleType: type.toUpperCase()
+    })
+    .andWhere({ deletedAt: null })
+    .first();
 }

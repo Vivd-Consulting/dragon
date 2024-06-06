@@ -84,7 +84,7 @@ export default function TransactionList() {
     variables: {
       where
     },
-    defaultSort: { id: 'asc', date: 'desc' }
+    defaultSort: { date: 'desc' }
   });
 
   const toastRef = useRef<Toast>(null);

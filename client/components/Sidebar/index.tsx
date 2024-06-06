@@ -162,6 +162,12 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
               onClick={onItemClick}
               allowedRoles={[Role.Admin]}
             />
+            <SidebarItem
+              label="Rules"
+              href="/accounting/rules"
+              onClick={onItemClick}
+              allowedRoles={[Role.Admin]}
+            />
           </SidebarGroup>
         </Column>
       </div>

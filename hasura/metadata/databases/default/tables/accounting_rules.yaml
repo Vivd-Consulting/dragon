@@ -1,0 +1,7 @@
+table:
+  name: rules
+  schema: accounting
+object_relationships:
+  - name: category
+    using:
+      foreign_key_constraint_on: gic_id

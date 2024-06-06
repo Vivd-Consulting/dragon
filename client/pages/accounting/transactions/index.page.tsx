@@ -6,7 +6,7 @@ import { Role } from 'types/roles';
 
 import TransactionList from './components/TransactionList';
 
-export default function Contractors() {
+export default function Transactions() {
   return (
     <Column gap="4" fullWidth>
       <Card
@@ -22,4 +22,4 @@ export default function Contractors() {
   );
 }
 
-Contractors.roles = [Role.Admin];
+Transactions.roles = [Role.Admin];
