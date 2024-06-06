@@ -1,6 +1,7 @@
 import { Products } from 'plaid';
 
-import { verifyJwt } from './verfiyJwt';
+import { verifyJwt } from '../verfiyJwt';
+
 import { client } from './plaid';
 
 const PLAID_PRODUCTS = (process.env.PLAID_PRODUCTS || Products.Transactions).split(',');

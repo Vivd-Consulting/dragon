@@ -1,7 +1,8 @@
 import knex from '../db';
 
+import { verifyJwt } from '../verfiyJwt';
+
 import { client } from './plaid';
-import { verifyJwt } from './verfiyJwt';
 
 export default async function handler(request, response) {
   try {
