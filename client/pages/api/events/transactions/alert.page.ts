@@ -3,7 +3,7 @@ import { sendSlackMessage } from '../../slack/slack';
 import knex from '../../db';
 
 export default async function handler(request, _response) {
-  if (!hasAdminToken(request.headers.action_secret as string)) {
+  if (!hasAdminToken(request.headers['action-secret'] as string)) {
     _response.status(401).json({ error: 'Unauthorized' });
     return;
   }
