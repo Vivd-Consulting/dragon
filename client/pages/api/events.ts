@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { backfillTransactions, getCategories } from './accounting/plaid.js';
-import knex from './accounting/db.js';
+import { backfillTransactions, getCategories } from './plaid/plaid';
+import knex from './db.js';
 
-import { sendSlackMessage } from './slack/index.js';
+import { sendSlackMessage } from './slack/slack';
 
 const router = express.Router();
 
@@ -69,24 +69,20 @@ router.post('/accounting/transactions/alert', async (req, res) => {
 });
 
 async function recommendRelatedTransactions() {
-  const insertedTransactions = await knex('accounting.transactions')
-    .select('*')
-    .where({
-      related_transaction_id: null,
-      gic_category_id: null
-    });
+  const insertedTransactions = await knex('accounting.transactions').select('*').where({
+    related_transaction_id: null,
+    gic_category_id: null
+  });
 
-  let changedRows = [];
+  let changedRows: any[] = [];
 
   for (const transaction of insertedTransactions) {
     const recommended_relations = await lookForRelatedTransactions(transaction);
 
-    const recomendations = recommended_relations.map(
-      (recommended_relation) => ({
-        transaction_id: transaction.id,
-        recommended_transaction_id: recommended_relation.id
-      })
-    );
+    const recomendations = recommended_relations.map(recommended_relation => ({
+      transaction_id: transaction.id,
+      recommended_transaction_id: recommended_relation.id
+    }));
 
     if (recomendations.length > 0) {
       const changes = await knex('accounting.transactions_recommendations')

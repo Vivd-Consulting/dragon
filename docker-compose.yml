@@ -4,8 +4,6 @@ services:
     build:
       context: client/.
       dockerfile: Dockerfile-dev
-    depends_on:
-      - api
     env_file:
       - client/.env.local
     volumes:
@@ -17,24 +15,6 @@ services:
     stdin_open: true
     restart: always
     image: "dragon_client:latest"
-  
-  api:
-    build:
-      context: api/.
-      dockerfile: Dockerfile-dev
-    depends_on:
-      - hasura
-    env_file:
-      - api/.env
-    volumes:
-      - ./api/.:/opt/api
-      - /opt/api/node_modules
-    ports:
-      - '3006:3006'
-      - '3008:3008'
-      - '9229:9229'
-    image: "dragon_api:latest"
-    restart: always
 
   postgres:
     image: postgres:15
