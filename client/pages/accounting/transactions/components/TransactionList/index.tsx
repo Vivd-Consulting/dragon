@@ -6,6 +6,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
+import { Tag } from 'primereact/tag';
 import { SelectButton } from 'primereact/selectbutton';
 import { Calendar } from 'primereact/calendar';
 import { InputNumber } from 'primereact/inputnumber';
@@ -319,6 +320,15 @@ export default function TransactionList() {
           header="Date"
           sortable
         />
+        {!onlyUncategorizedTransactions && (
+          <Column
+            body={({ applied_rule }) =>
+              applied_rule ? <Tag severity="info" value={`R${applied_rule}`} /> : <Tag value="M" />
+            }
+            field="applied_rule"
+            header="Applied Rule"
+          />
+        )}
         {onlyUncategorizedTransactions && <Column body={useActionButtons} />}
       </DataTable>
     </>
