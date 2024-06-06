@@ -10,5 +10,10 @@ export function parseJwt(token: string) {
 }
 
 export function hasAdminToken(token: string) {
+  console.log({
+    token,
+    ACTION_SECRET: process.env.ACTION_SECRET
+  });
+
   return token === process.env.ACTION_SECRET;
 }
