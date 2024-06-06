@@ -8,6 +8,6 @@ CREATE TABLE accounting.rules (
   gic_id INT REFERENCES accounting.category(id),
   applied_rule INT REFERENCES accounting.rules(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   deleted_at TIMESTAMP WITH TIME ZONE
 );
