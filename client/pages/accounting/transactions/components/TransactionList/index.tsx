@@ -322,10 +322,10 @@ export default function TransactionList() {
         />
         {!onlyUncategorizedTransactions && (
           <Column
-            body={({ applied_rule }) =>
-              applied_rule ? <Tag severity="info" value={`R${applied_rule}`} /> : <Tag value="M" />
+            body={({ appliedRule }) =>
+              appliedRule ? <Tag severity="info" value={appliedRule.name} /> : <Tag value="M" />
             }
-            field="applied_rule"
+            field="appliedRule"
             header="Applied Rule"
           />
         )}

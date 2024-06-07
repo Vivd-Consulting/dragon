@@ -10,6 +10,11 @@ query rules($limit: Int, $offset: Int, $order_by: [accounting_rules_order_by!], 
       is_business
     }
     created_at
+    transactions_aggregate {
+      aggregate {
+        count
+      }
+    }
   }
   accounting_rules_aggregate(order_by: $order_by, where: $where) {
     aggregate {
