@@ -111,7 +111,7 @@ export function Form({
   children,
   'data-cy': dataCy
 }: FormProps) {
-  const formHook = useForm({ defaultValues });
+  const formHook = useForm({ values: defaultValues });
 
   return (
     <HookForm

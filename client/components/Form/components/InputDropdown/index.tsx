@@ -47,9 +47,14 @@ export function InputDropdown({
         <Dropdown
           id={field.name}
           value={field.value}
+          defaultValue={undefined}
           onChange={e => {
-            onChange && onChange(e);
-            return field.onChange(e);
+            const newValue = e.value === null ? undefined : e.value;
+
+            field.onChange(newValue);
+            if (onChange) {
+              onChange(newValue);
+            }
           }}
           options={options}
           className={cx({ 'p-invalid': fieldState.error })}

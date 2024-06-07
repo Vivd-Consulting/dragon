@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { useKeyPress } from 'ahooks';
+import useSWR from 'swr';
 import { useQuery, useMutation } from '@apollo/client';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
@@ -11,15 +12,42 @@ import { Checkbox } from 'primereact/checkbox';
 import { Column, Row } from 'components/Group';
 import { ModalVisible } from 'components/Modal';
 
+import { useAuth } from 'hooks/useAuth';
+
 import useSelectedTransactions from '../../hooks/useSelectedTransactions';
 
 import categoriesQuery from './queries/categories.gql';
 import taxesQuery from './queries/taxes.gql';
 import updateTransactionMutation from './queries/updateTransaction.gql';
 import createRuleMutation from './queries/createRule.gql';
+import accountsQuery from './queries/accounts.gql';
 
-// categoryType is either 'credit' or 'debit'
-export default function CategoryModal() {
+const fetcher = ([url, token]) => {
+  if (!token) {
+    return Promise.reject('No token provided');
+  }
+
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  }).then(res => res.json());
+};
+
+export default function CategoryModal({ refetchTransactions }) {
+  const { token } = useAuth();
+
+  const { mutate: applyRulesMutation } = useSWR(
+    ['/api/events/transactions/apply-rules', token],
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false
+    }
+  );
+
   const { categoryTransactions, hasSelectedTransactions, resetSelectedTransactions } =
     useSelectedTransactions();
 
@@ -39,13 +67,14 @@ export default function CategoryModal() {
     refetchQueries: ['rules']
   });
 
+  const hasManyTransactions = transactions.length > 1;
+  const transaction = transactions[0];
+
   const [category, setCategory] = useState<any>(null);
   const [notes, setNotes] = useState<string>('');
   const [tax, setTax] = useState<number>();
+  const [accountId, setAccountId] = useState<number>();
   const [makeRule, setMakeRule] = useState<boolean>(false);
-
-  const hasManyTransactions = transactions.length > 1;
-  const transaction = transactions[0];
 
   const [ruleName, setRuleName] = useState<string>();
   const [transactionRegex, setTransactionRegex] = useState<string>();
@@ -54,9 +83,13 @@ export default function CategoryModal() {
     if (hasManyTransactions) {
       setRuleName('');
       setTransactionRegex('%%');
+      setTax(undefined);
+      setAccountId(undefined);
     } else {
       setRuleName(transaction?.name);
       setTransactionRegex(`%${transaction?.name}%`);
+      setTax(transaction?.tax_id);
+      setAccountId(transaction?.account_id);
     }
   }, [hasManyTransactions, transaction]);
 
@@ -109,6 +142,7 @@ export default function CategoryModal() {
             transactionType={type}
             categoryType={categoryType}
           />
+          <AccountDropdown accountId={accountId} setAccountId={setAccountId} />
           <TaxDropdown tax={tax} setTax={setTax} />
           <InputTextarea
             placeholder="Notes"
@@ -166,6 +200,7 @@ export default function CategoryModal() {
 
     if (makeRule && ruleName && transactionRegex && category) {
       await _createRule();
+      await applyRules();
     }
   }
 
@@ -194,12 +229,20 @@ export default function CategoryModal() {
     });
   }
 
+  async function applyRules() {
+    await applyRulesMutation();
+
+    refetchTransactions();
+  }
+
   function resetFields() {
     setCategory(null);
     setNotes('');
     setMakeRule(false);
     setRuleName('');
     setTransactionRegex('');
+    setTax(undefined);
+    setAccountId(undefined);
   }
 }
 
@@ -240,6 +283,25 @@ function TaxDropdown({ tax, setTax }) {
       onChange={e => setTax(e.value)}
       showClear
       data-cy="tax-dropdown"
+    />
+  );
+}
+
+function AccountDropdown({ accountId, setAccountId }) {
+  const { data } = useQuery(accountsQuery);
+
+  const accounts = data?.accounting_account;
+
+  return (
+    <Dropdown
+      options={accounts}
+      optionLabel="name"
+      optionValue="id"
+      placeholder="Select an Account"
+      value={accountId}
+      onChange={e => setAccountId(e.value)}
+      showClear
+      data-cy="account-dropdown"
     />
   );
 }
