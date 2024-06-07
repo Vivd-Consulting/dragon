@@ -20,7 +20,7 @@ export function InputTextDebounced({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useKeyPress(['meta.k'], () => {
+  useKeyPress(['meta.shift.f'], () => {
     setInternalValue('');
     inputRef.current?.focus();
   });
