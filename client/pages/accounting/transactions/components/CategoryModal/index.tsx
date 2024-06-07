@@ -98,6 +98,11 @@ export default function CategoryModal() {
         <span>Can only bulk set 1 type of transaction at a time</span>
       ) : (
         <Column>
+          <ul>
+            {transactions.map(transaction => (
+              <li key={transaction.id}>{transaction.name}</li>
+            ))}
+          </ul>
           <CategoryDropdown
             category={category}
             setCategory={setCategory}
