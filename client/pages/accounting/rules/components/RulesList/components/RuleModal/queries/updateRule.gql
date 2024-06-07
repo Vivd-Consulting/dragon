@@ -2,6 +2,7 @@ mutation updateRule(
   $id: Int!
   $name: String!
   $account_id: String
+  $tax_id: Int
   $gic_id: Int!
   $transaction_regex: String!
   $rule_type: rule_type!
@@ -11,6 +12,7 @@ mutation updateRule(
     _set: {
       name: $name
       account_id: $account_id
+      tax_id: $tax_id
       gic_id: $gic_id
       transaction_regex: $transaction_regex
       rule_type: $rule_type

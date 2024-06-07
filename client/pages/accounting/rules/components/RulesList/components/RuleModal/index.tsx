@@ -8,16 +8,20 @@ import { FormFooterButtons, Form, InputText, InputDropdown } from 'components/Fo
 
 import createRuleMutation from './queries/createRule.gql';
 import updateRuleMutation from './queries/updateRule.gql';
+
+import getRuleQuery from './queries/getRule.gql';
 import categoriesQuery from './queries/categories.gql';
 import accountsQuery from './queries/accounts.gql';
-import getRuleQuery from './queries/getRule.gql';
+import taxesQuery from './queries/taxes.gql';
 
 function RuleForm({ rule = {}, onSubmit, onError, onCancel }: any) {
   const { data: categoriesData } = useQuery(categoriesQuery);
   const { data: accountsData } = useQuery(accountsQuery);
+  const { data: taxesData } = useQuery(taxesQuery);
 
   const categories = categoriesData?.accounting_category;
   const accounts = accountsData?.accounting_account;
+  const taxes = taxesData?.accounting_tax;
 
   const [createRule] = useMutation(createRuleMutation, {
     refetchQueries: ['rule', 'rules']
@@ -35,13 +39,25 @@ function RuleForm({ rule = {}, onSubmit, onError, onCancel }: any) {
       <InputDropdown
         label="Account"
         name="account_id"
+        placeholder="Select an Account"
         options={accounts}
         optionLabel="name"
         optionValue="id"
+        showClear
+      />
+      <InputDropdown
+        label="Tax"
+        name="tax_id"
+        placeholder="Select a Tax"
+        options={taxes}
+        optionLabel="name"
+        optionValue="id"
+        showClear
       />
       <InputDropdown
         label="Category"
         name="gic_id"
+        placeholder="Select a Category"
         options={categories}
         optionLabel="name"
         optionValue="id"

@@ -1,0 +1,6 @@
+query taxes {
+  accounting_tax {
+    id
+    name
+  }
+}
