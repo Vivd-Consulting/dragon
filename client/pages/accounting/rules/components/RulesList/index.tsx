@@ -144,6 +144,7 @@ export default function RulesList() {
         />
         <Column field="transaction_regex" header="Regex" />
         <Column field="account.name" header="Account" />
+        <Column field="tax.name" header="Tax" />
         <Column field="category.name" header="Category" />
         <Column
           field="category.is_business"

@@ -5,6 +5,9 @@ query rules($limit: Int, $offset: Int, $order_by: [accounting_rules_order_by!], 
     account {
       name
     }
+    tax {
+      name
+    }
     rule_type
     transaction_regex
     category {
