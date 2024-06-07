@@ -135,7 +135,6 @@ export default function RulesList() {
         emptyMessage="No Rules found."
         data-cy="rules-table"
       >
-        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
         <Column field="name" header="Name" />
         <Column
           field="rule_type"
