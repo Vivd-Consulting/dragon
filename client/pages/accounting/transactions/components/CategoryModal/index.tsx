@@ -93,7 +93,7 @@ export default function CategoryModal({ refetchTransactions }) {
     }
   }, [hasManyTransactions, transaction]);
 
-  useKeyPress(['meta.delete'], submit);
+  useKeyPress(['meta.enter'], submit);
 
   return (
     <ModalVisible
