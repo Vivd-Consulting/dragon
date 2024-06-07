@@ -9,8 +9,10 @@ query transaction($id: String!) {
     credit
     debit
     recommendations(
-      where: { recommendation: { gic_category_id: { _is_null: true } } }
-      order_by: { recommendation: { date: desc } }
+      order_by: {
+        transaction: { gic_category_id: desc_nulls_last }
+        recommendation: { date: desc }
+      }
     ) {
       recommendation {
         id
@@ -21,6 +23,9 @@ query transaction($id: String!) {
         date
         credit
         debit
+        gicCategory {
+          name
+        }
       }
     }
   }

@@ -63,6 +63,7 @@ export default function TransactionList() {
   if (searchText) {
     where._or = [
       { name: { _ilike: `%${searchText}%` } },
+      { merchant_name: { _ilike: `%${searchText}%` } },
       { debit: { _eq: parseFloat(searchText) || -1 } },
       { credit: { _eq: parseFloat(searchText) || -1 } }
     ];
@@ -272,11 +273,12 @@ export default function TransactionList() {
             </span>
           )}
         /> */}
-        <Column
+        {/* <Column
           field="personalCategory.hirearchy"
           header="Hierarchy"
           body={({ personalCategory }) => <span>{personalCategory?.hierarchy.join(', ')}</span>}
-        />
+        /> */}
+        <Column field="merchant_name" header="Merchant" />
         <Column
           field="amount"
           header="Amount"
@@ -331,7 +333,7 @@ export default function TransactionList() {
             header="Applied Rule"
           />
         )}
-        {onlyUncategorizedTransactions && <Column body={useActionButtons} />}
+        <Column body={useActionButtons} />
       </DataTable>
     </>
   );
