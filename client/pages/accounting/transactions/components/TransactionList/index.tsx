@@ -197,7 +197,9 @@ export default function TransactionList() {
             mode="decimal"
             minFractionDigits={2}
           />
-          <CategoryDropdown value={selectedCategory} onChange={setSelectedCategory} />
+          {!onlyUncategorizedTransactions && (
+            <CategoryDropdown value={selectedCategory} onChange={setSelectedCategory} />
+          )}
         </Row>
         <Row>
           <span className="text-red-500">
