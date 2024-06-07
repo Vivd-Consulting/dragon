@@ -88,9 +88,13 @@ export async function checkLinkIsSafe(link) {
   }
 }
 
-export const dateFormat = date => {
+export const dateFormat = (date, excludeTime = false) => {
   if (!date) {
     return '--:--:--';
+  }
+
+  if (excludeTime) {
+    return dayjs(date).format('MMM D YYYY');
   }
 
   return dayjs(date).format('MMM D YYYY, HH:mm');
