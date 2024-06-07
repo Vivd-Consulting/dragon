@@ -125,7 +125,7 @@ export default function TransactionList() {
       markBusiness(bulkSelectTransactions);
     }
   });
-  useKeyPress(['meta.a'], e => {
+  useKeyPress(['meta.shift.a'], e => {
     e.preventDefault();
 
     if (transactions?.length > 0) {
