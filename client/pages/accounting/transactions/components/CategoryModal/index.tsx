@@ -80,17 +80,10 @@ export default function CategoryModal({ refetchTransactions }) {
   const [transactionRegex, setTransactionRegex] = useState<string>();
 
   useEffect(() => {
-    if (hasManyTransactions) {
-      setRuleName('');
-      setTransactionRegex('%%');
-      setTax(undefined);
-      setAccountId(undefined);
-    } else {
-      setRuleName(transaction?.name);
-      setTransactionRegex(`%${transaction?.name}%`);
-      setTax(transaction?.tax_id);
-      setAccountId(transaction?.account_id);
-    }
+    setRuleName(transaction?.name);
+    setTransactionRegex(`%${transaction?.name}%`);
+    setTax(transaction?.tax_id);
+    setAccountId(transaction?.account_id);
   }, [hasManyTransactions, transaction]);
 
   useKeyPress(['meta.enter'], submit);
@@ -220,7 +213,7 @@ export default function CategoryModal({ refetchTransactions }) {
     return createRule({
       variables: {
         name: ruleName,
-        account_id: transaction.account_id,
+        account_id: accountId,
         gic_id: category.id,
         transaction_regex: transactionRegex,
         rule_type: categoryType.toUpperCase(),
