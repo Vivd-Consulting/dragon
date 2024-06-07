@@ -162,6 +162,7 @@ function TransferModalForm({
             );
           }}
         />
+        <PColumn field="gicCategory.name" header="Category" />
         <PColumn
           field="date"
           header="Date"
