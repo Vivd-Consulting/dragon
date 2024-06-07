@@ -5,3 +5,11 @@ object_relationships:
   - name: category
     using:
       foreign_key_constraint_on: gic_id
+array_relationships:
+  - name: transactions
+    using:
+      foreign_key_constraint_on:
+        column: applied_rule
+        table:
+          name: transactions
+          schema: accounting

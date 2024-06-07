@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { useState, useRef } from 'react';
 import { useMutation } from '@apollo/client';
+import useSWR from 'swr';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -13,6 +14,7 @@ import { InputTextDebounced } from 'components/Form';
 import { dateFormat } from 'utils';
 
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
+import { useAuth } from 'hooks/useAuth';
 
 import CategoryDropdown from './components/CategoryDropdown';
 import { CreateRuleModal, UpdateRuleModal } from './components/RuleModal';
@@ -20,7 +22,32 @@ import { CreateRuleModal, UpdateRuleModal } from './components/RuleModal';
 import rulesQuery from './queries/rules.gql';
 import deleteRuleQuery from './queries/deleteRule.gql';
 
+const fetcher = ([url, token]) => {
+  if (!token) {
+    return Promise.reject('No token provided');
+  }
+
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  }).then(res => res.json());
+};
+
 export default function RulesList() {
+  const { token } = useAuth();
+
+  const { mutate: applyRulesMutation, isLoading: applyRulesLoading } = useSWR(
+    ['/api/events/transactions/apply-rules', token],
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false
+    }
+  );
+
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
 
@@ -37,7 +64,7 @@ export default function RulesList() {
   }
 
   const {
-    query: { loading, previousData, data },
+    query: { loading, previousData, data, refetch },
     paginationValues,
     onPage
   } = usePaginatedQuery(rulesQuery, {
@@ -77,7 +104,16 @@ export default function RulesList() {
           <CategoryDropdown value={selectedCategory} onChange={setSelectedCategory} />
         </Row>
 
-        <Button label="Create Rule" icon="pi pi-plus" onClick={() => setShowCreateModal(true)} />
+        <Row wrap>
+          <Button
+            label="Sync Transactions"
+            icon="pi pi-refresh"
+            severity="warning"
+            onClick={applyRules}
+            loading={applyRulesLoading}
+          />
+          <Button label="Create Rule" icon="pi pi-plus" onClick={() => setShowCreateModal(true)} />
+        </Row>
       </Row>
       <DataTable
         value={rules}
@@ -116,6 +152,7 @@ export default function RulesList() {
             <i className={`pi pi-${category?.is_business ? 'briefcase' : 'user'}`}></i>
           )}
         />
+        <Column field="transactions_aggregate.aggregate.count" header="Applied Transactions" />
         <Column
           body={({ created_at }) => <span>{dateFormat(created_at)}</span>}
           field="created_at"
@@ -186,5 +223,27 @@ export default function RulesList() {
         <div>{_.upperFirst(option)}</div>
       </div>
     );
+  }
+
+  async function applyRules() {
+    try {
+      await applyRulesMutation();
+
+      refetch();
+
+      toastRef.current?.show({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Rules applied successfully',
+        life: 3000
+      });
+    } catch (error) {
+      toastRef.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'An error occurred while applying rules',
+        life: 3000
+      });
+    }
   }
 }

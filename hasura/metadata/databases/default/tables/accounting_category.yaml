@@ -2,6 +2,13 @@ table:
   name: category
   schema: accounting
 array_relationships:
+  - name: rules
+    using:
+      foreign_key_constraint_on:
+        column: gic_id
+        table:
+          name: rules
+          schema: accounting
   - name: transactions
     using:
       foreign_key_constraint_on:
