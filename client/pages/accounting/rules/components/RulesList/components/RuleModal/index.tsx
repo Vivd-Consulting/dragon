@@ -182,7 +182,7 @@ export function UpdateRuleModal({ ruleId, setRuleId }) {
     <div className="card flex justify-content-center">
       <Toast ref={toast} />
 
-      <Dialog header="Add new time" visible={!!ruleId} style={{ width: '70vw' }} onHide={onHide}>
+      <Dialog header="Update Rule" visible={!!ruleId} style={{ width: '70vw' }} onHide={onHide}>
         {!loading && data && (
           <RuleForm
             rule={data.accounting_rules_by_pk}
@@ -199,7 +199,7 @@ export function UpdateRuleModal({ ruleId, setRuleId }) {
     toast?.current?.show({
       severity: 'success',
       summary: 'Success',
-      detail: 'Rule added',
+      detail: 'Rule updated',
       life: 3000
     });
 

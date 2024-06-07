@@ -77,7 +77,7 @@ export default function TransactionList() {
   }
 
   const {
-    query: { loading, previousData, data },
+    query: { loading, previousData, data, refetch: refetchTransactions },
     paginationValues,
     onPage
   } = usePaginatedQuery(transactionsQuery, {
@@ -148,7 +148,7 @@ export default function TransactionList() {
     <>
       <Toast ref={toastRef} />
 
-      <CategoryModal />
+      <CategoryModal refetchTransactions={refetchTransactions} />
       <TransferModal transferSourceId={transferSource?.id} setTransferSource={setTransferSource} />
 
       <Row align="center" justify="between" px={2} pb={4}>
