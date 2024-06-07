@@ -93,7 +93,7 @@ export const dateFormat = date => {
     return '--:--:--';
   }
 
-  return dayjs(date).format('MMM D, HH:mm');
+  return dayjs(date).format('MMM D YYYY, HH:mm');
 };
 
 export function convertDataToDropdownOptions(data: any[], labelKey: string, valueKey: string) {
