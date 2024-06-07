@@ -1,0 +1,1 @@
+ALTER TABLE accounting.rules ADD COLUMN account_id TEXT REFERENCES accounting.account(id);

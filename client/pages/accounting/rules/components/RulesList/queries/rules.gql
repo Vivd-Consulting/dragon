@@ -2,6 +2,9 @@ query rules($limit: Int, $offset: Int, $order_by: [accounting_rules_order_by!], 
   accounting_rules(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
     id
     name
+    account {
+      name
+    }
     rule_type
     transaction_regex
     category {

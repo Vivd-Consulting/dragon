@@ -9,12 +9,15 @@ import { FormFooterButtons, Form, InputText, InputDropdown } from 'components/Fo
 import createRuleMutation from './queries/createRule.gql';
 import updateRuleMutation from './queries/updateRule.gql';
 import categoriesQuery from './queries/categories.gql';
+import accountsQuery from './queries/accounts.gql';
 import getRuleQuery from './queries/getRule.gql';
 
 function RuleForm({ rule = {}, onSubmit, onError, onCancel }: any) {
-  const { data } = useQuery(categoriesQuery);
+  const { data: categoriesData } = useQuery(categoriesQuery);
+  const { data: accountsData } = useQuery(accountsQuery);
 
-  const categories = data?.accounting_category;
+  const categories = categoriesData?.accounting_category;
+  const accounts = accountsData?.accounting_account;
 
   const [createRule] = useMutation(createRuleMutation, {
     refetchQueries: ['rule', 'rules']
@@ -26,9 +29,16 @@ function RuleForm({ rule = {}, onSubmit, onError, onCancel }: any) {
 
   return (
     <Form defaultValues={rule} onSubmit={_onSubmit} data-cy="rule-form">
-      <InputText label="Name" name="name" />
-      <InputDropdown label="Rule Type" name="rule_type" options={['DEBIT', 'CREDIT']} />
-      <InputText label="Transaction Regex" name="transaction_regex" />
+      <InputText label="Name" name="name" isRequired />
+      <InputDropdown label="Rule Type" name="rule_type" options={['DEBIT', 'CREDIT']} isRequired />
+      <InputText label="Transaction Regex" name="transaction_regex" isRequired />
+      <InputDropdown
+        label="Account"
+        name="account_id"
+        options={accounts}
+        optionLabel="name"
+        optionValue="id"
+      />
       <InputDropdown
         label="Category"
         name="gic_id"
@@ -37,6 +47,7 @@ function RuleForm({ rule = {}, onSubmit, onError, onCancel }: any) {
         optionValue="id"
         itemTemplate={categoryDropdownTemplate}
         valueTemplate={categoryDropdownValueTemplate}
+        isRequired
       />
 
       <FormFooterButtons onCancel={onCancel} />

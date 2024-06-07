@@ -2,6 +2,7 @@ query rule($id: Int!) {
   accounting_rules_by_pk(id: $id) {
     id
     name
+    account_id
     rule_type
     transaction_regex
     gic_id

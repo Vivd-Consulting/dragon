@@ -23,7 +23,7 @@ export default async function handler(request, response) {
     for (const rule of rules) {
       await knex('accounting.transactions')
         .update({ gic_category_id: rule.gic_id, applied_rule: rule.id })
-        .where({ gic_category_id: null })
+        .where({ gic_category_id: null, account_id: rule.account_id })
         .where('name', 'ILIKE', rule.transaction_regex);
     }
 
