@@ -45,9 +45,11 @@ export async function backfillTransactions() {
               const isDebit = debit && debit > 0;
               const type = isDebit ? 'DEBIT' : 'CREDIT';
 
-              const gic_category_id = (
-                await getRule({ name: transaction.name, account_id: transaction.account_id, type })
-              )?.gic_id;
+              const rule = await getRule({
+                name: transaction.name,
+                account_id: transaction.account_id,
+                type
+              });
 
               return {
                 account_id: transaction.account_id,
@@ -71,7 +73,8 @@ export async function backfillTransactions() {
                 counterparties: transaction.counterparties,
                 category_id: transaction.category_id,
                 category: transaction.category,
-                gic_category_id
+                gic_category_id: rule?.gic_id,
+                tax_id: rule?.tax_id
               };
             })
           )
@@ -193,12 +196,14 @@ async function fetchTransactions({ token, cursor }) {
 }
 
 async function getRule({ name, account_id, type }) {
-  return await knex('accounting.rules')
-    .where('transaction_regex', 'ILIKE', name)
-    .where({
-      rule_type: type.toUpperCase(),
-      account_id,
-      deleted_at: null
-    })
-    .first();
+  const query = knex('accounting.rules').where('transaction_regex', 'ILIKE', name).where({
+    rule_type: type.toUpperCase(),
+    deleted_at: null
+  });
+
+  if (account_id) {
+    query.where({ account_id });
+  }
+
+  return await query.first();
 }

@@ -3,6 +3,7 @@ query rule($id: Int!) {
     id
     name
     account_id
+    tax_id
     rule_type
     transaction_regex
     gic_id

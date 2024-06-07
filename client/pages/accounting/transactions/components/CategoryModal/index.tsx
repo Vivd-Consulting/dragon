@@ -14,6 +14,7 @@ import { ModalVisible } from 'components/Modal';
 import useSelectedTransactions from '../../hooks/useSelectedTransactions';
 
 import categoriesQuery from './queries/categories.gql';
+import taxesQuery from './queries/taxes.gql';
 import updateTransactionMutation from './queries/updateTransaction.gql';
 import createRuleMutation from './queries/createRule.gql';
 
@@ -40,6 +41,7 @@ export default function CategoryModal() {
 
   const [category, setCategory] = useState<any>(null);
   const [notes, setNotes] = useState<string>('');
+  const [tax, setTax] = useState<number>();
   const [makeRule, setMakeRule] = useState<boolean>(false);
 
   const hasManyTransactions = transactions.length > 1;
@@ -102,6 +104,7 @@ export default function CategoryModal() {
             transactionType={type}
             categoryType={categoryType}
           />
+          <TaxDropdown tax={tax} setTax={setTax} />
           <InputTextarea
             placeholder="Notes"
             value={notes}
@@ -167,6 +170,7 @@ export default function CategoryModal() {
         category: category?.id,
         transactionType: type,
         notes,
+        tax,
         transactionIds: transactions.map(transaction => transaction.id)
       }
     });
@@ -179,7 +183,8 @@ export default function CategoryModal() {
         account_id: transaction.account_id,
         gic_id: category.id,
         transaction_regex: transactionRegex,
-        rule_type: categoryType.toUpperCase()
+        rule_type: categoryType.toUpperCase(),
+        tax_id: tax
       }
     });
   }
@@ -213,6 +218,23 @@ function CategoryDropdown({ category, setCategory, categoryType, transactionType
       filter
       filterInputAutoFocus
       autoFocus
+    />
+  );
+}
+
+function TaxDropdown({ tax, setTax }) {
+  const { data } = useQuery(taxesQuery);
+
+  return (
+    <Dropdown
+      options={data?.accounting_tax}
+      optionLabel="name"
+      optionValue="id"
+      placeholder="Select a Tax"
+      value={tax}
+      onChange={e => setTax(e.value)}
+      showClear
+      data-cy="tax-dropdown"
     />
   );
 }

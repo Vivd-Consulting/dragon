@@ -21,10 +21,16 @@ export default async function handler(request, response) {
     const rules = await knex('accounting.rules').where({ deleted_at: null });
 
     for (const rule of rules) {
-      await knex('accounting.transactions')
-        .update({ gic_category_id: rule.gic_id, applied_rule: rule.id })
-        .where({ gic_category_id: null, account_id: rule.account_id })
+      const query = knex('accounting.transactions')
+        .update({ gic_category_id: rule.gic_id, applied_rule: rule.id, tax_id: rule.tax_id })
+        .where({ gic_category_id: null })
         .where('name', 'ILIKE', rule.transaction_regex);
+
+      if (rule.account_id) {
+        query.where({ account_id: rule.account_id });
+      }
+
+      await query;
     }
 
     response.status(200).json({ success: true });
