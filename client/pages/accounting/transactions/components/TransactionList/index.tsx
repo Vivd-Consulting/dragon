@@ -315,7 +315,7 @@ export default function TransactionList() {
           />
         )}
         <Column
-          body={({ date }) => <span>{dateFormat(date)}</span>}
+          body={({ date }) => <span>{dateFormat(date, true)}</span>}
           field="date"
           header="Date"
           sortable

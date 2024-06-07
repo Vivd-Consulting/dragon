@@ -154,7 +154,7 @@ export default function RulesList() {
         />
         <Column field="transactions_aggregate.aggregate.count" header="Applied Transactions" />
         <Column
-          body={({ created_at }) => <span>{dateFormat(created_at)}</span>}
+          body={({ created_at }) => <span>{dateFormat(created_at, true)}</span>}
           field="created_at"
           header="Created At"
           sortable
