@@ -35,11 +35,34 @@ function RuleForm({ rule = {}, onSubmit, onError, onCancel }: any) {
         options={categories}
         optionLabel="name"
         optionValue="id"
+        itemTemplate={categoryDropdownTemplate}
+        valueTemplate={categoryDropdownValueTemplate}
       />
 
       <FormFooterButtons onCancel={onCancel} />
     </Form>
   );
+
+  function categoryDropdownTemplate(option) {
+    return (
+      <div className="flex justify-content-start align-items-center gap-2">
+        <i className={`pi ${option.is_business ? 'pi-briefcase' : 'pi-users'} p-mr-4`}></i>
+        <span>{option.name}</span>
+      </div>
+    );
+  }
+
+  function categoryDropdownValueTemplate(option) {
+    if (option) {
+      return (
+        <div className="flex justify-content-start align-items-center gap-2">
+          <i className={`pi ${option.is_business ? 'pi-briefcase' : 'pi-users'} p-mr-2`}></i>
+          <span>{option.name}</span>
+        </div>
+      );
+    }
+    return <span>Select a Category</span>;
+  }
 
   function _onSubmit(data) {
     return new Promise(async resolve => {
