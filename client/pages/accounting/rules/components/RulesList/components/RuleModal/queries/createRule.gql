@@ -1,5 +1,6 @@
 mutation createRule(
   $name: String!
+  $account_id: String
   $gic_id: Int!
   $transaction_regex: String!
   $rule_type: rule_type!
@@ -7,6 +8,7 @@ mutation createRule(
   insert_accounting_rules_one(
     object: {
       name: $name
+      account_id: $account_id
       gic_id: $gic_id
       transaction_regex: $transaction_regex
       rule_type: $rule_type

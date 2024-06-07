@@ -1,0 +1,9 @@
+query accounts {
+  accounting_account(where: { excluded: { _eq: false } }) {
+    id
+    bank {
+      name
+    }
+    name
+  }
+}
