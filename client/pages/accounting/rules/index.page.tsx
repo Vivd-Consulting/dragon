@@ -12,7 +12,7 @@ export default function Rules() {
       <Card
         header={
           <Row justify="between" align="center" mx={4} mt={4}>
-            <h2 className="my-0">Transactions</h2>
+            <h2 className="my-0">Rules</h2>
           </Row>
         }
       >
