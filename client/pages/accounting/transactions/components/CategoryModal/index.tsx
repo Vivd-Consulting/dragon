@@ -142,7 +142,6 @@ export default function CategoryModal({ refetchTransactions }) {
             transactionType={type}
             categoryType={categoryType}
           />
-          <AccountDropdown accountId={accountId} setAccountId={setAccountId} />
           <TaxDropdown tax={tax} setTax={setTax} />
           <InputTextarea
             placeholder="Notes"
@@ -174,6 +173,7 @@ export default function CategoryModal({ refetchTransactions }) {
                   onChange={e => setRuleName(e.target.value)}
                 />
               </div>
+              <AccountDropdown accountId={accountId} setAccountId={setAccountId} />
               <div className="flex flex-column gap-1">
                 <label htmlFor="transactionRegex" className="ml-2">
                   Transaction Regex
