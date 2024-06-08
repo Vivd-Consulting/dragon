@@ -66,6 +66,11 @@ export default function BankList({ paginatedQuery }) {
         header="Created At"
       />
       <Column
+        body={({ updated_at }) => <span>{dateFormat(updated_at)}</span>}
+        field="updated_at"
+        header="Updated At"
+      />
+      <Column
         body={({ error }) =>
           error ? <span className="text-red-500">{error}</span> : <i className="pi pi-check"></i>
         }
