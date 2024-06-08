@@ -144,6 +144,7 @@ export async function backfillTransactions() {
       await knexTransaction.commit();
     } catch (error: any) {
       await knex('accounting.bank').update({ error: error.message }).where({ token });
+      throw new Error(error);
     }
   }
 }
