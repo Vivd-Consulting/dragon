@@ -113,7 +113,8 @@ export async function backfillTransactions() {
               website: transaction.website,
               counterparties: transaction.counterparties,
               category_id: transaction.category_id,
-              category: transaction.category
+              category: transaction.category,
+              updated_at: new Date()
             }))
           )
           .whereIn(
@@ -137,7 +138,7 @@ export async function backfillTransactions() {
 
       // Update the cursor
       await knex('accounting.bank')
-        .update({ cursor, updatedAt: new Date() })
+        .update({ cursor, updated_at: new Date() })
         .where({ token })
         .transacting(knexTransaction);
 
@@ -202,7 +203,7 @@ async function fetchTransactions({ token, cursor, knexTransaction }) {
     await knex('accounting.bank')
       .update({
         cursor,
-        updatedAt: new Date()
+        updated_at: new Date()
       })
       .where({ token })
       .transacting(knexTransaction);
