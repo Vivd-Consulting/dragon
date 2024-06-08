@@ -114,6 +114,10 @@ export default function TransactionList() {
     setBulkSelectTransactions
   ]);
 
+  useEffect(() => {
+    setSelectedCategory(undefined);
+  }, [onlyUncategorizedTransactions]);
+
   useKeyPress(['meta.p'], e => {
     if (bulkSelectTransactions.length > 0) {
       e.preventDefault();
