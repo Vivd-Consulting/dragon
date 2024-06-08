@@ -35,7 +35,7 @@ export async function backfillTransactions() {
     // Get all transactions for this account
     try {
       const transaction = await fetchTransactions({ token, cursor, knexTransaction });
-      const { added, removed, modified } = transaction;
+      const { added, removed, modified, cursor: lastCursor } = transaction;
 
       if (added.length > 0) {
         // Insert the transactions into the database
@@ -138,15 +138,16 @@ export async function backfillTransactions() {
 
       // Update the cursor
       await knex('accounting.bank')
-        .update({ cursor, updated_at: new Date() })
+        .update({ cursor: lastCursor, updated_at: new Date() })
         .where({ token })
         .transacting(knexTransaction);
-
-      await knexTransaction.commit();
     } catch (error: any) {
       await knex('accounting.bank').update({ error: error.message }).where({ token });
+      knexTransaction.rollback();
       throw new Error(error);
     }
+
+    await knexTransaction.commit();
   }
 }
 
@@ -200,19 +201,20 @@ async function fetchTransactions({ token, cursor, knexTransaction }) {
     // Update cursor to the next cursor
     cursor = data.next_cursor;
 
-    await knex('accounting.bank')
-      .update({
-        cursor,
-        updated_at: new Date()
-      })
-      .where({ token })
-      .transacting(knexTransaction);
+    // await knex('accounting.bank')
+    //   .update({
+    //     cursor,
+    //     updated_at: new Date()
+    //   })
+    //   .where({ token })
+    //   .transacting(knexTransaction);
   }
 
   return {
     added,
     removed,
-    modified
+    modified,
+    cursor
   };
 }
 
