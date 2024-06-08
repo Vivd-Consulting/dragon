@@ -9,6 +9,7 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 
 import { Row } from 'components/Group';
+import CategoryDropdown from 'components/CategoryDropdown';
 import { InputTextDebounced } from 'components/Form';
 
 import { dateFormat } from 'utils';
@@ -16,7 +17,6 @@ import { dateFormat } from 'utils';
 import { usePaginatedQuery } from 'hooks/usePaginatedQuery';
 import { useAuth } from 'hooks/useAuth';
 
-import CategoryDropdown from './components/CategoryDropdown';
 import { CreateRuleModal, UpdateRuleModal } from './components/RuleModal';
 
 import rulesQuery from './queries/rules.gql';

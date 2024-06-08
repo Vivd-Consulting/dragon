@@ -3,5 +3,6 @@ query categories {
     id
     name
     transaction_type
+    is_business
   }
 }

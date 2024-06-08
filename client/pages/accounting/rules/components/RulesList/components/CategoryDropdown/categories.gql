@@ -1,7 +1,0 @@
-query categories {
-  accounting_category {
-    id
-    name
-    transaction_type
-  }
-}
