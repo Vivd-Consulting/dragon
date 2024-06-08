@@ -20,11 +20,14 @@ const configuration = new Configuration({
 export const client = new PlaidApi(configuration);
 
 export async function backfillTransactions() {
+  const knexTransaction = await knex.transaction();
+
   // Get all the accounts with their bank info
   const accounts = await knex('accounting.account')
     .select(['account.id as id', 'account.name', 'bank.id as bank_id', 'token', 'cursor'])
     .where({ excluded: false })
-    .join('accounting.bank', 'account.bank_id', 'bank.id');
+    .join('accounting.bank', 'account.bank_id', 'bank.id')
+    .where({ error: null });
 
   for (const account of accounts) {
     const { token, cursor } = account;
@@ -50,6 +53,8 @@ export async function backfillTransactions() {
                 account_id: transaction.account_id,
                 type
               });
+
+              console.log({ rule });
 
               return {
                 account_id: transaction.account_id,
@@ -79,7 +84,8 @@ export async function backfillTransactions() {
             })
           )
           .onConflict(['id'])
-          .merge();
+          .merge()
+          .transacting(knexTransaction);
       }
 
       if (modified.length > 0) {
@@ -114,7 +120,8 @@ export async function backfillTransactions() {
             'id',
             modified.map((transaction: any) => transaction.transaction_id)
           )
-          .returning('*');
+          .returning('*')
+          .transacting(knexTransaction);
       }
 
       if (removed.length > 0) {
@@ -124,11 +131,17 @@ export async function backfillTransactions() {
           .whereIn(
             'id',
             removed.map((transaction: any) => transaction.transaction_id)
-          );
+          )
+          .transacting(knexTransaction);
       }
 
       // Update the cursor
-      await knex('accounting.bank').update({ cursor }).where({ token });
+      await knex('accounting.bank')
+        .update({ cursor, updatedAt: new Date() })
+        .where({ token })
+        .transacting(knexTransaction);
+
+      await knexTransaction.commit();
     } catch (error: any) {
       await knex('accounting.bank').update({ error: error.message }).where({ token });
     }
@@ -196,6 +209,10 @@ async function fetchTransactions({ token, cursor }) {
 }
 
 async function getRule({ name, account_id, type }) {
+  if (!name || !type || !account_id) {
+    return null;
+  }
+
   const query = knex('accounting.rules').where('transaction_regex', 'ILIKE', name).where({
     rule_type: type.toUpperCase(),
     deleted_at: null
