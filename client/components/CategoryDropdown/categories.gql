@@ -1,0 +1,8 @@
+query categories($where: accounting_category_bool_exp) {
+  accounting_category(where: $where) {
+    id
+    name
+    transaction_type
+    is_business
+  }
+}

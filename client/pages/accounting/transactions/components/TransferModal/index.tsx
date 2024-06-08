@@ -1,24 +1,26 @@
 import _ from 'lodash';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Button } from 'primereact/button';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
 import { Column as PColumn } from 'primereact/column';
 
-import { useCategories } from 'hooks/useCategories';
-
 import { Column, Row } from 'components/Group';
 import { ModalVisible } from 'components/Modal';
+import CategoryDropdown from 'components/CategoryDropdown';
+
+import { getTransactionType } from 'utils';
 
 import transactionQuery from './queries/transaction.gql';
 import updateTransfersMutation from './queries/updateTransfers.gql';
 
 export default function TransferModal({ transferSourceId, setTransferSource }) {
-  const [, getBy] = useCategories();
-
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const [notes, setNotes] = useState<string | null>(null);
+
+  const [sourceCategory, setSourceCategory] = useState();
+  const [targetCategory, setTargetCategory] = useState();
 
   const [updateTransfers] = useMutation(updateTransfersMutation, {
     refetchQueries: ['transactions']
@@ -32,6 +34,14 @@ export default function TransferModal({ transferSourceId, setTransferSource }) {
   });
 
   const transferSource = data?.accounting_transactions_by_pk;
+
+  useEffect(() => {
+    if (!transferSource) {
+      setSourceCategory(undefined);
+      setTargetCategory(undefined);
+      setSelectedTransaction(null);
+    }
+  }, [transferSource]);
 
   return (
     <ModalVisible
@@ -63,6 +73,10 @@ export default function TransferModal({ transferSourceId, setTransferSource }) {
         <TransferModalForm
           transferSource={transferSource}
           notes={notes}
+          sourceCategory={sourceCategory}
+          setSourceCategory={setSourceCategory}
+          targetCategory={targetCategory}
+          setTargetCategory={setTargetCategory}
           setNotes={setNotes}
           selectedTransaction={selectedTransaction}
           setSelectedTransaction={setSelectedTransaction}
@@ -74,8 +88,8 @@ export default function TransferModal({ transferSourceId, setTransferSource }) {
   function onSubmit() {
     return updateTransfers({
       variables: {
-        sourceGic: getBy({ name: 'Transfer' }).id,
-        matchedGic: getBy({ name: 'Transfer' }).id,
+        sourceGic: sourceCategory,
+        matchedGic: targetCategory,
         notes,
         sourceTransfer: transferSourceId,
         matchedTransfer: selectedTransaction.id
@@ -87,6 +101,10 @@ export default function TransferModal({ transferSourceId, setTransferSource }) {
 function TransferModalForm({
   transferSource,
   notes,
+  sourceCategory,
+  setSourceCategory,
+  targetCategory,
+  setTargetCategory,
   setNotes,
   selectedTransaction,
   setSelectedTransaction
@@ -127,6 +145,19 @@ function TransferModalForm({
                 day: 'numeric'
               })}
             </span>
+          )}
+        />
+        <PColumn
+          field="gic_id"
+          header="Category"
+          body={() => (
+            <CategoryDropdown
+              value={sourceCategory}
+              defaultCategory="Transfer"
+              onChange={setSourceCategory}
+              transactionType={getTransactionType(transferSource)}
+              showIcons
+            />
           )}
         />
       </DataTable>
@@ -176,6 +207,25 @@ function TransferModalForm({
             </span>
           )}
         />
+        {selectedTransaction && (
+          <PColumn
+            field="gic_id"
+            header="Category"
+            body={t => {
+              const thisTransaction = t.id === selectedTransaction?.id;
+
+              return thisTransaction ? (
+                <CategoryDropdown
+                  value={targetCategory}
+                  defaultCategory="Transfer"
+                  transactionType={getTransactionType(t)}
+                  onChange={setTargetCategory}
+                  showIcons
+                />
+              ) : null;
+            }}
+          />
+        )}
       </DataTable>
 
       <InputTextarea

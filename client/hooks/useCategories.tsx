@@ -5,12 +5,12 @@ export function useCategories() {
   const { data, loading, error } = useQuery(CATEGORIES);
 
   if (loading) {
-    return [[]];
+    return [[], stub];
   }
 
   if (error) {
     console.error(error);
-    return [[]];
+    return [[], stub];
   }
 
   const { accounting_category } = data || [];
@@ -25,6 +25,10 @@ export function useCategories() {
       });
     });
   }
+
+  function stub() {
+    return {};
+  }
 }
 
 const CATEGORIES = gql`
@@ -34,6 +38,7 @@ const CATEGORIES = gql`
       gic
       name
       transaction_type
+      is_business
     }
   }
 `;

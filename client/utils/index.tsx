@@ -154,3 +154,7 @@ export function formatDuration(duration) {
 
   return formattedDuration;
 }
+
+export function getTransactionType(transaction) {
+  return transaction.debit > 0 ? 'debit' : 'credit';
+}
