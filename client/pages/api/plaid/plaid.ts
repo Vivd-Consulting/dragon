@@ -24,7 +24,9 @@ export async function backfillTransactions() {
     .select(['account.id as id', 'account.name', 'bank.id as bank_id', 'token', 'cursor'])
     .where({ excluded: false })
     .join('accounting.bank', 'account.bank_id', 'bank.id')
-    .where({ error: null });
+    .whereIn('error', [null, '']);
+
+  console.log('Accounts:', accounts.length);
 
   for (const account of accounts) {
     const knexTransaction = await knex.transaction();
@@ -50,8 +52,6 @@ export async function backfillTransactions() {
               account_id: transaction.account_id,
               type
             });
-
-            console.log({ rule });
 
             return {
               account_id: transaction.account_id,
@@ -152,6 +152,13 @@ export async function backfillTransactions() {
         .where({ token })
         .transacting(knexTransaction);
 
+      console.log({
+        account: account.id,
+        added: added.length,
+        modified: modified.length,
+        removed: removed.length
+      });
+
       await knexTransaction.commit();
     } catch (error: any) {
       await knexTransaction.rollback();
@@ -221,13 +228,6 @@ async function fetchTransactions({ token, cursor }) {
     //   .transacting(knexTransaction);
   }
 
-  console.log({
-    cursor2: cursor,
-    added,
-    removed,
-    modified
-  });
-
   return {
     added,
     removed,
@@ -241,10 +241,12 @@ async function getRule({ name, account_id, type }) {
     return null;
   }
 
-  const query = knex('accounting.rules').where('transaction_regex', 'ILIKE', name).where({
-    rule_type: type.toUpperCase(),
-    deleted_at: null
-  });
+  const query = knex('accounting.rules')
+    .where(knex.raw('?', [name]), 'ilike', 'transaction_regex')
+    .where({
+      rule_type: type.toUpperCase(),
+      deleted_at: null
+    });
 
   if (account_id) {
     query.where({ account_id });
