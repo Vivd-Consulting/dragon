@@ -59,9 +59,7 @@ export async function backfillTransactions() {
                 type
               });
 
-              console.log({ rule });
-
-              return {
+              const payload: any = {
                 account_id: transaction.account_id,
                 account_owner: transaction.account_owner,
                 credit,
@@ -82,10 +80,16 @@ export async function backfillTransactions() {
                 website: transaction.website,
                 counterparties: transaction.counterparties,
                 category_id: transaction.category_id,
-                category: transaction.category,
-                gic_category_id: rule?.gic_id,
-                tax_id: rule?.tax_id
+                category: transaction.category
               };
+
+              if (rule) {
+                payload.applied_rule = rule.id;
+                payload.gic_category_id = rule.gic_id;
+                payload.tax_id = rule.tax_id;
+              }
+
+              return payload;
             })
           )
           .onConflict(['id'])
@@ -193,6 +197,7 @@ async function fetchTransactions({ token, cursor }) {
     const response = await client.transactionsSync(request);
 
     if (response.status !== 200) {
+      console.error(response);
       throw new Error(response.statusText);
     }
 
@@ -214,6 +219,13 @@ async function fetchTransactions({ token, cursor }) {
     //   .where({ token })
     //   .transacting(knexTransaction);
   }
+
+  console.log({
+    cursor2: cursor,
+    added,
+    removed,
+    modified
+  });
 
   return {
     added,
