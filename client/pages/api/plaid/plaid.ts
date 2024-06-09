@@ -37,6 +37,11 @@ export async function backfillTransactions() {
       const transaction = await fetchTransactions({ token, cursor });
       const { added, removed, modified, cursor: lastCursor } = transaction;
 
+      console.log({
+        added,
+        lastCursor
+      });
+
       if (added.length > 0) {
         // Insert the transactions into the database
         await knex('accounting.transactions')
