@@ -8,8 +8,7 @@ import { UpdatePlaidLink } from 'components/PlaidLink';
 
 export default function BankList({ paginatedQuery }) {
   const {
-    query: { loading, previousData, data },
-    refetch,
+    query: { loading, previousData, data, refetch },
     paginationValues,
     onPage
   } = paginatedQuery;
