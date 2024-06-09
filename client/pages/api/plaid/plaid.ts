@@ -20,8 +20,6 @@ const configuration = new Configuration({
 export const client = new PlaidApi(configuration);
 
 export async function backfillTransactions() {
-  const knexTransaction = await knex.transaction();
-
   // Get all the accounts with their bank info
   const accounts = await knex('accounting.account')
     .select(['account.id as id', 'account.name', 'bank.id as bank_id', 'token', 'cursor'])
@@ -30,11 +28,13 @@ export async function backfillTransactions() {
     .where({ error: null });
 
   for (const account of accounts) {
+    const knexTransaction = await knex.transaction();
+
     const { token, cursor } = account;
 
     // Get all transactions for this account
     try {
-      const transaction = await fetchTransactions({ token, cursor, knexTransaction });
+      const transaction = await fetchTransactions({ token, cursor });
       const { added, removed, modified, cursor: lastCursor } = transaction;
 
       if (added.length > 0) {
@@ -169,7 +169,7 @@ export async function getCategories() {
   return insertedCategories;
 }
 
-async function fetchTransactions({ token, cursor, knexTransaction }) {
+async function fetchTransactions({ token, cursor }) {
   // New transaction updates since "cursor"
   let added: any[] = [];
   let modified: any[] = [];
