@@ -9,7 +9,7 @@
   comment: ""
 - name: Transaction Sync
   webhook: '{{ACTION_API}}/events/transactions'
-  schedule: 0 15 * * *
+  schedule: '*/30 * * * *'
   include_in_metadata: true
   payload: {}
   retry_conf:
