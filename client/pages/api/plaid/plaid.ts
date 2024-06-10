@@ -148,7 +148,7 @@ export async function backfillTransactions() {
           }
         }
 
-        // await applyRules(knexTransaction);
+        await applyRules(knexTransaction);
 
         // Update the cursor
         await knex('accounting.bank')
