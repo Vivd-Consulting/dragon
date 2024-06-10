@@ -58,15 +58,6 @@ export async function backfillTransactions() {
               const credit = transaction.amount < 0 ? transaction.amount : null;
               const debit = transaction.amount > 0 ? transaction.amount : null;
 
-              const isDebit = debit && debit > 0;
-              const type = isDebit ? 'DEBIT' : 'CREDIT';
-
-              const rule = await getRule({
-                name: transaction.name,
-                account_id: transaction.account_id,
-                type
-              });
-
               return {
                 account_id: transaction.account_id,
                 account_owner: transaction.account_owner,
@@ -88,10 +79,7 @@ export async function backfillTransactions() {
                 website: transaction.website,
                 counterparties: transaction.counterparties,
                 category_id: transaction.category_id,
-                applied_rule: rule?.id,
-                category: transaction.category,
-                gic_category_id: rule?.gic_id,
-                tax_id: rule?.tax_id
+                category: transaction.category
               };
             })
           );
@@ -159,6 +147,8 @@ export async function backfillTransactions() {
             console.warn('No data to remove for account:', account.id);
           }
         }
+
+        await applyRules(knexTransaction);
 
         // Update the cursor
         await knex('accounting.bank')
@@ -231,21 +221,20 @@ async function fetchTransactions({ token, cursor }) {
   };
 }
 
-async function getRule({ name, account_id, type }) {
-  if (!name || !type || !account_id) {
-    return null;
+async function applyRules(knexTransaction) {
+  const rules = await knex('accounting.rules').where({ deleted_at: null });
+
+  for (const rule of rules) {
+    const query = knex('accounting.transactions')
+      .update({ gic_category_id: rule.gic_id, applied_rule: rule.id, tax_id: rule.tax_id })
+      .where({ gic_category_id: null })
+      .where('name', 'ILIKE', rule.transaction_regex)
+      .transacting(knexTransaction);
+
+    if (rule.account_id) {
+      query.where({ account_id: rule.account_id });
+    }
+
+    await query;
   }
-
-  const query = knex('accounting.rules')
-    .where(knex.raw('?', [name]), 'ilike', 'transaction_regex')
-    .where({
-      rule_type: type.toUpperCase(),
-      deleted_at: null
-    });
-
-  if (account_id) {
-    query.where({ account_id });
-  }
-
-  return await query.first();
 }
