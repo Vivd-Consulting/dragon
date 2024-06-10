@@ -21,19 +21,24 @@ export const client = new PlaidApi(configuration);
 
 export async function backfillTransactions() {
   const accounts = await knex('accounting.account')
-    .select(['account.id as id', 'account.name', 'bank.id as bank_id', 'token', 'cursor'])
+    .select(['account.id as id', 'account.name', 'bank.id as bank_id', 'token'])
     .where({ excluded: false })
     .join('accounting.bank', 'account.bank_id', 'bank.id')
-    .whereIn('error', [null, '']);
-
-  console.log('Accounts:', accounts.length);
+    .where('error', null)
+    .orWhere('error', '');
 
   for (const account of accounts) {
-    const { token, cursor } = account;
+    const { token } = account;
 
     let hasMore = true;
 
     while (hasMore) {
+      const { cursor } = await knex('accounting.bank')
+        .where({ token })
+        .where('error', null)
+        .orWhere('error', '')
+        .first();
+
       const knexTransaction = await knex.transaction();
 
       try {
