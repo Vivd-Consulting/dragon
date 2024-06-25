@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 
 import { Dropdown } from 'primereact/dropdown';
@@ -37,6 +38,15 @@ export default function CategoryDropdown({
 
   const categories = data?.accounting_category;
 
+  const _value =
+    value ||
+    categories?.find(category => category.name.toLowerCase() === defaultCategory?.toLowerCase())
+      ?.id;
+
+  useEffect(() => {
+    onChange(_value);
+  }, []);
+
   return (
     <Dropdown
       options={categories}
@@ -45,11 +55,7 @@ export default function CategoryDropdown({
       placeholder="Select a Category"
       filter
       showClear
-      value={
-        value ||
-        categories?.find(category => category.name.toLowerCase() === defaultCategory?.toLowerCase())
-          ?.id
-      }
+      value={_value}
       onChange={e => onChange(e.value)}
       itemTemplate={showIcons ? categoryDropdownTemplate : undefined}
       valueTemplate={showIcons ? categoryDropdownValueTemplate : undefined}
