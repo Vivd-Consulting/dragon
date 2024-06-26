@@ -121,6 +121,11 @@ export async function backfillTransactions() {
             updated_at: new Date()
           }));
 
+          console.error({
+            updateData,
+            whereIn: modified.map((transaction: any) => transaction.transaction_id)
+          });
+
           if (updateData.length > 0) {
             await knex('accounting.transactions')
               .update(updateData)
