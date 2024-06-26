@@ -40,7 +40,7 @@ export async function backfillTransactions() {
         .first();
 
       if (!bank) {
-        // console.warn(`(${account.name}) No bank found for token: ${token}`);
+        console.warn(`(${account.name}) No bank found for token: ${token}`);
         break;
       }
 
@@ -134,20 +134,16 @@ export async function backfillTransactions() {
             updated_at: new Date()
           }));
 
-          console.error({
-            updateData: JSON.stringify(updateData),
-            whereIn: modified.map((transaction: any) => transaction.transaction_id)
-          });
-
           if (updateData.length > 0) {
-            await knex('accounting.transactions')
-              .update(updateData)
-              .whereIn(
-                'id',
-                modified.map((transaction: any) => transaction.transaction_id)
-              )
-              .returning('*')
-              .transacting(knexTransaction);
+            const updateIds = updateData.map((transaction: any) => transaction.id);
+
+            for (const data of updateData) {
+              await knex('accounting.transactions')
+                .update(data)
+                .whereIn('id', updateIds)
+                .returning('*')
+                .transacting(knexTransaction);
+            }
           } else {
             console.warn('No data to update for account:', account.id);
           }
@@ -178,7 +174,7 @@ export async function backfillTransactions() {
       } catch (error: any) {
         await knexTransaction.rollback();
         await knex('accounting.bank').update({ error: error.message }).where({ token });
-        // console.error('Error processing account:', account.id, error);
+        console.error('Error processing account:', account.id, error);
 
         break;
       }
