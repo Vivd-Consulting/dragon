@@ -219,6 +219,7 @@ function TransferModalForm({
                 <CategoryDropdown
                   value={targetCategory}
                   defaultCategory="Transfer"
+                  isAccountBusiness={selectedTransaction.account.is_business}
                   transactionType={getTransactionType(t)}
                   onChange={setTargetCategory}
                   showIcons
