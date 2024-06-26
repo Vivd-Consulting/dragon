@@ -40,6 +40,8 @@ function RuleForm({ rule = {}, onSubmit, onError, onCancel }: any) {
         label="Account"
         name="account_id"
         placeholder="Select an Account"
+        itemTemplate={accountDropdownTemplate}
+        valueTemplate={accountDropdownValueTemplate}
         options={accounts}
         optionLabel="name"
         optionValue="id"
@@ -89,6 +91,27 @@ function RuleForm({ rule = {}, onSubmit, onError, onCancel }: any) {
       );
     }
     return <span>Select a Category</span>;
+  }
+
+  function accountDropdownTemplate(option) {
+    return (
+      <div className="flex justify-content-start align-items-center gap-2">
+        <i className={`pi ${option.is_business ? 'pi-briefcase' : 'pi-users'} p-mr-4`}></i>
+        <span>{option.name}</span>
+      </div>
+    );
+  }
+
+  function accountDropdownValueTemplate(option) {
+    if (option) {
+      return (
+        <div className="flex justify-content-start align-items-center gap-2">
+          <i className={`pi ${option.is_business ? 'pi-briefcase' : 'pi-users'} p-mr-2`}></i>
+          <span>{option.name}</span>
+        </div>
+      );
+    }
+    return <span>Select an Account</span>;
   }
 
   function _onSubmit(data) {
