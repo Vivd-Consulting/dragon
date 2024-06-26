@@ -40,7 +40,7 @@ export async function backfillTransactions() {
         .first();
 
       if (!bank) {
-        console.warn(`(${account.name}) No bank found for token: ${token}`);
+        // console.warn(`(${account.name}) No bank found for token: ${token}`);
         break;
       }
 
@@ -178,7 +178,7 @@ export async function backfillTransactions() {
       } catch (error: any) {
         await knexTransaction.rollback();
         await knex('accounting.bank').update({ error: error.message }).where({ token });
-        console.error('Error processing account:', account.id, error);
+        // console.error('Error processing account:', account.id, error);
 
         break;
       }
