@@ -8,6 +8,7 @@ import categoriesQuery from './categories.gql';
 export default function CategoryDropdown({
   value,
   defaultCategory,
+  isAccountBusiness = false,
   transactionType = null,
   isBusiness = null,
   showIcons = false,
@@ -15,6 +16,7 @@ export default function CategoryDropdown({
 }: {
   value: any;
   defaultCategory?: string;
+  isAccountBusiness?: boolean;
   transactionType?: string | null;
   isBusiness?: boolean | null;
   showIcons?: boolean;
@@ -40,8 +42,11 @@ export default function CategoryDropdown({
 
   const _value =
     value ||
-    categories?.find(category => category.name.toLowerCase() === defaultCategory?.toLowerCase())
-      ?.id;
+    categories?.find(
+      category =>
+        category.is_business === isAccountBusiness &&
+        category.name.toLowerCase() === defaultCategory?.toLowerCase()
+    )?.id;
 
   useEffect(() => {
     onChange(_value);

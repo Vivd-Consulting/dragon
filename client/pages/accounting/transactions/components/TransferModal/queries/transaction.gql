@@ -3,6 +3,8 @@ query transaction($id: String!) {
     id
     account {
       name
+      is_business
+      currency
     }
     name
     date
