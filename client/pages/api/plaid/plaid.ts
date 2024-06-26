@@ -33,11 +33,18 @@ export async function backfillTransactions() {
     let hasMore = true;
 
     while (hasMore) {
-      const { cursor } = await knex('accounting.bank')
+      const bank = await knex('accounting.bank')
         .where({ token })
         .where('error', null)
         .orWhere('error', '')
         .first();
+
+      if (!bank) {
+        console.warn('No bank found for token:', token);
+        break;
+      }
+
+      const { cursor } = bank;
 
       const knexTransaction = await knex.transaction();
 
@@ -47,6 +54,12 @@ export async function backfillTransactions() {
           token,
           cursor
         });
+
+        if (!transaction) {
+          console.warn('No transactions to process for account:', account.id);
+          break;
+        }
+
         const { added, removed, modified, cursor: lastCursor, hasMore: _hasMore } = transaction;
 
         hasMore = _hasMore;
@@ -122,7 +135,7 @@ export async function backfillTransactions() {
           }));
 
           console.error({
-            updateData,
+            updateData: JSON.stringify(updateData),
             whereIn: modified.map((transaction: any) => transaction.transaction_id)
           });
 
