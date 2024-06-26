@@ -314,10 +314,33 @@ function AccountDropdown({ accountId, setAccountId }) {
       optionLabel="name"
       optionValue="id"
       placeholder="Select an Account"
+      itemTemplate={accountDropdownTemplate}
+      valueTemplate={accountDropdownValueTemplate}
       value={accountId}
       onChange={e => setAccountId(e.value)}
       showClear
       data-cy="account-dropdown"
     />
   );
+
+  function accountDropdownTemplate(option) {
+    return (
+      <div className="flex justify-content-start align-items-center gap-2">
+        <i className={`pi ${option.is_business ? 'pi-briefcase' : 'pi-users'} p-mr-4`}></i>
+        <span>{option.name}</span>
+      </div>
+    );
+  }
+
+  function accountDropdownValueTemplate(option) {
+    if (option) {
+      return (
+        <div className="flex justify-content-start align-items-center gap-2">
+          <i className={`pi ${option.is_business ? 'pi-briefcase' : 'pi-users'} p-mr-2`}></i>
+          <span>{option.name}</span>
+        </div>
+      );
+    }
+    return <span>Select an Account</span>;
+  }
 }

@@ -1,9 +1,11 @@
 query accounts {
-  accounting_account(where: { excluded: { _eq: false } }) {
+  accounting_account(where: { excluded: { _eq: false } }, order_by: {is_business: desc}) {
     id
     bank {
       name
     }
     name
+    is_business
+    currency
   }
 }

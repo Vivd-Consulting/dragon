@@ -1,0 +1,1 @@
+ALTER TABLE accounting.account ADD COLUMN is_business BOOLEAN NOT NULL DEFAULT FALSE;
