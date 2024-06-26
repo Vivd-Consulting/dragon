@@ -1,5 +1,5 @@
 query categories($where: accounting_category_bool_exp) {
-  accounting_category(where: $where) {
+  accounting_category(where: $where, order_by: {is_business: desc}) {
     id
     name
     transaction_type
