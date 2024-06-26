@@ -40,7 +40,7 @@ export async function backfillTransactions() {
         .first();
 
       if (!bank) {
-        console.warn('No bank found for token:', token);
+        console.warn(`(${account.name}) No bank found for token: ${token}`);
         break;
       }
 
