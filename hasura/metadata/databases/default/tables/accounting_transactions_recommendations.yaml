@@ -4,7 +4,21 @@ table:
 object_relationships:
   - name: recommendation
     using:
-      foreign_key_constraint_on: transaction_id
+      manual_configuration:
+        column_mapping:
+          recommended_account_id: account_id
+          recommended_transaction_id: id
+        insertion_order: null
+        remote_table:
+          name: transactions
+          schema: accounting
   - name: transaction
     using:
-      foreign_key_constraint_on: recommended_transaction_id
+      manual_configuration:
+        column_mapping:
+          account_id: account_id
+          transaction_id: id
+        insertion_order: null
+        remote_table:
+          name: transactions
+          schema: accounting

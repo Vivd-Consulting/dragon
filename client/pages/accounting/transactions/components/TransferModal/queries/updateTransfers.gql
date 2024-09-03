@@ -3,7 +3,9 @@ mutation updateTransfers(
   $matchedGic: Int!
   $notes: String
   $sourceTransfer: String!
+  $sourceTransferAccount: String!
   $matchedTransfer: String!
+  $matchedTransferAccount: String!
 ) {
   updateSource: update_accounting_transactions_by_pk(
     _set: {

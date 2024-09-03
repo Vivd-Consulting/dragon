@@ -59,7 +59,7 @@ export default function CategoryModal({ refetchTransactions }) {
 
   const categoryType = transactions?.[0]?.debit > 0 ? 'debit' : 'credit';
 
-  const [updateTransaction] = useMutation(updateTransactionMutation, {
+  const [updateTransactions] = useMutation(updateTransactionMutation, {
     refetchQueries: ['transactions']
   });
 
@@ -198,13 +198,16 @@ export default function CategoryModal({ refetchTransactions }) {
   }
 
   function updateTransactionCategory() {
-    return updateTransaction({
+    return updateTransactions({
       variables: {
         category: category?.id,
         transactionType: type,
         notes,
         tax,
-        transactionIds: transactions.map(transaction => transaction.id)
+        transactionIds: transactions.map(transaction => ({
+          id: transaction.id,
+          account_id: transaction.account_id
+        }))
       }
     });
   }

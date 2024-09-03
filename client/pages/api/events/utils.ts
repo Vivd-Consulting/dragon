@@ -13,13 +13,20 @@ export async function recommendRelatedTransactions() {
 
     const recomendations = recommended_relations.map(recommended_relation => ({
       transaction_id: transaction.id,
-      recommended_transaction_id: recommended_relation.id
+      account_id: transaction.account_id,
+      recommended_transaction_id: recommended_relation.id,
+      recommended_account_id: recommended_relation.account_id
     }));
 
     if (recomendations.length > 0) {
       const changes = await knex('accounting.transactions_recommendations')
         .insert(recomendations)
-        .onConflict(['transaction_id', 'recommended_transaction_id'])
+        .onConflict([
+          'transaction_id',
+          'account_id',
+          'recommended_transaction_id',
+          'recommended_account_id'
+        ])
         .ignore()
         .returning('*');
 
@@ -37,7 +44,7 @@ export async function lookForRelatedTransactions(transaction) {
   credit = Math.abs(credit);
 
   const relatedTransactions = await knex('accounting.transactions')
-    .select('id')
+    .select('id', 'account_id')
     // find matching debits where debit is not null
     // or matching credits where credit is not null
     .where(function () {

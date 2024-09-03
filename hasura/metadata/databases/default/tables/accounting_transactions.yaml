@@ -28,29 +28,25 @@ object_relationships:
           schema: accounting
   - name: relatedTransaction
     using:
-      foreign_key_constraint_on: related_transaction_id
+      manual_configuration:
+        column_mapping:
+          account_id: related_account_id
+          id: related_transaction_id
+        insertion_order: null
+        remote_table:
+          name: transactions
+          schema: accounting
   - name: tax
     using:
       foreign_key_constraint_on: tax_id
 array_relationships:
   - name: recommendations
     using:
-      foreign_key_constraint_on:
-        column: recommended_transaction_id
-        table:
-          name: transactions_recommendations
-          schema: accounting
-  - name: transactions
-    using:
-      foreign_key_constraint_on:
-        column: related_transaction_id
-        table:
-          name: transactions
-          schema: accounting
-  - name: transactions_recommendations
-    using:
-      foreign_key_constraint_on:
-        column: transaction_id
-        table:
+      manual_configuration:
+        column_mapping:
+          account_id: recommended_account_id
+          id: recommended_transaction_id
+        insertion_order: null
+        remote_table:
           name: transactions_recommendations
           schema: accounting

@@ -92,7 +92,9 @@ export default function TransferModal({ transferSourceId, setTransferSource }) {
         matchedGic: targetCategory,
         notes,
         sourceTransfer: transferSourceId,
-        matchedTransfer: selectedTransaction.id
+        sourceTransferAccount: transferSource.account.id,
+        matchedTransfer: selectedTransaction.id,
+        matchedTransferAccount: selectedTransaction.account.id
       }
     }).then(() => setTransferSource(null));
   }
