@@ -36,6 +36,7 @@ query transactions($limit: Int, $offset: Int, $order_by: [accounting_transaction
     recommendations {
       recommendation {
         id
+        account_id
       }
     }
     notes

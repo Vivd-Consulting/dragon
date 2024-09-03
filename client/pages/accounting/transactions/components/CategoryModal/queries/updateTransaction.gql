@@ -1,16 +1,19 @@
-mutation updateTransaction(
-  $category: Int!
-  $transactionType: String!
-  $notes: String
+mutation updateTransactions(
+  $transactionIds: jsonb!,
+  $category: Int!,
+  $transactionType: String!,
+  $notes: String,
   $tax: Int
-  $transactionIds: [String!]
 ) {
-  update_accounting_transactions_many(
-    updates: {
-      _set: { gic_category_id: $category, notes: $notes, tax_id: $tax, transaction_type: $transactionType }
-      where: { id: { _in: $transactionIds } }
+  accounting_update_transactions(
+    args: {
+      composite_keys: $transactionIds,
+      new_category: $category,
+      new_transaction_type: $transactionType,
+      new_notes: $notes,
+      new_tax: $tax
     }
   ) {
-    affected_rows
+    id
   }
 }
