@@ -48,9 +48,11 @@ export async function backfillTransactions() {
 
       const knexTransaction = await knex.transaction();
 
+      let transaction;
+
       try {
         // Get all transactions for this account
-        const transaction = await fetchTransactions({
+        transaction = await fetchTransactions({
           token,
           cursor
         });
@@ -100,7 +102,7 @@ export async function backfillTransactions() {
           if (insertData.length > 0) {
             await knex('accounting.transactions')
               .insert(insertData)
-              .onConflict(['id'])
+              .onConflict(['id', 'account_id'])
               .merge()
               .transacting(knexTransaction);
           } else {
@@ -173,7 +175,9 @@ export async function backfillTransactions() {
         await knexTransaction.commit();
       } catch (error: any) {
         await knexTransaction.rollback();
-        await knex('accounting.bank').update({ error: error.message }).where({ token });
+        await knex('accounting.bank')
+          .update({ error: error.message, account, transaction })
+          .where({ token });
         console.error('Error processing account:', account.id, error);
 
         break;
