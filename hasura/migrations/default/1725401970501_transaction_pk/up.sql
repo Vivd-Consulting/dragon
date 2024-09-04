@@ -1,4 +1,4 @@
-SET search_path = 'accounting';
+-- SET search_path = 'accounting';
 
 -- ALTER TABLE transactions_recommendations DROP CONSTRAINT transactions_recommendations_transaction_id_fkey;
 -- ALTER TABLE transactions_recommendations DROP CONSTRAINT transactions_recommendations_recommended_transaction_id_fkey;
