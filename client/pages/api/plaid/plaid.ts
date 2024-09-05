@@ -176,7 +176,13 @@ export async function backfillTransactions() {
       } catch (error: any) {
         await knexTransaction.rollback();
         await knex('accounting.bank')
-          .update({ error: error.message, account, transaction })
+          .update({
+            error: `${error.message} -- ${JSON.stringify(account, null, 2)} -- ${JSON.stringify(
+              transaction,
+              null,
+              2
+            )}`
+          })
           .where({ token });
         console.error('Error processing account:', account.id, error);
 
