@@ -102,7 +102,7 @@ export async function backfillTransactions() {
           if (insertData.length > 0) {
             await knex('accounting.transactions')
               .insert(insertData)
-              .onConflict(['id', 'account_id'])
+              .onConflict(['id'])
               .merge()
               .transacting(knexTransaction);
           } else {
