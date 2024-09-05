@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
 
 import knex from '../db';
@@ -86,8 +87,9 @@ export async function backfillTransactions() {
                 name: transaction.name,
                 payment_channel: transaction.payment_channel,
                 payment_meta: transaction.payment_meta,
-                personal_finance_category: transaction.detailed,
-                personal_finance_category_confidence: transaction.confidence_level,
+                personal_finance_category: transaction.personal_finance_category.detailed,
+                personal_finance_category_confidence:
+                  transaction.personal_finance_category.confidence_level,
                 personal_finance_category_icon_url: transaction.personal_finance_category_icon_url,
                 id: transaction.transaction_id,
                 transaction_type: transaction.transaction_type,
@@ -124,25 +126,24 @@ export async function backfillTransactions() {
             name: transaction.name,
             payment_channel: transaction.payment_channel,
             payment_meta: transaction.payment_meta,
-            personal_finance_category: transaction.detailed,
-            personal_finance_category_confidence: transaction.confidence_level,
+            personal_finance_category: transaction.personal_finance_category?.detailed,
+            personal_finance_category_confidence:
+              transaction.personal_finance_category?.confidence_level,
             personal_finance_category_icon_url: transaction.personal_finance_category_icon_url,
-            id: transaction.transaction_id,
             transaction_type: transaction.transaction_type,
             website: transaction.website,
             counterparties: transaction.counterparties,
             category_id: transaction.category_id,
             category: transaction.category,
+            id: transaction.transaction_id,
             updated_at: new Date()
           }));
 
           if (updateData.length > 0) {
-            const updateIds = updateData.map((transaction: any) => transaction.id);
-
             for (const data of updateData) {
               await knex('accounting.transactions')
-                .update(data)
-                .whereIn('id', updateIds)
+                .update(_.omit(data, ['id']))
+                .where({ id: data.id })
                 .returning('*')
                 .transacting(knexTransaction);
             }
