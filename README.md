@@ -1,5 +1,7 @@
 # Dragon Dash
 
+Dragon is an internal Next.js application for managing clients, projects, env variables, time tracking, invoicing, book-keeping and reporting for software development agencies.
+
 ## Quickstart
 In the root of the project, run: `yarn install`. That will make the `hasura-cli` available for the project. Invoke it with `yarn hasura ...`.
 
