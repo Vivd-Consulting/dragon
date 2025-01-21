@@ -2,6 +2,8 @@
 
 Dragon is an internal Next.js application for managing clients, projects, env variables, time tracking, invoicing, book-keeping and reporting for software development agencies.
 
+<img src="https://github.com/user-attachments/assets/ffc590a6-6955-40d7-b288-4425ad6c43f7" width="200" height="200" />
+
 ## Quickstart
 In the root of the project, run: `yarn install`. That will make the `hasura-cli` available for the project. Invoke it with `yarn hasura ...`.
 
