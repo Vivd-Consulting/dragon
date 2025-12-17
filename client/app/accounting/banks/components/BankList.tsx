@@ -10,6 +10,7 @@ import { Toast } from 'primereact/toast';
 import { dateFormat } from '@/utils';
 import { UpdatePlaidLink } from '@/components/PlaidLink';
 import { getBanks } from '@/app/actions/banks';
+import AccountList from './AccountList';
 import type { Bank } from '@/lib/knex/types';
 
 export default function BankList() {
@@ -20,6 +21,7 @@ export default function BankList() {
   const [rows, setRows] = useState(10);
   const [sortField, setSortField] = useState<string | undefined>();
   const [sortOrder, setSortOrder] = useState<0 | 1 | -1 | null | undefined>();
+  const [expandedRows, setExpandedRows] = useState<any>(null);
 
   const toastRef = useRef<Toast>(null);
 
@@ -77,6 +79,14 @@ export default function BankList() {
     // Handle failure
   }
 
+  const rowExpansionTemplate = (bank: Bank) => {
+    return (
+      <div className="p-3">
+        <AccountList bankId={bank.id} />
+      </div>
+    );
+  };
+
   return (
     <>
       <Toast ref={toastRef} />
@@ -100,7 +110,14 @@ export default function BankList() {
         emptyMessage="No Banks found."
         data-cy="banks-table"
         loading={loading}
+        expandedRows={expandedRows}
+        onRowToggle={(e) => {
+          setExpandedRows(e.data);
+        }}
+        rowExpansionTemplate={rowExpansionTemplate}
+        dataKey="id"
       >
+        <Column expander style={{ width: '3rem' }} />
         <Column field="id" header="ID" sortable />
         <Column
           field="logo"

@@ -24,6 +24,8 @@ export async function getTransactions(filters?: {
     date_lte?: Date;
     debit_gt?: number;
     credit_gt?: number;
+    invoice_id?: { _is_null: boolean } | number | string;
+    search?: string; // Server-side search
   };
 }) {
   try {
@@ -69,6 +71,26 @@ export async function getTransactions(filters?: {
 
     if (filters?.where?.credit_gt !== undefined) {
       query = query.where('accounting.transactions.credit', '>', filters.where.credit_gt);
+    }
+
+    if (filters?.where?.invoice_id) {
+      if (typeof filters.where.invoice_id === 'object' && filters.where.invoice_id._is_null) {
+        query = query.whereNull('accounting.transactions.invoice_id');
+      } else {
+        query = query.where('accounting.transactions.invoice_id', filters.where.invoice_id);
+      }
+    }
+
+    // Server-side search
+    if (filters?.where?.search) {
+      const searchTerm = `%${filters.where.search}%`;
+      query = query.where(function() {
+        this.where('accounting.transactions.description', 'ilike', searchTerm)
+          .orWhere('accounting.transactions.notes', 'ilike', searchTerm)
+          .orWhere('accounting.account.name', 'ilike', searchTerm)
+          .orWhereRaw('CAST(accounting.transactions.debit AS TEXT) LIKE ?', [searchTerm])
+          .orWhereRaw('CAST(accounting.transactions.credit AS TEXT) LIKE ?', [searchTerm]);
+      });
     }
 
     if (filters?.order_by) {
@@ -122,13 +144,14 @@ export async function getTransaction(id: number) {
 }
 
 export async function updateTransaction(
-  id: number,
+  id: number | string,
   data: Partial<{
     gic_category_id?: number;
     gic_id?: number;
     notes?: string;
     applied_rule?: number;
     tax_id?: number;
+    invoice_id?: number | null;
   }>
 ) {
   try {
@@ -152,6 +175,10 @@ export async function updateTransaction(
 
     if (data.tax_id !== undefined) {
       updateData.tax_id = data.tax_id;
+    }
+
+    if (data.invoice_id !== undefined) {
+      updateData.invoice_id = data.invoice_id;
     }
 
     const [transaction] = await db<Transaction>('accounting.transactions')
@@ -251,10 +278,51 @@ export async function deleteRule(id: number) {
   }
 }
 
-export async function getAccounts() {
+export async function getAccounts(filters?: {
+  bank_id?: string;
+  excluded?: boolean;
+}) {
   try {
-    const accounts = await db<Account>('accounting.account');
+    let query = db<Account>('accounting.account');
+
+    if (filters?.bank_id) {
+      query = query.where('bank_id', filters.bank_id);
+    }
+
+    if (filters?.excluded !== undefined) {
+      query = query.where('excluded', filters.excluded);
+    }
+
+    const accounts = await query.orderBy('name', 'asc');
     return { data: accounts };
+  } catch (error) {
+    return handleActionError(error);
+  }
+}
+
+export async function updateAccount(
+  id: string,
+  data: Partial<{
+    name: string;
+    excluded: boolean;
+    is_business: boolean;
+    description: string;
+  }>
+) {
+  try {
+    const [account] = await db<Account>('accounting.account')
+      .where({ id })
+      .update({
+        ...data,
+        updated_at: db.fn.now(),
+      })
+      .returning('*');
+
+    if (!account) {
+      return { error: 'Account not found' };
+    }
+
+    return { data: account };
   } catch (error) {
     return handleActionError(error);
   }

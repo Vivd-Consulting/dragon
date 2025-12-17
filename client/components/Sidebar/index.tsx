@@ -60,54 +60,38 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
         </a>
       </Column>
 
-      <SplitButton
-        label="User"
-        size="small"
-        icon="pi pi-user"
-        id="user-profile"
-        className="mb-2"
-      />
-
       <div className={styles['sidebar-items-container']}>
         <Column className={styles['sidebar-items']}>
-          <SidebarGroup
-            icon="pi pi-money-bill"
-            title="Accounting"
-            expanded={selectedGroup === 'Accounting'}
-            setExpanded={setSelectedGroup}
+          <SidebarItem
+            label="Invoices"
+            href="/accounting/invoices"
+            onClick={onItemClick}
             allowedRoles={[Role.Admin]}
-          >
-            <SidebarItem
-              label="Invoices"
-              href="/accounting/invoices"
-              onClick={onItemClick}
-              allowedRoles={[Role.Admin]}
-            />
-            <SidebarItem
-              label="Reports"
-              href="/accounting/reports"
-              onClick={onItemClick}
-              allowedRoles={[Role.Admin]}
-            />
-            <SidebarItem
-              label="Banks"
-              href="/accounting/banks"
-              onClick={onItemClick}
-              allowedRoles={[Role.Admin]}
-            />
-            <SidebarItem
-              label="Transactions"
-              href="/accounting/transactions"
-              onClick={onItemClick}
-              allowedRoles={[Role.Admin]}
-            />
-            <SidebarItem
-              label="Rules"
-              href="/accounting/rules"
-              onClick={onItemClick}
-              allowedRoles={[Role.Admin]}
-            />
-          </SidebarGroup>
+          />
+          <SidebarItem
+            label="Reports"
+            href="/accounting/reports"
+            onClick={onItemClick}
+            allowedRoles={[Role.Admin]}
+          />
+          <SidebarItem
+            label="Banks"
+            href="/accounting/banks"
+            onClick={onItemClick}
+            allowedRoles={[Role.Admin]}
+          />
+          <SidebarItem
+            label="Transactions"
+            href="/accounting/transactions"
+            onClick={onItemClick}
+            allowedRoles={[Role.Admin]}
+          />
+          <SidebarItem
+            label="Rules"
+            href="/accounting/rules"
+            onClick={onItemClick}
+            allowedRoles={[Role.Admin]}
+          />
         </Column>
       </div>
     </>

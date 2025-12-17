@@ -1,12 +1,15 @@
-import { useRouter } from 'next/router';
+'use client';
+
+import { useRouter, usePathname } from 'next/navigation';
 
 export function useNavigate() {
   const router = useRouter();
+  const pathname = usePathname();
 
   return {
     goBack: (path: string, refetch?: boolean) => {
       if (refetch) {
-        return router.push(`${path}?refetch=true`, path);
+        return router.push(`${path}?refetch=true`);
       }
 
       return router.push(path);
@@ -14,7 +17,7 @@ export function useNavigate() {
     goUp: (levels?: number, urlVars?: any | null) => {
       levels = levels || 1;
 
-      const split = router.asPath.split('/');
+      const split = (pathname || '').split('/');
 
       for (let i = 0; i < levels; i++) {
         split.pop();
@@ -37,11 +40,11 @@ export function useNavigate() {
 
       return router.push(builtUrl);
     },
-    goTo: path => {
+    goTo: (path: string) => {
       return router.push(path);
     },
     reload: () => {
-      return router.reload();
+      router.refresh();
     }
   };
 }

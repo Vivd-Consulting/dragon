@@ -58,11 +58,19 @@ export default function CategoryModal({ refetchTransactions }: { refetchTransact
         setSelectedCategory(transaction.gic_category_id || undefined);
         setSelectedTax(transaction.tax_id || undefined);
         setRuleTransactionRegex(transaction.name || '');
+        
+        // Debug: log transaction data to help diagnose category filtering issues
+        console.log('Transaction data:', {
+          debit: transaction.debit,
+          credit: transaction.credit,
+          transaction_type: transaction.transaction_type,
+          type: type,
+        });
       }
     } else {
       setVisible(false);
     }
-  }, [transactions]);
+  }, [transactions, type]);
 
   useEffect(() => {
     async function loadTaxes() {
@@ -104,7 +112,12 @@ export default function CategoryModal({ refetchTransactions }: { refetchTransact
       );
 
       if (createRuleChecked && ruleName && ruleTransactionRegex) {
-        const transactionType = transactions[0]?.transaction_type || (type === 'personal' ? 'debit' : 'credit');
+        // Determine transaction type from actual transaction data (debit/credit), not personal/business
+        const firstTransaction = transactions[0];
+        const isDebit = firstTransaction?.debit !== null && 
+                       firstTransaction?.debit !== undefined && 
+                       firstTransaction?.debit !== 0;
+        const transactionType = firstTransaction?.transaction_type || (isDebit ? 'debit' : 'credit');
         await createRule({
           name: ruleName,
           transaction_regex: ruleTransactionRegex,
@@ -158,7 +171,12 @@ export default function CategoryModal({ refetchTransactions }: { refetchTransact
         <CategoryDropdown
           value={selectedCategory}
           onChange={setSelectedCategory}
-          transactionType={type === 'personal' ? 'debit' : type === 'business' ? 'credit' : undefined}
+          transactionType={
+            transactions[0]?.transaction_type ||
+            ((transactions[0]?.debit !== null && transactions[0]?.debit !== undefined && transactions[0]?.debit !== 0) 
+              ? 'debit' 
+              : 'credit')
+          }
           isBusiness={type === 'business' ? true : type === 'personal' ? false : undefined}
         />
 

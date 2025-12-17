@@ -24,16 +24,33 @@ export default function CategoryDropdown({
         const result = await getCategories();
         if ('data' in result) {
           let filtered = result.data || [];
+          
+          // Debug: log filtering criteria
+          console.log('CategoryDropdown filtering:', {
+            transactionType,
+            isBusiness,
+            totalCategories: filtered.length,
+          });
+          
           if (transactionType) {
-            filtered = filtered.filter((c: any) => c.transaction_type === transactionType);
+            filtered = filtered.filter((c: any) => {
+              const categoryType = c.transaction_type?.toLowerCase();
+              const filterType = transactionType.toLowerCase();
+              return categoryType === filterType;
+            });
+            console.log(`After transactionType filter (${transactionType}):`, filtered.length);
           }
+          
           if (isBusiness !== undefined) {
             filtered = filtered.filter((c: any) => c.is_business === isBusiness);
+            console.log(`After isBusiness filter (${isBusiness}):`, filtered.length);
           }
+          
+          console.log('Final filtered categories:', filtered.length);
           setCategories(filtered);
         }
       } catch (error) {
-        console.error(error);
+        console.error('Error loading categories:', error);
       } finally {
         setLoading(false);
       }

@@ -1,3 +1,5 @@
+'use client';
+
 import { Row } from 'components/Group';
 import { FormSplitButton } from 'components/Form/components/FormSplitButton';
 import { FormButton } from 'components/Form/components/FormButton';

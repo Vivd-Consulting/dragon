@@ -201,14 +201,14 @@ export interface Bank {
 }
 
 export interface Account {
-  id: number;
+  id: string;
   name: string;
-  account_id: string;
-  bank_id: number;
+  bank_id: string;
   currency: string;
   balance: number;
-  logo_url?: string | null;
   description?: string | null;
+  excluded: boolean;
+  is_business: boolean;
   created_at: Date;
   updated_at: Date;
 }

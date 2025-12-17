@@ -22,11 +22,13 @@ export async function getBanks(filters?: {
     const limit = filters?.limit ?? 10;
     const offset = filters?.offset ?? 0;
 
+    // Clone query before applying limit/offset for count
+    const countQuery = query.clone().clearSelect().clearOrder();
     const [data, totalResult] = await Promise.all([
       query.limit(limit).offset(offset),
-      query.clone().clearSelect().clearOrder().count('* as count').first(),
+      countQuery.count('* as count').first(),
     ]);
-
+    
     const total = Number((totalResult as any)?.count ?? 0);
 
     return { data, total, limit, offset };
