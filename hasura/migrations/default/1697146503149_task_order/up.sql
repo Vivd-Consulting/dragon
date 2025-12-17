@@ -1,1 +1,0 @@
-ALTER TABLE task ADD COLUMN order_index integer NOT NULL DEFAULT 0;

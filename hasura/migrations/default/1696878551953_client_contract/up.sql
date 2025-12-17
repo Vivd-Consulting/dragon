@@ -1,1 +1,0 @@
-ALTER TABLE client add COLUMN contract_id int REFERENCES media(id);

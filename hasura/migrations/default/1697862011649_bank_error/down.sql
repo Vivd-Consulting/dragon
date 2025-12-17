@@ -1,1 +1,0 @@
-ALTER TABLE accounting.bank drop column error;

@@ -1,1 +1,0 @@
-ALTER TABLE contractor add COLUMN image_id int REFERENCES media(id);

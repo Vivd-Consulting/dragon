@@ -1,5 +1,0 @@
-query project($projectId: Int!) {
-  project(where: { id: { _eq: $projectId } }) {
-    name
-  }
-}

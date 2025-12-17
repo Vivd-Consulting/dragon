@@ -1,1 +1,0 @@
-ALTER TABLE accounting.rules DROP COLUMN account_id;

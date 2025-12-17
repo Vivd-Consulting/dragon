@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+'use client';
 
+import { useEffect, useState } from 'react';
 import { Dropdown } from 'primereact/dropdown';
-
-import categoriesQuery from './categories.gql';
+import { getCategories } from '@/app/actions/accounting';
 
 export default function CategoryDropdown({
   value,
@@ -22,23 +21,34 @@ export default function CategoryDropdown({
   showIcons?: boolean;
   onChange: (value: any) => void;
 }) {
-  const where: any = {};
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (transactionType) {
-    where.transaction_type = { _eq: transactionType };
-  }
-
-  if (isBusiness !== null) {
-    where.is_business = { _eq: isBusiness };
-  }
-
-  const { data } = useQuery(categoriesQuery, {
-    variables: {
-      where
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const result = await getCategories();
+        if ('data' in result) {
+          let filtered = result.data || [];
+          
+          if (transactionType) {
+            filtered = filtered.filter((c: any) => c.transaction_type === transactionType);
+          }
+          
+          if (isBusiness !== null) {
+            filtered = filtered.filter((c: any) => c.is_business === isBusiness);
+          }
+          
+          setCategories(filtered);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     }
-  });
-
-  const categories = data?.accounting_category;
+    loadCategories();
+  }, [transactionType, isBusiness]);
 
   const _value =
     value ||
@@ -49,8 +59,10 @@ export default function CategoryDropdown({
     )?.id;
 
   useEffect(() => {
-    onChange(_value);
-  }, []);
+    if (_value !== undefined) {
+      onChange(_value);
+    }
+  }, [_value]);
 
   return (
     <Dropdown

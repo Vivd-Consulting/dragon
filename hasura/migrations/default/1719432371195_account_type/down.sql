@@ -1,1 +1,0 @@
-ALTER TABLE accounting.account DROP COLUMN is_business;

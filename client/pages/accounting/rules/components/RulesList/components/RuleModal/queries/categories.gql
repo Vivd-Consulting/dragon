@@ -1,8 +1,0 @@
-query categories {
-  accounting_category(order_by: {is_business: desc}) {
-    id
-    name
-    transaction_type
-    is_business
-  }
-}

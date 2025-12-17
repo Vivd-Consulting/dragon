@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 import { UseFormRegister } from 'react-hook-form/dist/types/form';
 

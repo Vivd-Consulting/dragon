@@ -1,14 +1,8 @@
 import useSWR from 'swr';
 
-import { useAuth } from 'hooks/useAuth';
-
 export default function useGetImage(s3Key) {
-  const { token } = useAuth();
-
   const fetcher = url =>
-    fetch(url, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    fetch(url)
       .then(res => res.blob())
       .then(blob => URL.createObjectURL(blob));
 

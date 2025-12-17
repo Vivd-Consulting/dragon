@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef } from 'react';
 import { useUpdateEffect, useKeyPress } from 'ahooks';
 import { InputText as PrimeInputText } from 'primereact/inputtext';

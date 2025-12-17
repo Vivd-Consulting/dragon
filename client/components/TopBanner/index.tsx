@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import cx from 'clsx';
 import { Sidebar as PSidebar } from 'primereact/sidebar';

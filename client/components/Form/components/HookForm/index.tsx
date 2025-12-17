@@ -1,3 +1,5 @@
+'use client';
+
 import { useForm, UseFormReturn } from 'react-hook-form';
 import React, { useMemo, useCallback } from 'react';
 import cx from 'clsx';

@@ -1,10 +1,8 @@
 import useSWR from 'swr';
 
-export default function usePlaidLinkToken(accessToken, oldBankToken = null) {
+export default function usePlaidLinkToken(accessToken = null, oldBankToken = null) {
   const fetcher = url =>
-    fetch(url, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    }).then(res => res.json());
+    fetch(url).then(res => res.json());
 
   const url = oldBankToken
     ? `/api/plaid/updateLinkToken?accessToken=${oldBankToken}`

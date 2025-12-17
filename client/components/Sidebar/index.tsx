@@ -1,12 +1,11 @@
+'use client';
+
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Link from 'next/link';
 import cx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter } from 'next/router';
-import { signOut } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 import { SplitButton } from 'primereact/splitbutton';
-
-import { useAuth } from 'hooks/useAuth';
 
 import { Row, Column } from 'components/Group';
 
@@ -36,10 +35,19 @@ type sidebarContentProps = {
   onItemClick?: () => void;
 };
 const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
-  const { user, isAdmin } = useAuth();
+  const pathname = usePathname();
 
-  const router = useRouter();
-  const [selectedGroup, setSelectedGroup] = useState<SetStateAction<string | undefined | null>>();
+  // Initialize Accounting group as expanded if we're on an accounting page
+  const [selectedGroup, setSelectedGroup] = useState<SetStateAction<string | undefined | null>>(
+    pathname?.startsWith('/accounting') ? 'Accounting' : null
+  );
+
+  // Update expanded state when pathname changes
+  useEffect(() => {
+    if (pathname?.startsWith('/accounting')) {
+      setSelectedGroup('Accounting');
+    }
+  }, [pathname]);
 
   return (
     <>
@@ -48,89 +56,20 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
           <img src="/dragon_logo.png" alt="Dragon" className={styles['sidebar-logo']} />
         </Link>
         <a href="/" className={styles['sidebar-title']}>
-          <h2 className="mt-0 mb-2">Dragon {isAdmin ? 'Admin' : 'Dash'}</h2>
+          <h2 className="mt-0 mb-2">Dragon Admin</h2>
         </a>
       </Column>
 
       <SplitButton
-        label={user.email}
+        label="User"
         size="small"
         icon="pi pi-user"
         id="user-profile"
-        onClick={() => onSelectPath('/manage-account')}
-        model={[
-          {
-            label: 'Manage Account',
-            icon: 'pi pi-user',
-            command: () => onSelectPath('/manage-account')
-          },
-          {
-            label: 'Sign out',
-            icon: 'pi pi-sign-out',
-            command: () =>
-              signOut({
-                callbackUrl: process.env.NEXT_PUBLIC_LOGOUT_URL
-              })
-          }
-        ]}
         className="mb-2"
       />
 
       <div className={styles['sidebar-items-container']}>
         <Column className={styles['sidebar-items']}>
-          <SidebarItem
-            icon="pi pi-home"
-            label="Home"
-            href="/"
-            onClick={onItemClick}
-            allowedRoles={[Role.Admin]}
-          />
-
-          <SidebarGroup
-            icon="pi pi-briefcase"
-            title="Clients"
-            expanded={selectedGroup === 'Clients'}
-            setExpanded={setSelectedGroup}
-            allowedRoles={[Role.Admin]}
-          >
-            <SidebarItem
-              label="Clients"
-              href="/clients"
-              onClick={onItemClick}
-              allowedRoles={[Role.Admin]}
-            />
-            <SidebarItem
-              label="Projects"
-              href="/projects"
-              onClick={onItemClick}
-              allowedRoles={[Role.Admin]}
-            />
-          </SidebarGroup>
-
-          <SidebarItem
-            icon="pi pi-users"
-            label="Contractors"
-            href="/contractors"
-            onClick={onItemClick}
-            allowedRoles={[Role.Admin]}
-          />
-
-          <SidebarItem
-            icon="pi pi-list"
-            label="Tasks"
-            href="/tasks"
-            onClick={onItemClick}
-            allowedRoles={[Role.Admin]}
-          />
-
-          <SidebarItem
-            icon="pi pi-clock"
-            label="Time Tracker"
-            href="/time-tracker"
-            onClick={onItemClick}
-            allowedRoles={[Role.Admin, Role.Contractor]}
-          />
-
           <SidebarGroup
             icon="pi pi-money-bill"
             title="Accounting"
@@ -174,11 +113,6 @@ const SidebarContent = ({ onItemClick }: sidebarContentProps) => {
     </>
   );
 
-  function onSelectPath(path) {
-    router.push(path);
-
-    onItemClick && onItemClick();
-  }
 };
 
 // Icon should be changed to correct type, not any: WIP
@@ -197,14 +131,11 @@ const SidebarItem = ({
   external?: boolean;
   onClick?: () => void;
 }) => {
-  const { role } = useAuth();
-  const { asPath } = useRouter();
+  const pathname = usePathname();
 
-  if (!allowedRoles?.includes(role)) {
-    return null;
-  }
+  // No auth - always show items
 
-  const selected = href === '/' ? asPath === href : asPath.startsWith(href);
+  const selected = href === '/' ? pathname === href : pathname?.startsWith(href);
   const klass = cx(styles['sidebar-item'], selected && styles['selected']);
 
   if (external) {
@@ -252,19 +183,16 @@ const SidebarGroup = ({
   setExpanded,
   children
 }: sidebarGroupProps) => {
-  const { role } = useAuth();
-  const { asPath } = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (asPath.startsWith(`/${title}`)) {
+    if (pathname?.startsWith(`/${title.toLowerCase()}`)) {
       setExpanded(title);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pathname]);
 
-  if (!allowedRoles?.includes(role)) {
-    return null;
-  }
+  // No auth - always show groups
 
   const klass = cx(styles['sidebar-group'], styles['expandable']);
 
@@ -285,7 +213,6 @@ const SidebarGroup = ({
       <AnimatePresence initial={expanded}>
         {expanded && (
           <motion.div
-            className={styles['group-children']}
             key="content"
             initial="collapsed"
             animate="open"
@@ -296,7 +223,9 @@ const SidebarGroup = ({
             }}
             transition={{ duration: 0.25, ease: [0.04, 0.62, 0.23, 0.98] }}
           >
-            {children}
+            <div className={styles['group-children']}>
+              {children}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

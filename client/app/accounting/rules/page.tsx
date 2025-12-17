@@ -1,0 +1,23 @@
+'use client';
+
+import { Card } from 'primereact/card';
+
+import { Row, Column } from '@/components/Group';
+
+import RulesList from './components/RulesList';
+
+export default function Rules() {
+  return (
+    <Column gap="4" fullWidth>
+      <Card
+        header={
+          <Row justify="between" align="center" mx={4} mt={4}>
+            <h2 className="my-0">Rules</h2>
+          </Row>
+        }
+      >
+        <RulesList />
+      </Card>
+    </Column>
+  );
+}

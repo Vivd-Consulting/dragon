@@ -1,11 +1,10 @@
-version: '3.6'
 services:
   client:
     build:
       context: client/.
       dockerfile: Dockerfile-dev
     env_file:
-      - client/.env.local
+      - client/.env.development
     volumes:
       - ./client/.:/opt/client
       - /opt/client/node_modules
@@ -15,6 +14,21 @@ services:
     stdin_open: true
     restart: always
     image: "dragon_client:latest"
+  
+  inngest:
+    image: inngest/inngest:latest
+    container_name: dragon-inngest
+    command: inngest start --event-key ${INNGEST_EVENT_KEY} --signing-key ${INNGEST_SIGNING_KEY} -u http://host.docker.internal:3000/api/ai/funnels
+    ports:
+      - "8288:8288"
+    depends_on:
+      - client
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - dragon_default
 
   postgres:
     image: postgres:15
@@ -28,25 +42,6 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pgpass
-
-  hasura:
-    image: hasura/graphql-engine:v2.25.1.cli-migrations-v3
-    container_name: hasura
-    ports:
-      - "${HASURA_GRAPHQL_SERVER_PORT}:${HASURA_GRAPHQL_SERVER_PORT}"
-    depends_on:
-      - "postgres"
-    restart: always
-    env_file:
-      - .env
-    command:
-      - graphql-engine
-      - serve
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    volumes:
-      - ./hasura/migrations:/hasura-migrations
-      - ./hasura/metadata:/hasura-metadata
 
 volumes:
   db_data:

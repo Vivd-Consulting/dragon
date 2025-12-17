@@ -4,11 +4,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.ts`. The page auto-updates as you edit the file.
+This project uses Next.js 16 with the App Router. You can start editing pages by modifying files in the `app/` directory.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+[API routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) can be accessed via route handlers in the `app/api/` directory. Files in this directory are treated as [API routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) instead of React pages.
 
 ## Learn More
 

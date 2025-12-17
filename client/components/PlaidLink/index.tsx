@@ -2,12 +2,10 @@ import React, { useEffect } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import { Button } from 'primereact/button';
 
-import { useAuth } from 'hooks/useAuth';
 import usePlaidLinkToken from 'hooks/usePlaidLinkToken';
 
 export function PlaidLink({ onSuccess, onFail }) {
-  const { token: authToken } = useAuth();
-  const [plaidLinkToken, loading] = usePlaidLinkToken(authToken);
+  const [plaidLinkToken, loading] = usePlaidLinkToken();
 
   if (loading) {
     return <Button type="button" icon="pi pi-spin pi-spinner" label="Link Account" disabled />;
@@ -16,17 +14,16 @@ export function PlaidLink({ onSuccess, onFail }) {
   return (
     <PlaidLinkButton
       plaidLinkToken={plaidLinkToken}
-      authToken={authToken}
       onSuccessCallback={onSuccess}
       onFailCallback={onFail}
     />
   );
 }
 
-function PlaidLinkButton({ plaidLinkToken, authToken, onSuccessCallback, onFailCallback }) {
+function PlaidLinkButton({ plaidLinkToken, onSuccessCallback, onFailCallback }) {
   const config: Parameters<typeof usePlaidLink>[0] = {
     token: plaidLinkToken,
-    onSuccess: publicToken => onSuccess(publicToken, authToken),
+    onSuccess: publicToken => onSuccess(publicToken),
     onEvent: eventName => {
       if (eventName === 'HANDOFF') {
         isOauth = true;
@@ -54,13 +51,12 @@ function PlaidLinkButton({ plaidLinkToken, authToken, onSuccessCallback, onFailC
     />
   );
 
-  async function onSuccess(public_token: string, authToken: string) {
+  async function onSuccess(public_token: string) {
     // If the access_token is needed, send public_token to server
     const response = await fetch('/api/plaid/exchangeToken', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ public_token })
     });
@@ -77,8 +73,7 @@ function PlaidLinkButton({ plaidLinkToken, authToken, onSuccessCallback, onFailC
 }
 
 export function UpdatePlaidLink({ oldToken, onSuccess, onFail }) {
-  const { token: authToken } = useAuth();
-  const [plaidLinkToken, loading] = usePlaidLinkToken(authToken, oldToken);
+  const [plaidLinkToken, loading] = usePlaidLinkToken(null, oldToken);
 
   if (loading) {
     return <Button type="button" icon="pi pi-spin pi-spinner" label="Update Account" disabled />;
@@ -88,7 +83,6 @@ export function UpdatePlaidLink({ oldToken, onSuccess, onFail }) {
     <UpdatePlaidLinkButton
       plaidLinkToken={plaidLinkToken}
       oldToken={oldToken}
-      authToken={authToken}
       onSuccessCallback={onSuccess}
       onFailCallback={onFail}
     />
@@ -97,7 +91,6 @@ export function UpdatePlaidLink({ oldToken, onSuccess, onFail }) {
 
 function UpdatePlaidLinkButton({
   plaidLinkToken,
-  authToken,
   oldToken,
   onSuccessCallback,
   onFailCallback
@@ -136,10 +129,9 @@ function UpdatePlaidLinkButton({
     const response = await fetch('/api/plaid/updateLinkTokenSuccess', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ authToken, newToken, oldToken })
+      body: JSON.stringify({ newToken, oldToken })
     });
 
     if (!response.ok) {

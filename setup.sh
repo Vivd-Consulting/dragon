@@ -2,10 +2,8 @@
 yarn install
 cd e2e && yarn install && cd ..
 
-yarn hasura metadata apply
-yarn hasura migrate apply --database-name default
-yarn hasura seed apply --database-name default
+# Run Knex migrations
+cd client && yarn migrate:latest && cd ..
 
-yarn hasura metadata reload
+echo "Setup complete!"
 
-echo "Setup Hasura, run with: hasura console"

@@ -7,8 +7,6 @@ import { ContextMenu } from 'primereact/contextmenu';
 import { Button } from 'primereact/button';
 import { MenuItem } from 'primereact/menuitem';
 
-import { useAuth } from 'hooks/useAuth';
-
 import { ACCEPTED_TYPES } from 'consts';
 
 import styles from './styles.module.sass';
@@ -48,8 +46,6 @@ export const UploadButtonInput = ({
   disabled
 }: UploadButtonInputProps) => {
   const fileUploadRef = useRef(null);
-  const { token } = useAuth();
-
   const cmRef = useRef<ContextMenu | null>(null);
 
   const [uploading, setUploading] = useState(false);
@@ -156,15 +152,10 @@ export const UploadButtonInput = ({
   }
 
   async function uploadImage(formData) {
-    const headers: HeadersInit = {
-      Authorization: `Bearer ${token}`
-    };
-
     const uploadTarget = `${process.env.NEXT_PUBLIC_API_HOST}/storage/upload`;
 
     const req = await fetch(uploadTarget, {
       method: 'POST',
-      headers,
       body: formData
     });
 

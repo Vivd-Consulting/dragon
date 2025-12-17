@@ -1,7 +1,0 @@
-query media($id: Int!) {
-    media(where: { id: { _eq: $id } }) {
-        id
-        key
-        filename
-    }
-}

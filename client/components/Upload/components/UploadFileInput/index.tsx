@@ -1,15 +1,15 @@
+'use client';
+
 import React, { useCallback, useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
 import _ from 'lodash';
 import cx from 'clsx';
 
 import TooltipIcon from 'components/Tooltip';
 import { Column, Row } from 'components/Group';
 import { S3Image } from 'components/Image';
+import { getMedia } from '@/app/actions/media';
 
 import { UploadButtonInput } from '../UploadButtonInput';
-
-import mediaQuery from './media.gql';
 
 import styles from './styles.module.sass';
 
@@ -20,21 +20,30 @@ type S3AssetProps = {
 };
 
 function S3Asset({ fileId, isImage, className }: S3AssetProps) {
-  // Annoying re-query here, but it's cached anyway
-  const { data } = useQuery(mediaQuery, {
-    variables: {
-      id: fileId
-    },
-    skip: !fileId
-  });
+  const [media, setMedia] = useState<{ key?: string; filename?: string } | null>(null);
 
-  if (!fileId) {
+  useEffect(() => {
+    if (!fileId) return;
+
+    async function loadMedia() {
+      try {
+        const result = await getMedia(fileId);
+        if ('data' in result && result.data) {
+          setMedia({ key: result.data.key || undefined, filename: result.data.filename || undefined });
+        }
+      } catch (error) {
+        console.error('Error loading media:', error);
+      }
+    }
+
+    loadMedia();
+  }, [fileId]);
+
+  if (!fileId || !media || !media.key) {
     return null;
   }
 
-  const { key, filename } = data?.media[0] || {};
-
-  return isImage ? <S3Image s3Key={key} className={className} /> : <span>{filename}</span>;
+  return isImage ? <S3Image s3Key={media.key} className={className} /> : <span>{media.filename}</span>;
 }
 
 export type UploadInputProps = {
@@ -111,14 +120,24 @@ export function UploadFileInput({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  const { data } = useQuery(mediaQuery, {
-    variables: {
-      id: fileId
-    },
-    skip: !fileId
-  });
+  const [mediaId, setMediaId] = useState<string | undefined>(undefined);
 
-  const { id } = data?.media[0] || {};
+  useEffect(() => {
+    if (!fileId) return;
+
+    async function loadMedia() {
+      try {
+        const result = await getMedia(Number(fileId));
+        if ('data' in result && result.data?.id) {
+          setMediaId(result.data.id.toString());
+        }
+      } catch (error) {
+        console.error('Error loading media:', error);
+      }
+    }
+
+    loadMedia();
+  }, [fileId]);
 
   const getFormErrorMessage = () => {
     if (!errors) {
@@ -181,7 +200,7 @@ export function UploadFileInput({
         onUploadEnd={onUploadEnd}
         onError={onError}
         auto={auto}
-        mediaId={id}
+        mediaId={mediaId || undefined}
         acceptType={acceptType}
         compression={compression}
         onDelete={onDelete}
